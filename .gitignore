@@ -1,0 +1,34 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+.vercel/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+
+# supabase local
+supabase/.branches/
+supabase/.temp/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# playwright
+playwright-report/
+test-results/
+
+# agent scratch
+.agents/scratch/

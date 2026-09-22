@@ -1,0 +1,101 @@
+{
+  "app": {
+    "name": "ታዛ ግሪንስ",
+    "tagline": "ትኩስ ጅምር እዚህ ነው።"
+  },
+  "nav": {
+    "menu": "ምናሌ",
+    "cart": "ጋሪ",
+    "orders": "ትዕዛዞቼ",
+    "profile": "መለያ"
+  },
+  "menu": {
+    "allCategories": "ሁሉም",
+    "soldOut": "አልቋል",
+    "addToCart": "ወደ ጋሪ ጨምር",
+    "itemUnavailable": "በአሁኑ ጊዜ አይገኝም"
+  },
+  "cart": {
+    "title": "ጋሪዎ",
+    "empty": "ጋሪዎ ባዶ ነው",
+    "emptyDescription": "ከምናሌው ጣፋጭ ነገር ይጨምሩ።",
+    "browseMenu": "ምናሌ ይመልከቱ",
+    "quantity": "ብዛት",
+    "remove": "አስወግድ",
+    "subtotal": "ንዑስ ድምር",
+    "deliveryFee": "የማድረስ ክፍያ",
+    "total": "ጠቅላላ",
+    "reviewOrder": "ትዕዛዝ ይፈትሹ",
+    "itemCount": "{count} ዕቃ"
+  },
+  "checkout": {
+    "title": "ክፍያ",
+    "deliveryAddress": "የማድረሻ አድራሻ",
+    "pickupAtCafe": "ካፌ ላይ ይውሰዱ",
+    "landmark": "ምልክት ወይም አቅጣጫ",
+    "landmarkPlaceholder": "ለምሳሌ፦ ሩዋንዳ ድልድይ አቅራቢያ፣ ሰማያዊ በር፣ 3ኛ ፎቅ",
+    "landmarkRequired": "ምልክት ያስፈልጋል — የአዲስ አበባ አድራሻዎች በምልክት ናቸው።",
+    "notes": "የትዕዛዝ ማስታወሻ (አማራጭ)",
+    "notesPlaceholder": "አለርጂ፣ ልዩ ጥያቄ፣ የበር ኮድ…",
+    "paymentMethod": "ክፍያ",
+    "cashOnDelivery": "ሲደርስ ክፍያ",
+    "placeOrder": "ትዕዛዝ ያስቀምጡ",
+    "restaurantClosed": "አሁን ዝግ ነን። ብዙም ሳይቆይ ትዕዛዝ ይጀምራል።",
+    "belowMinimum": "ዝቅተኛ ትዕዛዝ {minimum} ነው።",
+    "confirmingOrder": "ትዕዛዝ እያስቀመጠ ነው…"
+  },
+  "orders": {
+    "title": "ትዕዛዞቼ",
+    "orderNumber": "ትዕዛዝ #{id}",
+    "empty": "ምንም ትዕዛዝ የለም",
+    "emptyDescription": "የተጠናቀቁ ትዕዛዞችዎ እዚህ ይታያሉ።",
+    "reorder": "ድጋሜ ይዝዙ",
+    "trackOrder": "ትዕዛዝ ይከታተሉ",
+    "status": {
+      "pending": "ትዕዛዝ ደርሷል",
+      "accepted": "ተቀብሏል",
+      "preparing": "እየተዘጋጀ ነው",
+      "ready": "ዝግጁ ነው",
+      "out_for_delivery": "በመምጣት ላይ",
+      "delivered": "ደርሷል",
+      "rejected": "ተቀባይነት አላገኘም",
+      "cancelled": "ተሰርዟል"
+    },
+    "tracker": {
+      "title": "ትዕዛዝ #{id}",
+      "estimatedTime": "ግምታዊ ሰዓት {time}",
+      "since": "{status} ከ{time} ጀምሮ",
+      "rejectedReason": "ምክንያት፦ {reason}",
+      "contactUs": "ያግኙን",
+      "orderAgain": "ድጋሜ ይዝዙ",
+      "items": "ዕቃዎች",
+      "deliveryTo": "የሚደርሰው"
+    }
+  },
+  "profile": {
+    "title": "መለያ",
+    "savedAddresses": "የተቀመጡ አድራሻዎች",
+    "addAddress": "አድራሻ ጨምር",
+    "orderHistory": "የትዕዛዝ ታሪክ",
+    "deleteAccount": "ውሂቤን ሰርዝ",
+    "deleteConfirm": "ይህ መለያዎን እና የግል ውሂብዎን ይሰርዛል። የትዕዛዝ ታሪክ ድምሮች ለሂሳብ ዓላማ ይቀራሉ። ይቀጥሉ?"
+  },
+  "errors": {
+    "generic": "ስህተት ተፈጥሯል። እባክዎ ደግሞ ይሞክሩ።",
+    "offline": "ግንኙነት የለዎትም። ኔትዎርክዎን ያረጋግጡ።",
+    "notFound": "ይህ ገጽ የለም።",
+    "unauthorized": "መግቢያ ያስፈልጋል።"
+  },
+  "common": {
+    "loading": "እየጫነ ነው…",
+    "retry": "ደግሞ ይሞክሩ",
+    "back": "ተመለስ",
+    "save": "አስቀምጥ",
+    "cancel": "ሰርዝ",
+    "confirm": "አረጋግጥ",
+    "close": "ዝጋ",
+    "edit": "አርም",
+    "delete": "ሰርዝ",
+    "birr": "ብር"
+  }
+}

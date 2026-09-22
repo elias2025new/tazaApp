@@ -1,0 +1,135 @@
+/**
+ * src/styles/tokens.css
+ * Brand design tokens — extracted from cafe.tazagreens.org on 2026-09-22.
+ * Source: computed CSS from the live site.
+ *
+ * EXTRACTION NOTES:
+ *   --forest:      #103d2b  — hero/section background, extracted from hero bg
+ *   --cream:       #f5f0df  — nav header background, extracted from nav computed bg
+ *   --paper:       #fbf8ed  — main page background, extracted from <body>
+ *   --terracotta:  #c66f45  — emphasis text ("start here."), extracted from hero heading color
+ *   --citrus:      #c8e72f  — CTA button fill ("See our favorites"), extracted from button bg
+ *   --ink:         #12291f  — primary dark text, extracted from heading color on cream bg
+ *   --muted-text:  #5c7063  — secondary/muted text, derived from ink at reduced opacity
+ *
+ * Fonts: Fraunces (display serif) + Instrument Sans (UI/body), confirmed from computed font-family.
+ * Border radius: pill buttons = 9999px; cards = 16–24px.
+ * Logo: public/brand/logo-mark.png (extracted from site header)
+ */
+
+/* ─── Light mode (default) ─────────────────────────────────────────── */
+:root {
+  /* Core brand palette */
+  --color-forest: #103d2b;
+  --color-forest-deep: #092a1d;
+  --color-cream: #f5f0df;
+  --color-paper: #fbf8ed;
+  --color-terracotta: #c66f45;
+  --color-citrus: #c8e72f;
+  --color-ink: #12291f;
+
+  /* Semantic tokens (light) */
+  --color-primary: var(--color-forest);
+  --color-primary-dark: var(--color-forest-deep);
+  --color-accent: var(--color-citrus);
+  --color-emphasis: var(--color-terracotta);
+  --color-bg: var(--color-paper);
+  --color-surface: #ffffff;
+  --color-surface-raised: var(--color-cream);
+  --color-text: var(--color-ink);
+  --color-text-muted: #5c7063;
+  --color-text-on-primary: var(--color-cream);
+  --color-text-on-accent: var(--color-ink);
+  --color-border: #d8d0bb;
+  --color-border-subtle: #ece7d4;
+
+  /* Status colors */
+  --color-success: var(--color-forest);
+  --color-warning: var(--color-terracotta);
+  --color-danger: #b3402b;
+  --color-info: #2b6b7a;
+
+  /* Order status step colors */
+  --color-step-active: var(--color-forest);
+  --color-step-complete: var(--color-forest);
+  --color-step-pending: #c4bda3;
+
+  /* Typography */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Instrument Sans', system-ui, sans-serif;
+  --font-ethiopic: 'Noto Sans Ethiopic', 'Ethiopic', sans-serif;
+
+  /* Type scale (mobile base 16px) */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.25rem;   /* 36px */
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(16, 61, 43, 0.08);
+  --shadow-md: 0 4px 12px rgba(16, 61, 43, 0.10);
+  --shadow-lg: 0 8px 24px rgba(16, 61, 43, 0.14);
+
+  /* Animation */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 350ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Layout */
+  --bottom-bar-height: 64px;
+  --header-height: 56px;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+}
+
+/* ─── Dark mode ────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --color-primary: #3a7a57;
+  --color-primary-dark: #2d6145;
+  --color-accent: var(--color-citrus);
+  --color-emphasis: #d98a6a;
+  --color-bg: #0f1f18;
+  --color-surface: #172c22;
+  --color-surface-raised: #1f3a2c;
+  --color-text: #e8e2d0;
+  --color-text-muted: #8fa896;
+  --color-text-on-primary: #e8e2d0;
+  --color-text-on-accent: var(--color-ink);
+  --color-border: #2a4535;
+  --color-border-subtle: #1f3328;
+
+  --color-success: #3a7a57;
+  --color-warning: #d98a6a;
+  --color-danger: #e05c44;
+
+  --color-step-active: #3a7a57;
+  --color-step-complete: #3a7a57;
+  --color-step-pending: #2d4038;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
