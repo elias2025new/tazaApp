@@ -64,7 +64,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white shadow-sm">
-        <div className="px-4 pt-16 pb-3">
+        <div className="px-4 pt-24 pb-3">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h1 className="text-xl font-bold text-[#103d2b] tracking-tight">🌿 Taza Greens</h1>

@@ -130,7 +130,7 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-white border-b border-gray-100 flex items-center gap-3 px-4 pt-16 pb-4">
+      <div className="sticky top-0 z-40 bg-white border-b border-gray-100 flex items-center gap-3 px-4 pt-24 pb-4">
         <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100">
           <ArrowLeft className="w-4 h-4 text-gray-600" />
         </button>
