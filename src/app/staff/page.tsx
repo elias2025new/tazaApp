@@ -40,6 +40,8 @@ const STATUS_BADGE: Record<string, string> = {
   out_for_delivery: 'bg-orange-100 text-orange-700',
   delivered:        'bg-gray-100 text-gray-500',
   rejected:         'bg-red-100 text-red-500',
+};
+
 function playSynth(type: string) {
   if (type === 'none' || typeof window === 'undefined') return;
   try {
