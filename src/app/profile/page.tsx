@@ -59,10 +59,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 flex flex-col pb-24">
       {/* Header */}
       <div className="bg-[#103d2b] text-white px-4 pt-24 pb-12">
-        <h1 className="text-xl font-bold mb-6">Profile</h1>
         
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm overflow-hidden">
@@ -86,7 +85,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Main Content */}
-      <div className="px-4 -mt-6">
+      <div className="px-4 -mt-6 flex-1 flex flex-col">
         <div className="bg-white rounded-2xl shadow-sm p-2 mb-4">
           {!dbProfile?.phone_number && user && (
             <div className="p-4 bg-orange-50 rounded-xl mb-2 border border-orange-100 flex items-start gap-3">
@@ -124,7 +123,7 @@ export default function ProfilePage() {
           </button>
         </div>
 
-        <div className="text-center mt-8">
+        <div className="text-center mt-auto pt-8">
           <p className="text-xs text-gray-400">Taza Greens v1.0.0</p>
         </div>
       </div>

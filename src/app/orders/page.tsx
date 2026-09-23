@@ -48,7 +48,7 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="sticky top-0 z-40 bg-white border-b border-gray-100 px-4 py-4">
+      <div className="sticky top-0 z-40 bg-white border-b border-gray-100 px-4 pt-24 pb-4">
         <h1 className="text-xl font-bold text-gray-800">My Orders</h1>
       </div>
 
