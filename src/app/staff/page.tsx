@@ -42,6 +42,12 @@ const STATUS_BADGE: Record<string, string> = {
   rejected:         'bg-red-100 text-red-500',
 };
 
+const SOUNDS = {
+  beep: 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg',
+  bell: 'https://actions.google.com/sounds/v1/alarms/dinner_bell_triangle.ogg',
+  chime: 'https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg',
+};
+
 export default function StaffDashboard() {
   const [secret, setSecret] = useState('');
   const [authed, setAuthed] = useState(false);
@@ -54,15 +60,37 @@ export default function StaffDashboard() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
 
+  // Sound settings
+  const [soundChoice, setSoundChoice] = useState<string>('bell');
+
+  useEffect(() => {
+    // Load saved sound preference
+    const saved = localStorage.getItem('taza_staff_sound');
+    if (saved) setSoundChoice(saved);
+  }, []);
+
+  const handleSoundChange = (val: string) => {
+    setSoundChoice(val);
+    localStorage.setItem('taza_staff_sound', val);
+    if (val !== 'none') {
+      const audio = new Audio(SOUNDS[val as keyof typeof SOUNDS]);
+      audio.play().catch(() => {});
+    }
+  };
+
   const prevOrderCountRef = useRef(0);
 
   // Audio for new orders
-  const playDing = () => {
+  const playDing = useCallback(() => {
+    if (soundChoice === 'none') return;
     try {
-      const audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-      audio.play().catch(() => {}); // ignore autoplay errors
+      const url = SOUNDS[soundChoice as keyof typeof SOUNDS];
+      if (url) {
+        const audio = new Audio(url);
+        audio.play().catch(() => {}); // ignore autoplay errors
+      }
     } catch (e) {}
-  };
+  }, [soundChoice]);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -79,7 +107,7 @@ export default function StaffDashboard() {
 
       setOrders(newOrders);
     } catch {}
-  }, [secret]);
+  }, [secret, playDing]);
 
   const fetchMenu = useCallback(async () => {
     try {
@@ -371,6 +399,25 @@ export default function StaffDashboard() {
               >
                 {storeOpen ? 'Close Store' : 'Open Store'}
               </button>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-gray-800 text-lg">Notification Sound</h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Choose the alert sound for new incoming orders on this device.
+                </p>
+              </div>
+              <select
+                value={soundChoice}
+                onChange={(e) => handleSoundChange(e.target.value)}
+                className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-[#103d2b] cursor-pointer"
+              >
+                <option value="bell">🛎️ Bell</option>
+                <option value="beep">📻 Beep</option>
+                <option value="chime">🔔 Chime</option>
+                <option value="none">🔇 None (Muted)</option>
+              </select>
             </div>
           </div>
         )}
