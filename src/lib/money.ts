@@ -30,3 +30,24 @@ export function parseBirrToSantim(birr: string): number {
 export function addSantim(...amounts: number[]): number {
   return amounts.reduce((sum, a) => sum + a, 0);
 }
+
+/** Transaction fee rate: 4% applied at checkout only — not shown on menu */
+export const TRANSACTION_FEE_RATE = 0.04;
+
+/** Calculate 4% transaction fee, rounded to nearest santim */
+export function calcTransactionFee(subtotalSantim: number): number {
+  return Math.round(subtotalSantim * TRANSACTION_FEE_RATE);
+}
+
+/** Calculate full order breakdown from a cart subtotal */
+export function calcOrderTotals(subtotalSantim: number) {
+  const transactionFee = calcTransactionFee(subtotalSantim);
+  const deliveryFee = 0; // Free delivery
+  const total = subtotalSantim + transactionFee + deliveryFee;
+  return { subtotalSantim, transactionFee, deliveryFee, total };
+}
+
+/** Convenience alias used in components: formats santim as "295 birr" */
+export function formatPrice(santim: number): string {
+  return `${Math.round(santim / 100).toLocaleString()} birr`;
+}

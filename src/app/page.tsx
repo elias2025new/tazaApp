@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { ShoppingBag, Search, Plus, Minus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCartStore } from '@/lib/cart-store';
+import { formatPrice, calcOrderTotals } from '@/lib/money';
 
 type Category = { id: string; name_en: string; emoji: string; sort_order: number };
 type MenuItem = {
@@ -13,19 +16,19 @@ type MenuItem = {
   image_path: string | null;
   is_available: boolean;
 };
-type CartItem = MenuItem & { quantity: number };
-
-function formatPrice(santim: number) {
-  return `${(santim / 100).toFixed(0)} birr`;
-}
 
 export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
-  const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const { items: cartItems, addItem, removeItem, count, total } = useCartStore();
+  const cartCount = count();
+  const cartSubtotal = total();
+  const { total: cartTotal } = calcOrderTotals(cartSubtotal);
 
   useEffect(() => {
     fetch('/api/menu')
@@ -44,28 +47,9 @@ export default function HomePage() {
     return matchCat && matchSearch;
   });
 
-  const cartCount = cart.reduce((sum, i) => sum + i.quantity, 0);
-  const cartTotal = cart.reduce((sum, i) => sum + i.base_price_santim * i.quantity, 0);
-
-  function addToCart(item: MenuItem) {
-    setCart((prev) => {
-      const existing = prev.find((c) => c.id === item.id);
-      if (existing) return prev.map((c) => c.id === item.id ? { ...c, quantity: c.quantity + 1 } : c);
-      return [...prev, { ...item, quantity: 1 }];
-    });
-  }
-
-  function removeFromCart(item: MenuItem) {
-    setCart((prev) => {
-      const existing = prev.find((c) => c.id === item.id);
-      if (!existing) return prev;
-      if (existing.quantity === 1) return prev.filter((c) => c.id !== item.id);
-      return prev.map((c) => c.id === item.id ? { ...c, quantity: c.quantity - 1 } : c);
-    });
-  }
 
   function getQty(itemId: string) {
-    return cart.find((c) => c.id === itemId)?.quantity || 0;
+    return cartItems.find((c) => c.id === itemId)?.quantity || 0;
   }
 
   if (loading) {
@@ -87,7 +71,10 @@ export default function HomePage() {
               <p className="text-xs text-gray-400">Bole Rwanda, Addis Ababa</p>
             </div>
             {cartCount > 0 && (
-              <button className="relative flex items-center gap-2 bg-[#103d2b] text-white text-sm font-semibold px-4 py-2 rounded-full shadow-md active:scale-95 transition-transform">
+              <button
+                onClick={() => router.push('/cart')}
+                className="relative flex items-center gap-2 bg-[#103d2b] text-white text-sm font-semibold px-4 py-2 rounded-full shadow-md active:scale-95 transition-transform"
+              >
                 <ShoppingBag className="w-4 h-4" />
                 <span>{formatPrice(cartTotal)}</span>
                 <span className="absolute -top-2 -right-2 bg-[#e8a838] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
@@ -154,7 +141,10 @@ export default function HomePage() {
                 </h2>
                 <div className="space-y-2">
                   {catItems.map((item) => (
-                    <MenuCard key={item.id} item={item} qty={getQty(item.id)} onAdd={addToCart} onRemove={removeFromCart} />
+                    <MenuCard key={item.id} item={item} qty={getQty(item.id)}
+                      onAdd={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
+                      onRemove={() => removeItem(item.id)}
+                    />
                   ))}
                 </div>
               </section>
@@ -169,7 +159,10 @@ export default function HomePage() {
               </div>
             ) : (
               filteredItems.map((item) => (
-                <MenuCard key={item.id} item={item} qty={getQty(item.id)} onAdd={addToCart} onRemove={removeFromCart} />
+                <MenuCard key={item.id} item={item} qty={getQty(item.id)}
+                  onAdd={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
+                  onRemove={() => removeItem(item.id)}
+                />
               ))
             )}
           </div>
@@ -190,8 +183,8 @@ function MenuCard({
 }: {
   item: MenuItem;
   qty: number;
-  onAdd: (item: MenuItem) => void;
-  onRemove: (item: MenuItem) => void;
+  onAdd: () => void;
+  onRemove: () => void;
 }) {
   return (
     <div className="flex items-center justify-between bg-white rounded-2xl p-3 shadow-sm border border-gray-50 active:scale-[0.99] transition-transform">
@@ -206,7 +199,7 @@ function MenuCard({
       <div className="flex-shrink-0">
         {qty === 0 ? (
           <button
-            onClick={() => onAdd(item)}
+            onClick={onAdd}
             className="w-9 h-9 flex items-center justify-center bg-[#103d2b] text-white rounded-full shadow-md active:scale-90 transition-transform"
           >
             <Plus className="w-5 h-5" />
@@ -214,14 +207,14 @@ function MenuCard({
         ) : (
           <div className="flex items-center gap-2">
             <button
-              onClick={() => onRemove(item)}
+              onClick={onRemove}
               className="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-700 rounded-full active:scale-90 transition-transform"
             >
               <Minus className="w-4 h-4" />
             </button>
             <span className="text-sm font-bold text-[#103d2b] w-4 text-center">{qty}</span>
             <button
-              onClick={() => onAdd(item)}
+              onClick={onAdd}
               className="w-8 h-8 flex items-center justify-center bg-[#103d2b] text-white rounded-full active:scale-90 transition-transform"
             >
               <Plus className="w-4 h-4" />
