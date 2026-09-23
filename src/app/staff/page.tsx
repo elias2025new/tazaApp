@@ -118,6 +118,12 @@ export default function StaffDashboard() {
   // Audio for new orders
   const playDing = useCallback(() => {
     playSynth(soundChoice);
+    let count = 1;
+    const interval = setInterval(() => {
+      playSynth(soundChoice);
+      count++;
+      if (count >= 3) clearInterval(interval);
+    }, 1200);
   }, [soundChoice]);
 
   const fetchOrders = useCallback(async () => {
