@@ -234,7 +234,7 @@ export default function StaffDashboard() {
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar Navigation */}
       <aside className="w-full md:w-64 bg-white border-r border-gray-200 md:min-h-screen flex flex-col">
-        <div className="p-6 border-b border-gray-100">
+        <div className="pt-16 pb-6 px-6 md:p-6 border-b border-gray-100">
           <h1 className="text-xl font-bold text-[#103d2b]">🌿 Taza Staff</h1>
         </div>
         <nav className="p-4 space-y-2 flex-1">

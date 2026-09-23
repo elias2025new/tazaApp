@@ -61,7 +61,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       {/* Header */}
-      <div className="bg-[#103d2b] text-white px-4 py-8 pb-12">
+      <div className="bg-[#103d2b] text-white px-4 pt-16 pb-12">
         <h1 className="text-xl font-bold mb-6">Profile</h1>
         
         <div className="flex items-center gap-4">
