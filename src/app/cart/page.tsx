@@ -19,6 +19,21 @@ export default function CartPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  // Store status & Scheduling
+  const [storeOpen, setStoreOpen] = useState(true);
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [scheduleTime, setScheduleTime] = useState('');
+
+  // Fetch store status on mount
+  import('react').then(({ useEffect }) => {
+    useEffect(() => {
+      fetch('/api/store')
+        .then((r) => r.json())
+        .then((d) => setStoreOpen(d.is_open))
+        .catch(() => {}); // default to true if error
+    }, []);
+  });
+
   const subtotal = total();
   const { transactionFee, deliveryFee, total: grandTotal } = calcOrderTotals(subtotal);
 
@@ -31,9 +46,19 @@ export default function CartPage() {
       setError('Your cart is empty.');
       return;
     }
+    if (!storeOpen && (!scheduleDate || !scheduleTime)) {
+      setError('The store is currently closed. Please select a date and time for your scheduled order.');
+      return;
+    }
 
     setPlacing(true);
     setError(null);
+
+    // Combine date and time for scheduled_for
+    let scheduledFor = null;
+    if (!storeOpen && scheduleDate && scheduleTime) {
+      scheduledFor = new Date(`${scheduleDate}T${scheduleTime}:00`).toISOString();
+    }
 
     try {
       const res = await fetch('/api/orders', {
@@ -44,6 +69,7 @@ export default function CartPage() {
           fulfillment_type: fulfillment,
           landmark: landmark.trim() || null,
           notes: notes.trim() || null,
+          scheduled_for: scheduledFor,
           idempotency_key: crypto.randomUUID(),
         }),
       });
@@ -172,6 +198,33 @@ export default function CartPage() {
             </button>
           </div>
         </div>
+
+        {/* Scheduled Order (If Store Closed) */}
+        {!storeOpen && (
+          <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4">
+            <h2 className="text-sm font-bold text-orange-800 mb-2 flex items-center gap-2">
+              🌙 We are currently closed
+            </h2>
+            <p className="text-xs text-orange-700 mb-4">
+              You can still place an order by scheduling it for later. When would you like it ready?
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="date"
+                min={new Date().toISOString().split('T')[0]} // restrict to today or future
+                value={scheduleDate}
+                onChange={(e) => setScheduleDate(e.target.value)}
+                className="flex-1 bg-white border border-orange-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-orange-400 text-gray-700"
+              />
+              <input
+                type="time"
+                value={scheduleTime}
+                onChange={(e) => setScheduleTime(e.target.value)}
+                className="w-32 bg-white border border-orange-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-orange-400 text-gray-700"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Address / Landmark */}
         {fulfillment === 'delivery' && (

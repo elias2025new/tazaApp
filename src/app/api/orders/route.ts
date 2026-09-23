@@ -43,11 +43,12 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { items, fulfillment_type, landmark, notes, idempotency_key } = body as {
+    const { items, fulfillment_type, landmark, notes, scheduled_for, idempotency_key } = body as {
       items: OrderItem[];
       fulfillment_type: 'delivery' | 'pickup';
       landmark?: string;
       notes?: string;
+      scheduled_for?: string;
       idempotency_key: string;
     };
 
@@ -132,6 +133,7 @@ export async function POST(req: Request) {
         total_santim: totalSantim,
         currency: 'ETB',
         customer_note: notes ?? null,
+        scheduled_for: scheduled_for ?? null,
         idempotency_key,
         placed_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),

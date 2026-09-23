@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { RefreshCw, ChevronDown } from 'lucide-react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { RefreshCw, Store, ListOrdered, Utensils, CheckCircle, XCircle } from 'lucide-react';
 import { formatPrice } from '@/lib/money';
 
 type Order = {
@@ -11,7 +11,15 @@ type Order = {
   total_santim: number;
   placed_at: string;
   customer_note: string | null;
+  scheduled_for: string | null;
   order_items: { name_snapshot: string; quantity: number; line_total_santim: number }[];
+};
+
+type MenuItem = {
+  id: string;
+  name_en: string;
+  base_price_santim: number;
+  is_available: boolean;
 };
 
 const NEXT_STATUS: Record<string, { label: string; next: string; color: string }[]> = {
@@ -34,31 +42,76 @@ const STATUS_BADGE: Record<string, string> = {
   rejected:         'bg-red-100 text-red-500',
 };
 
-export default function StaffPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function StaffDashboard() {
   const [secret, setSecret] = useState('');
   const [authed, setAuthed] = useState(false);
+  const [activeTab, setActiveTab] = useState<'orders' | 'menu' | 'settings'>('orders');
+
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [storeOpen, setStoreOpen] = useState(true);
+  
+  const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
 
+  const prevOrderCountRef = useRef(0);
+
+  // Audio for new orders
+  const playDing = () => {
+    try {
+      const audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+      audio.play().catch(() => {}); // ignore autoplay errors
+    } catch (e) {}
+  };
+
   const fetchOrders = useCallback(async () => {
-    const res = await fetch('/api/staff/orders', {
-      headers: { 'x-staff-secret': secret },
-    });
-    const d = await res.json();
-    setOrders(d.orders ?? []);
-    setLoading(false);
+    try {
+      const res = await fetch('/api/staff/orders', { headers: { 'x-staff-secret': secret } });
+      const d = await res.json();
+      const newOrders = d.orders ?? [];
+      
+      // Check for new pending orders
+      const currentPending = newOrders.filter((o: Order) => o.status === 'pending').length;
+      if (currentPending > prevOrderCountRef.current) {
+        playDing(); // Ding!
+      }
+      prevOrderCountRef.current = currentPending;
+
+      setOrders(newOrders);
+    } catch {}
   }, [secret]);
+
+  const fetchMenu = useCallback(async () => {
+    try {
+      const res = await fetch('/api/menu');
+      const d = await res.json();
+      setMenuItems(d.items ?? []);
+    } catch {}
+  }, []);
+
+  const fetchSettings = useCallback(async () => {
+    try {
+      const res = await fetch('/api/store');
+      const d = await res.json();
+      setStoreOpen(d.is_open);
+    } catch {}
+  }, []);
+
+  const loadAll = useCallback(async () => {
+    setLoading(true);
+    await Promise.all([fetchOrders(), fetchMenu(), fetchSettings()]);
+    setLoading(false);
+  }, [fetchOrders, fetchMenu, fetchSettings]);
 
   useEffect(() => {
     if (authed) {
-      fetchOrders();
-      const interval = setInterval(fetchOrders, 15000);
+      loadAll();
+      const interval = setInterval(fetchOrders, 10000);
       return () => clearInterval(interval);
     }
-  }, [authed, fetchOrders]);
+  }, [authed, loadAll, fetchOrders]);
 
-  async function transition(orderId: string, nextStatus: string) {
+  async function transitionStatus(orderId: string, nextStatus: string) {
     setUpdating(orderId + nextStatus);
     await fetch(`/api/orders/${orderId}/status`, {
       method: 'POST',
@@ -69,23 +122,41 @@ export default function StaffPage() {
     setUpdating(null);
   }
 
+  async function toggleStore(isOpen: boolean) {
+    setUpdating('store');
+    await fetch('/api/staff/store-settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_open: isOpen, staff_secret: secret }),
+    });
+    await fetchSettings();
+    setUpdating(null);
+  }
+
+  async function updateMenu(id: string, updates: Partial<MenuItem>) {
+    setUpdating(id);
+    await fetch(`/api/staff/menu`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, ...updates, staff_secret: secret }),
+    });
+    await fetchMenu();
+    setUpdating(null);
+  }
+
   if (!authed) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-2xl shadow-sm p-6 w-full max-w-sm">
-          <h1 className="text-lg font-bold text-gray-800 mb-1">🔑 Staff Panel</h1>
-          <p className="text-sm text-gray-400 mb-4">Enter your staff secret to continue</p>
+          <h1 className="text-xl font-bold text-[#103d2b] mb-1 text-center">🌿 Taza Staff</h1>
+          <p className="text-sm text-gray-400 mb-6 text-center">Enter staff secret</p>
           <input
             type="password"
-            placeholder="Staff secret..."
             value={secret}
             onChange={(e) => setSecret(e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#103d2b] mb-3"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#103d2b] mb-4"
           />
-          <button
-            onClick={() => setAuthed(true)}
-            className="w-full bg-[#103d2b] text-white font-semibold py-3 rounded-xl"
-          >
+          <button onClick={() => setAuthed(true)} className="w-full bg-[#103d2b] text-white font-semibold py-3 rounded-xl">
             Login
           </button>
         </div>
@@ -94,111 +165,216 @@ export default function StaffPage() {
   }
 
   const activeOrders = orders.filter((o) => !['delivered', 'rejected', 'cancelled'].includes(o.status));
-  const pastOrders = orders.filter((o) => ['delivered', 'rejected', 'cancelled'].includes(o.status));
+  const todayOrders = orders.filter((o) => o.placed_at.startsWith(new Date().toISOString().split('T')[0]));
+  const todayRevenue = todayOrders.reduce((sum, o) => sum + o.total_santim, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="sticky top-0 z-40 bg-[#103d2b] text-white px-4 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="font-bold text-lg">🌿 Staff Panel</h1>
-          <p className="text-xs text-white/60">{activeOrders.length} active orders</p>
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+      {/* Sidebar Navigation */}
+      <aside className="w-full md:w-64 bg-white border-r border-gray-200 md:min-h-screen flex flex-col">
+        <div className="p-6 border-b border-gray-100">
+          <h1 className="text-xl font-bold text-[#103d2b]">🌿 Taza Staff</h1>
         </div>
-        <button onClick={fetchOrders} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10">
-          <RefreshCw className="w-4 h-4" />
-        </button>
-      </div>
+        <nav className="p-4 space-y-2 flex-1">
+          <button
+            onClick={() => setActiveTab('orders')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+              activeTab === 'orders' ? 'bg-[#103d2b] text-white' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <ListOrdered className="w-4 h-4" /> Live Orders
+            {activeOrders.length > 0 && (
+              <span className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{activeOrders.length}</span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('menu')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+              activeTab === 'menu' ? 'bg-[#103d2b] text-white' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Utensils className="w-4 h-4" /> Menu Items
+          </button>
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+              activeTab === 'settings' ? 'bg-[#103d2b] text-white' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Store className="w-4 h-4" /> Store Settings
+          </button>
+        </nav>
+        <div className="p-6 border-t border-gray-100 text-xs text-gray-400">
+          Logged in securely
+        </div>
+      </aside>
 
-      <div className="px-4 py-4 space-y-3">
-        {loading ? (
-          <div className="flex justify-center py-10">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#103d2b] border-t-transparent" />
-          </div>
-        ) : activeOrders.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
-            <p className="text-4xl mb-2">🎉</p>
-            <p className="text-sm font-medium">No active orders right now!</p>
-          </div>
-        ) : null}
-
-        {activeOrders.map((order) => {
-          const actions = NEXT_STATUS[order.status] ?? [];
-          return (
-            <div key={order.id} className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              {/* Order Header */}
-              <div className="p-4 border-b border-gray-50">
-                <div className="flex items-center justify-between mb-1">
-                  <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${STATUS_BADGE[order.status]}`}>
-                    {order.status.replace(/_/g, ' ').toUpperCase()}
-                  </span>
-                  <span className="text-xs text-gray-400">
-                    {new Date(order.placed_at).toLocaleTimeString('en-ET', { hour: '2-digit', minute: '2-digit' })}
-                  </span>
+      {/* Main Content Area */}
+      <main className="flex-1 p-6 lg:p-10 max-h-screen overflow-y-auto">
+        {activeTab === 'orders' && (
+          <div className="max-w-6xl mx-auto space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-800">Live Orders</h2>
+              <div className="flex gap-4">
+                <div className="bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
+                  <p className="text-xs text-gray-400">Today&apos;s Orders</p>
+                  <p className="font-bold text-gray-800">{todayOrders.length}</p>
                 </div>
-                <p className="text-xs text-gray-500 font-mono">#{order.id.slice(0, 8).toUpperCase()}</p>
-                <p className="text-sm font-bold text-gray-800 mt-1">
-                  {order.fulfillment_type === 'pickup' ? '🏃 Pickup' : '🛵 Delivery'} · {formatPrice(order.total_santim)}
-                </p>
-              </div>
-
-              {/* Items */}
-              <div className="px-4 py-3 space-y-1">
-                {order.order_items.map((item, i) => (
-                  <div key={i} className="flex justify-between text-sm">
-                    <span className="text-gray-600">{item.name_snapshot} × {item.quantity}</span>
-                    <span className="text-gray-800 font-medium">{formatPrice(item.line_total_santim)}</span>
-                  </div>
-                ))}
-                {order.customer_note && (
-                  <p className="text-xs text-amber-600 bg-amber-50 rounded-lg px-2 py-1 mt-2">
-                    📝 {order.customer_note}
-                  </p>
-                )}
-              </div>
-
-              {/* Actions */}
-              {actions.length > 0 && (
-                <div className="px-4 pb-4 flex gap-2">
-                  {actions.map((action) => (
-                    <button
-                      key={action.next}
-                      onClick={() => transition(order.id, action.next)}
-                      disabled={updating === order.id + action.next}
-                      className={`flex-1 ${action.color} text-white text-sm font-semibold py-2.5 rounded-xl disabled:opacity-50`}
-                    >
-                      {updating === order.id + action.next ? '...' : action.label}
-                    </button>
-                  ))}
+                <div className="bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
+                  <p className="text-xs text-gray-400">Today&apos;s Revenue</p>
+                  <p className="font-bold text-[#103d2b]">{formatPrice(todayRevenue)}</p>
                 </div>
-              )}
+              </div>
             </div>
-          );
-        })}
 
-        {/* Past Orders */}
-        {pastOrders.length > 0 && (
-          <div>
-            <details>
-              <summary className="flex items-center gap-2 text-sm text-gray-400 font-medium py-2 cursor-pointer list-none">
-                <ChevronDown className="w-4 h-4" />
-                Past orders ({pastOrders.length})
-              </summary>
-              <div className="mt-2 space-y-2">
-                {pastOrders.slice(0, 10).map((order) => (
-                  <div key={order.id} className="bg-white rounded-xl p-3 flex justify-between items-center">
-                    <div>
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${STATUS_BADGE[order.status]}`}>
-                        {order.status}
-                      </span>
-                      <p className="text-xs text-gray-400 font-mono mt-1">#{order.id.slice(0, 8).toUpperCase()}</p>
+            {loading ? (
+              <p className="text-gray-400">Loading...</p>
+            ) : (
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                {activeOrders.map((order) => {
+                  const actions = NEXT_STATUS[order.status] ?? [];
+                  return (
+                    <div key={order.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                      <div className="p-5 border-b border-gray-50 bg-gray-50/50 flex justify-between items-start">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${STATUS_BADGE[order.status]}`}>
+                              {order.status.replace(/_/g, ' ').toUpperCase()}
+                            </span>
+                            {order.scheduled_for && (
+                              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-orange-100 text-orange-700 flex items-center gap-1">
+                                🕒 Scheduled: {new Date(order.scheduled_for).toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm font-bold text-gray-800">
+                            {order.fulfillment_type === 'pickup' ? '🏃 Pickup' : '🛵 Delivery'} · {formatPrice(order.total_santim)}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1">Placed: {new Date(order.placed_at).toLocaleTimeString()}</p>
+                        </div>
+                        <p className="text-xs text-gray-400 font-mono">#{order.id.slice(0, 8).toUpperCase()}</p>
+                      </div>
+
+                      <div className="p-5 flex-1">
+                        <ul className="space-y-2">
+                          {order.order_items.map((item, i) => (
+                            <li key={i} className="flex justify-between text-sm">
+                              <span className="text-gray-700 font-medium">{item.quantity}x {item.name_snapshot}</span>
+                              <span className="text-gray-400">{formatPrice(item.line_total_santim)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        {order.customer_note && (
+                          <div className="mt-4 bg-amber-50 rounded-xl p-3 border border-amber-100">
+                            <p className="text-xs font-semibold text-amber-800 mb-1">Customer Note:</p>
+                            <p className="text-sm text-amber-900">{order.customer_note}</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {actions.length > 0 && (
+                        <div className="p-4 bg-gray-50/50 border-t border-gray-100 flex gap-3">
+                          {actions.map((action) => (
+                            <button
+                              key={action.next}
+                              onClick={() => transitionStatus(order.id, action.next)}
+                              disabled={updating === order.id + action.next}
+                              className={`flex-1 ${action.color} text-white text-sm font-semibold py-3 rounded-xl disabled:opacity-50 transition-transform active:scale-[0.98]`}
+                            >
+                              {updating === order.id + action.next ? '...' : action.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <p className="text-sm font-bold text-gray-700">{formatPrice(order.total_santim)}</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-            </details>
+            )}
+            
+            {activeOrders.length === 0 && !loading && (
+              <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                <p className="text-4xl mb-4">🎉</p>
+                <p className="text-gray-500 font-medium">All caught up! No active orders.</p>
+              </div>
+            )}
           </div>
         )}
-      </div>
+
+        {activeTab === 'menu' && (
+          <div className="max-w-4xl mx-auto space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800">Menu Management</h2>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-200">
+                    <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Item Name</th>
+                    <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Price (Birr)</th>
+                    <th className="p-4 text-xs font-semibold text-gray-500 uppercase text-center">Available</th>
+                    <th className="p-4 text-xs font-semibold text-gray-500 uppercase text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {menuItems.map((item) => (
+                    <tr key={item.id} className="hover:bg-gray-50/50">
+                      <td className="p-4 text-sm font-semibold text-gray-800">{item.name_en}</td>
+                      <td className="p-4">
+                        <input
+                          type="number"
+                          defaultValue={Math.round(item.base_price_santim / 100)}
+                          onBlur={(e) => {
+                            const newPrice = Number(e.target.value) * 100;
+                            if (newPrice !== item.base_price_santim) {
+                              updateMenu(item.id, { base_price_santim: newPrice });
+                            }
+                          }}
+                          className="w-24 px-3 py-1.5 border border-gray-200 rounded-lg text-sm"
+                        />
+                      </td>
+                      <td className="p-4 text-center">
+                        <button
+                          onClick={() => updateMenu(item.id, { is_available: !item.is_available })}
+                          disabled={updating === item.id}
+                          className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 focus:outline-none"
+                          style={{ backgroundColor: item.is_available ? '#103d2b' : '#e5e7eb' }}
+                        >
+                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${item.is_available ? 'translate-x-6' : 'translate-x-1'}`} />
+                        </button>
+                      </td>
+                      <td className="p-4 text-right">
+                        {updating === item.id && <span className="text-xs text-gray-400">Saving...</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'settings' && (
+          <div className="max-w-2xl mx-auto space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800">Store Settings</h2>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-gray-800 text-lg">Store Status</h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  When closed, customers can still browse the menu but must schedule orders for a later time.
+                </p>
+              </div>
+              <button
+                onClick={() => toggleStore(!storeOpen)}
+                disabled={updating === 'store'}
+                className={`px-6 py-3 rounded-xl font-bold text-white transition-colors disabled:opacity-50 ${
+                  storeOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-[#103d2b] hover:bg-[#0c2f21]'
+                }`}
+              >
+                {storeOpen ? 'Close Store' : 'Open Store'}
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
