@@ -55,8 +55,12 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     tg.expand();
     
     // Attempt to request full screen (removes native telegram header and bottom bar on mobile)
-    if (tg.requestFullscreen) {
-      tg.requestFullscreen();
+    try {
+      if (typeof tg.requestFullscreen === 'function' && ['android', 'ios'].includes(tg.platform)) {
+        tg.requestFullscreen();
+      }
+    } catch (e) {
+      console.warn('requestFullscreen not supported on this platform', e);
     }
 
     // 3. Authenticate with our backend (only if initData is available)
