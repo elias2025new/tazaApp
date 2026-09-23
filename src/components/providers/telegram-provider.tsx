@@ -10,6 +10,7 @@ declare global {
         ready: () => void;
         expand: () => void;
         requestFullscreen?: () => void;
+        platform: string;
         initData: string;
         initDataUnsafe: {
           user?: {
