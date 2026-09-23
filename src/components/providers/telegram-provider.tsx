@@ -9,6 +9,7 @@ declare global {
       WebApp: {
         ready: () => void;
         expand: () => void;
+        requestFullscreen?: () => void;
         initData: string;
         initDataUnsafe: {
           user?: {
@@ -52,6 +53,11 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
 
     // 2. Expand to full height
     tg.expand();
+    
+    // Attempt to request full screen (removes native telegram header and bottom bar on mobile)
+    if (tg.requestFullscreen) {
+      tg.requestFullscreen();
+    }
 
     // 3. Authenticate with our backend (only if initData is available)
     if (!tg.initData) {
