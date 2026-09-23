@@ -36,7 +36,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     const tg = window.Telegram?.WebApp;
 
     // Check if we are inside Telegram
-    if (!tg || !tg.initData) {
+    if (!tg) {
       // Allow dev mode fallback if enabled
       if (process.env.NEXT_PUBLIC_DEV_MOCK_TELEGRAM === 'true') {
         console.warn('Telegram WebApp not detected — using dev mock mode.');
@@ -53,7 +53,13 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     // 2. Expand to full height
     tg.expand();
 
-    // 3. Authenticate with our backend
+    // 3. Authenticate with our backend (only if initData is available)
+    if (!tg.initData) {
+      // initData empty — still show app (happens in some Telegram Desktop versions)
+      setIsReady(true);
+      return;
+    }
+
     fetch('/api/auth/telegram', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
