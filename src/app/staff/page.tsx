@@ -165,7 +165,7 @@ export default function StaffDashboard() {
   }
 
   const activeOrders = orders.filter((o) => !['delivered', 'rejected', 'cancelled'].includes(o.status));
-  const todayOrders = orders.filter((o) => o.placed_at.startsWith(new Date().toISOString().split('T')[0]));
+  const todayOrders = orders.filter((o) => o.placed_at.startsWith(new Date().toISOString().split('T')[0] as string));
   const todayRevenue = todayOrders.reduce((sum, o) => sum + o.total_santim, 0);
 
   return (

@@ -34,7 +34,8 @@ export default function ProfilePage() {
   const requestPhone = () => {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
       setSharingPhone(true);
-      window.Telegram.WebApp.requestContact((shared: boolean, data?: any) => {
+      const tg = window.Telegram.WebApp as any;
+      tg.requestContact((shared: boolean, data?: any) => {
         setSharingPhone(false);
         // The callback isn't always reliable across clients, 
         // but if we get the data, we save it immediately.
