@@ -50,8 +50,11 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     // 1. Signal to Telegram that the app is ready
     tg.ready();
 
-    // 2. Expand to full height
+    // 2. Expand to full height and blend the header
     tg.expand();
+    if (tg.setHeaderColor) {
+      tg.setHeaderColor('#ffffff'); // Blends the telegram header with the top nav
+    }
 
     // 3. Authenticate with our backend (only if initData is available)
     if (!tg.initData) {
