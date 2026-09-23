@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
 import { validateInitData } from '@/lib/telegram/validate-init-data';
-import { env } from '@/lib/env';
+import { serverEnv, publicEnv } from '@/lib/env';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/supabase/types';
 
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     }
 
     // 1. Validate cryptographic integrity from Telegram
-    const result = validateInitData(initDataRaw, env.TELEGRAM_BOT_TOKEN);
+    const result = validateInitData(initDataRaw, serverEnv.TELEGRAM_BOT_TOKEN);
     if (!result.ok) {
       return NextResponse.json({ error: result.error }, { status: 401 });
     }
@@ -26,8 +26,8 @@ export async function POST(req: Request) {
 
     // 2. Upsert user in Supabase bypassing RLS with the Service Role Key
     const supabaseAdmin = createClient<Database>(
-      env.NEXT_PUBLIC_SUPABASE_URL,
-      env.SUPABASE_SERVICE_ROLE_KEY
+      publicEnv.NEXT_PUBLIC_SUPABASE_URL,
+      serverEnv.SUPABASE_SERVICE_ROLE_KEY
     );
 
     // Upsert the profile
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     }
 
     // 3. Sign a custom JWT that Supabase understands (must use SUPABASE_JWT_SECRET)
-    const secret = new TextEncoder().encode(env.SUPABASE_JWT_SECRET);
+    const secret = new TextEncoder().encode(serverEnv.SUPABASE_JWT_SECRET);
     const alg = 'HS256';
 
     const jwt = await new SignJWT({

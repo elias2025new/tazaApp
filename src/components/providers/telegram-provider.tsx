@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { init, retrieveLaunchParams, miniApp, themeParams } from '@telegram-apps/sdk-react';
+import { init, retrieveLaunchParams, miniApp, themeParams } from '@telegram-apps/sdk';
 
 export function TelegramProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
