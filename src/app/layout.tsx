@@ -29,6 +29,8 @@ export const viewport: Viewport = {
   userScalable: false,
   themeColor: '#103d2b', // --color-forest, matches the brand primary
 };
+import { TelegramProvider } from '@/components/providers/telegram-provider';
+import { BottomNav } from '@/components/ui/bottom-nav';
 
 export default function RootLayout({
   children,
@@ -37,7 +39,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="bg-[--tg-theme-bg-color,var(--color-sand)] text-[--tg-theme-text-color,var(--color-ink)]">
+        <TelegramProvider>
+          <main className="mx-auto max-w-md bg-white min-h-screen shadow-xl relative overflow-hidden pb-16">
+            {children}
+            <BottomNav />
+          </main>
+        </TelegramProvider>
+      </body>
     </html>
   );
 }
