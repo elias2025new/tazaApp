@@ -8,6 +8,38 @@ import { jwtVerify } from 'jose';
 
 type OrderItem = { id: string; quantity: number };
 
+async function getProfileId(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('taza-auth')?.value;
+  if (!token) return null;
+  try {
+    const secret = new TextEncoder().encode(serverEnv.SUPABASE_JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret);
+    return payload.sub ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function GET() {
+  const profileId = await getProfileId();
+  if (!profileId) return NextResponse.json({ orders: [] });
+
+  const supabase = createClient<Database>(
+    publicEnv.NEXT_PUBLIC_SUPABASE_URL,
+    serverEnv.SUPABASE_SERVICE_ROLE_KEY
+  );
+
+  const { data: orders } = await supabase
+    .from('orders')
+    .select('id, status, fulfillment_type, total_santim, placed_at')
+    .eq('profile_id', profileId)
+    .order('placed_at', { ascending: false });
+
+  return NextResponse.json({ orders: orders ?? [] });
+}
+
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
