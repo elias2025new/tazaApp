@@ -40,12 +40,49 @@ const STATUS_BADGE: Record<string, string> = {
   out_for_delivery: 'bg-orange-100 text-orange-700',
   delivered:        'bg-gray-100 text-gray-500',
   rejected:         'bg-red-100 text-red-500',
-};
+function playSynth(type: string) {
+  if (type === 'none' || typeof window === 'undefined') return;
+  try {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    
+    const playNote = (freq: number, oscType: OscillatorType, startTime: number, duration: number, vol: number = 0.1) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = oscType;
+      osc.frequency.value = freq;
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(vol, startTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+      
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    };
 
-const SOUNDS = {
-  beep: 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg',
-  digital: 'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg',
-};
+    const now = ctx.currentTime;
+    
+    if (type === 'beep') {
+      playNote(880, 'sine', now, 0.3); // Simple beep (A5)
+    } else if (type === 'message') {
+      // iPhone message style (Tri-tone / Note)
+      playNote(880, 'sine', now, 0.15, 0.2);
+      playNote(1046.50, 'sine', now + 0.2, 0.4, 0.2);
+    } else if (type === 'chime') {
+      // Store door chime (Ding-Dong)
+      playNote(987.77, 'sine', now, 0.4, 0.2);
+      playNote(783.99, 'sine', now + 0.4, 0.6, 0.2);
+    } else if (type === 'coin') {
+      // Cash register / Coin (Cha-ching!)
+      playNote(987.77, 'square', now, 0.1, 0.05);
+      playNote(1318.51, 'square', now + 0.1, 0.4, 0.05);
+    }
+  } catch (e) {}
+}
 
 export default function StaffDashboard() {
   const [secret, setSecret] = useState('');
@@ -60,7 +97,7 @@ export default function StaffDashboard() {
   const [updating, setUpdating] = useState<string | null>(null);
 
   // Sound settings
-  const [soundChoice, setSoundChoice] = useState<string>('bell');
+  const [soundChoice, setSoundChoice] = useState<string>('message');
 
   useEffect(() => {
     // Load saved sound preference
@@ -71,37 +108,14 @@ export default function StaffDashboard() {
   const handleSoundChange = (val: string) => {
     setSoundChoice(val);
     localStorage.setItem('taza_staff_sound', val);
-    if (val !== 'none') {
-      const url = SOUNDS[val as keyof typeof SOUNDS];
-      if (url) {
-        const audio = new Audio(url);
-        audio.play().catch(() => {});
-        // Stop after 1.5s
-        setTimeout(() => {
-          audio.pause();
-          audio.currentTime = 0;
-        }, 1500);
-      }
-    }
+    playSynth(val);
   };
 
   const prevOrderCountRef = useRef(0);
 
   // Audio for new orders
   const playDing = useCallback(() => {
-    if (soundChoice === 'none') return;
-    try {
-      const url = SOUNDS[soundChoice as keyof typeof SOUNDS];
-      if (url) {
-        const audio = new Audio(url);
-        audio.play().catch(() => {}); // ignore autoplay errors
-        // Stop after 1.5s
-        setTimeout(() => {
-          audio.pause();
-          audio.currentTime = 0;
-        }, 1500);
-      }
-    } catch (e) {}
+    playSynth(soundChoice);
   }, [soundChoice]);
 
   const fetchOrders = useCallback(async () => {
@@ -425,8 +439,10 @@ export default function StaffDashboard() {
                 onChange={(e) => handleSoundChange(e.target.value)}
                 className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-[#103d2b] cursor-pointer"
               >
-                <option value="beep">📻 Beep</option>
-                <option value="digital">⏱️ Digital Alarm</option>
+                <option value="message">📱 Message (iPhone-style)</option>
+                <option value="chime">🚪 Store Chime</option>
+                <option value="coin">💰 Coin Drop (Cha-ching)</option>
+                <option value="beep">📻 Classic Beep</option>
                 <option value="none">🔇 None (Muted)</option>
               </select>
             </div>
