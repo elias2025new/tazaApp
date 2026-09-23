@@ -44,10 +44,6 @@ const STATUS_BADGE: Record<string, string> = {
 
 const SOUNDS = {
   beep: 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg',
-  bell: 'https://actions.google.com/sounds/v1/alarms/dinner_bell_triangle.ogg',
-  doorbell: 'https://actions.google.com/sounds/v1/doors/store_door_chime.ogg',
-  coin: 'https://actions.google.com/sounds/v1/cartoon/cartoon_coin_drop.ogg',
-  phone: 'https://actions.google.com/sounds/v1/alarms/phone_ring_1.ogg',
   digital: 'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg',
 };
 
@@ -76,8 +72,16 @@ export default function StaffDashboard() {
     setSoundChoice(val);
     localStorage.setItem('taza_staff_sound', val);
     if (val !== 'none') {
-      const audio = new Audio(SOUNDS[val as keyof typeof SOUNDS]);
-      audio.play().catch(() => {});
+      const url = SOUNDS[val as keyof typeof SOUNDS];
+      if (url) {
+        const audio = new Audio(url);
+        audio.play().catch(() => {});
+        // Stop after 1.5s
+        setTimeout(() => {
+          audio.pause();
+          audio.currentTime = 0;
+        }, 1500);
+      }
     }
   };
 
@@ -91,6 +95,11 @@ export default function StaffDashboard() {
       if (url) {
         const audio = new Audio(url);
         audio.play().catch(() => {}); // ignore autoplay errors
+        // Stop after 1.5s
+        setTimeout(() => {
+          audio.pause();
+          audio.currentTime = 0;
+        }, 1500);
       }
     } catch (e) {}
   }, [soundChoice]);
@@ -416,11 +425,7 @@ export default function StaffDashboard() {
                 onChange={(e) => handleSoundChange(e.target.value)}
                 className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-[#103d2b] cursor-pointer"
               >
-                <option value="bell">🛎️ Bell</option>
                 <option value="beep">📻 Beep</option>
-                <option value="doorbell">🚪 Shop Doorbell</option>
-                <option value="coin">💰 Coin Drop (Cha-ching)</option>
-                <option value="phone">☎️ Phone Ring</option>
                 <option value="digital">⏱️ Digital Alarm</option>
                 <option value="none">🔇 None (Muted)</option>
               </select>
