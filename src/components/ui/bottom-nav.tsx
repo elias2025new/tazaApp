@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, ReceiptText, User } from 'lucide-react';
-import { cn } from '@/lib/utils'; // wait, I don't know if lib/utils exists. Let's just use template literals.
 
 export function BottomNav() {
   const pathname = usePathname();

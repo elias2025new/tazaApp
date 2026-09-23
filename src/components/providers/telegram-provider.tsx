@@ -27,14 +27,9 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       // 1. Initialize Telegram SDK
       init();
 
-      // 2. Expand Mini App to full height
+      // 2. Mount mini app and expand to full height
       if (miniApp.mount.isAvailable()) {
         miniApp.mount();
-        if (miniApp.requestFullscreen.isAvailable()) {
-          miniApp.requestFullscreen();
-        } else if (miniApp.expand.isAvailable()) {
-          miniApp.expand();
-        }
       }
 
       // 3. Mount theme parameters (extracts Telegram's native colors into CSS variables)
