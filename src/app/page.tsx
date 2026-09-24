@@ -139,7 +139,7 @@ export default function HomePage() {
                   <span className="text-base">{cat.emoji}</span>
                   {cat.name_en}
                 </h2>
-                <div className="space-y-2">
+                <div className="grid grid-cols-3 gap-2">
                   {catItems.map((item) => (
                     <MenuCard key={item.id} item={item} qty={getQty(item.id)}
                       onAdd={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
@@ -151,7 +151,7 @@ export default function HomePage() {
             );
           })
         ) : (
-          <div className="space-y-2">
+          <div className="grid grid-cols-3 gap-2">
             {filteredItems.length === 0 ? (
               <div className="text-center py-12 text-gray-400">
                 <p className="text-4xl mb-2">🔍</p>
@@ -187,37 +187,48 @@ function MenuCard({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between bg-white rounded-2xl p-3 shadow-sm border border-gray-50 active:scale-[0.99] transition-transform">
-      <div className="flex-1 pr-3">
-        <p className="text-sm font-semibold text-gray-800 leading-tight">{item.name_en}</p>
-        {item.description_en && (
-          <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-2 leading-snug">{item.description_en}</p>
+    <div className="flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative active:scale-[0.98] transition-transform">
+      {/* Image Container */}
+      <div className="w-full aspect-square bg-gray-50 relative border-b border-gray-50">
+        {item.image_path ? (
+          <img src={item.image_path} alt={item.name_en} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
+            {/* Fallback to emoji if no image */}
+            <span className="text-3xl opacity-50">🥗</span>
+          </div>
         )}
-        <p className="text-sm font-bold text-[#103d2b] mt-1.5">{formatPrice(item.base_price_santim)}</p>
       </div>
 
-      <div className="flex-shrink-0">
+      {/* Content */}
+      <div className="p-2 flex flex-col flex-1">
+        <p className="text-[11px] font-bold text-gray-800 leading-tight line-clamp-2 min-h-[30px]">{item.name_en}</p>
+        <p className="text-[11px] font-bold text-[#103d2b] mt-1">{formatPrice(item.base_price_santim)}</p>
+      </div>
+
+      {/* Floating Add/Qty Controls */}
+      <div className="absolute top-1.5 right-1.5">
         {qty === 0 ? (
           <button
             onClick={onAdd}
-            className="w-9 h-9 flex items-center justify-center bg-[#103d2b] text-white rounded-full shadow-md active:scale-90 transition-transform"
+            className="w-7 h-7 flex items-center justify-center bg-white/90 backdrop-blur-md text-[#103d2b] rounded-full shadow-sm border border-gray-100/50 active:scale-90 transition-transform"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4" />
           </button>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md rounded-full shadow-sm border border-gray-100/50 p-1">
             <button
               onClick={onRemove}
-              className="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-700 rounded-full active:scale-90 transition-transform"
+              className="w-5 h-5 flex items-center justify-center bg-gray-100 text-gray-700 rounded-full active:scale-90 transition-transform"
             >
-              <Minus className="w-4 h-4" />
+              <Minus className="w-3 h-3" />
             </button>
-            <span className="text-sm font-bold text-[#103d2b] w-4 text-center">{qty}</span>
+            <span className="text-[10px] font-bold text-[#103d2b] min-w-[12px] text-center">{qty}</span>
             <button
               onClick={onAdd}
-              className="w-8 h-8 flex items-center justify-center bg-[#103d2b] text-white rounded-full active:scale-90 transition-transform"
+              className="w-5 h-5 flex items-center justify-center bg-[#103d2b] text-white rounded-full active:scale-90 transition-transform"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-3 h-3" />
             </button>
           </div>
         )}
