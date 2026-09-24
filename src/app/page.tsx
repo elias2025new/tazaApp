@@ -211,10 +211,10 @@ function MenuCard({
       <div className="p-2 flex flex-col flex-1">
         <p className="text-[11px] font-bold text-gray-800 leading-tight line-clamp-2 min-h-[28px]">{item.name_en}</p>
         
-        <div className="mt-auto flex items-end justify-between pt-1">
-          <p className="text-[11px] font-bold text-[#103d2b]">{formatPrice(item.base_price_santim)}</p>
+        <div className="mt-auto flex items-center justify-between pt-1 h-[24px]">
+          <p className="text-[10px] sm:text-[11px] font-bold text-[#103d2b] truncate pr-1">{formatPrice(item.base_price_santim)}</p>
           
-          <div className="flex-shrink-0 ml-1">
+          <div className="flex-shrink-0 w-[54px] flex justify-end">
             {qty === 0 ? (
               <button
                 onClick={onAdd}
@@ -223,19 +223,19 @@ function MenuCard({
                 <Plus className="w-3 h-3" />
               </button>
             ) : (
-              <div className="flex items-center bg-gray-100 rounded-full border border-gray-200">
+              <div className="flex items-center justify-between w-full bg-gray-100 rounded-full border border-gray-200">
                 <button
                   onClick={onRemove}
-                  className="w-5 h-5 flex items-center justify-center bg-white text-gray-700 rounded-full shadow-sm active:scale-90 transition-transform"
+                  className="w-[22px] h-[22px] flex items-center justify-center bg-white text-gray-700 rounded-full shadow-sm active:scale-90 transition-transform"
                 >
-                  <Minus className="w-3 h-3" />
+                  <Minus className="w-2.5 h-2.5" />
                 </button>
-                <span className="text-[10px] font-bold text-[#103d2b] w-[14px] text-center">{qty}</span>
+                <span className="text-[9px] font-bold text-[#103d2b] text-center">{qty}</span>
                 <button
                   onClick={onAdd}
-                  className="w-5 h-5 flex items-center justify-center bg-[#103d2b] text-white rounded-full shadow-sm active:scale-90 transition-transform"
+                  className="w-[22px] h-[22px] flex items-center justify-center bg-[#103d2b] text-white rounded-full shadow-sm active:scale-90 transition-transform"
                 >
-                  <Plus className="w-3 h-3" />
+                  <Plus className="w-2.5 h-2.5" />
                 </button>
               </div>
             )}
