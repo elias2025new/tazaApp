@@ -61,9 +61,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-white shadow-sm">
+      <div className="bg-white shadow-sm flex-shrink-0 z-40">
         <div className="px-4 pt-24 pb-3">
           <div className="flex items-center justify-between mb-3">
             <div>
@@ -96,80 +96,87 @@ export default function HomePage() {
             />
           </div>
         </div>
+      </div>
 
-        {/* Category Pills */}
-        <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide">
+      <div className="flex-1 flex overflow-hidden bg-white">
+        {/* Vertical Category Nav Sidebar */}
+        <div className="w-[84px] bg-gray-50/50 flex-shrink-0 overflow-y-auto scroll-smooth border-r border-gray-100 flex flex-col no-scrollbar">
           <button
             onClick={() => setActiveCategory('all')}
-            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`flex flex-col items-center justify-center py-4 px-2 border-l-4 transition-all ${
               activeCategory === 'all'
-                ? 'bg-[#103d2b] text-white shadow-md'
-                : 'bg-gray-100 text-gray-600'
+                ? 'bg-white border-[#103d2b]'
+                : 'border-transparent text-gray-500'
             }`}
           >
-            All
+            <span className="text-xl mb-1">🌟</span>
+            <span className={`text-[10px] text-center leading-tight ${activeCategory === 'all' ? 'font-bold text-[#103d2b]' : 'font-medium'}`}>
+              All
+            </span>
           </button>
+          
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`flex-shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`flex flex-col items-center justify-center py-4 px-2 border-l-4 transition-all ${
                 activeCategory === cat.id
-                  ? 'bg-[#103d2b] text-white shadow-md'
-                  : 'bg-gray-100 text-gray-600'
+                  ? 'bg-white border-[#103d2b]'
+                  : 'border-transparent text-gray-500'
               }`}
             >
-              <span>{cat.emoji}</span>
-              <span>{cat.name_en}</span>
+              <span className="text-xl mb-1">{cat.emoji}</span>
+              <span className={`text-[10px] text-center leading-tight ${activeCategory === cat.id ? 'font-bold text-[#103d2b]' : 'font-medium'}`}>
+                {cat.name_en}
+              </span>
             </button>
           ))}
+          <div className="h-24" /> {/* Padding bottom */}
         </div>
-      </div>
 
-      {/* Menu Items */}
-      <div className="px-4 py-3 space-y-6">
-        {activeCategory === 'all' ? (
-          // Grouped by category
-          categories.map((cat) => {
-            const catItems = filteredItems.filter((i) => i.category_id === cat.id);
-            if (catItems.length === 0) return null;
-            return (
-              <section key={cat.id}>
-                <h2 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
-                  <span className="text-base">{cat.emoji}</span>
-                  {cat.name_en}
-                </h2>
-                <div className="grid grid-cols-3 gap-2">
-                  {catItems.map((item) => (
-                    <MenuCard key={item.id} item={item} qty={getQty(item.id)}
-                      onAdd={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
-                      onRemove={() => removeItem(item.id)}
-                    />
-                  ))}
+        {/* Menu Items Grid */}
+        <div className="flex-1 overflow-y-auto scroll-smooth p-3 pb-32">
+          {activeCategory === 'all' ? (
+            // Grouped by category
+            <div className="space-y-6">
+              {categories.map((cat) => {
+                const catItems = filteredItems.filter((i) => i.category_id === cat.id);
+                if (catItems.length === 0) return null;
+                return (
+                  <section key={cat.id}>
+                    <h2 className="text-sm font-bold text-gray-800 mb-3 sticky top-0 bg-white/90 backdrop-blur-md py-1 z-10 flex items-center gap-1.5">
+                      <span>{cat.name_en}</span>
+                    </h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {catItems.map((item) => (
+                        <MenuCard key={item.id} item={item} qty={getQty(item.id)}
+                          onAdd={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
+                          onRemove={() => removeItem(item.id)}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {filteredItems.length === 0 ? (
+                <div className="col-span-full text-center py-12 text-gray-400">
+                  <p className="text-4xl mb-2">🔍</p>
+                  <p className="text-sm">No items found</p>
                 </div>
-              </section>
-            );
-          })
-        ) : (
-          <div className="grid grid-cols-3 gap-2">
-            {filteredItems.length === 0 ? (
-              <div className="text-center py-12 text-gray-400">
-                <p className="text-4xl mb-2">🔍</p>
-                <p className="text-sm">No items found</p>
-              </div>
-            ) : (
-              filteredItems.map((item) => (
-                <MenuCard key={item.id} item={item} qty={getQty(item.id)}
-                  onAdd={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
-                  onRemove={() => removeItem(item.id)}
-                />
-              ))
-            )}
-          </div>
-        )}
-
-        {/* Bottom padding for nav */}
-        <div className="h-4" />
+              ) : (
+                filteredItems.map((item) => (
+                  <MenuCard key={item.id} item={item} qty={getQty(item.id)}
+                    onAdd={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
+                    onRemove={() => removeItem(item.id)}
+                  />
+                ))
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
