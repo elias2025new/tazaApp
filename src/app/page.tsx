@@ -195,15 +195,17 @@ function MenuCard({
 }) {
   return (
     <div className="flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden active:scale-[0.98] transition-transform">
-      {/* Image Container */}
-      <div className="w-full aspect-square bg-gray-50 border-b border-gray-100">
-        {item.image_path ? (
-          <img src={item.image_path} alt={item.name_en} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-3xl opacity-30">🥗</span>
-          </div>
-        )}
+      {/* Image Container — strict 1:1 ratio using padding hack, never stretches */}
+      <div className="relative w-full overflow-hidden bg-gray-50" style={{ paddingBottom: '100%' }}>
+        <div className="absolute inset-0">
+          {item.image_path ? (
+            <img src={item.image_path} alt={item.name_en} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="text-3xl opacity-30">🥗</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Name + Price row */}

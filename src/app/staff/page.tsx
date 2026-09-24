@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { RefreshCw, Store, ListOrdered, Utensils, CheckCircle, XCircle } from 'lucide-react';
+import { ImageCropModal } from '@/components/ui/image-crop-modal';
 import { formatPrice } from '@/lib/money';
 
 type Order = {
@@ -208,15 +209,16 @@ export default function StaffDashboard() {
   }
 
   const [uploadingImageId, setUploadingImageId] = useState<string | null>(null);
+  const [pendingCrop, setPendingCrop] = useState<{ id: string; file: File } | null>(null);
 
-  const handleImageUpload = async (id: string, file: File) => {
+  const handleImageUpload = async (id: string, blob: Blob) => {
     if (!secret) return;
     setUploadingImageId(id);
     try {
       const formData = new FormData();
       formData.append('id', id);
       formData.append('staff_secret', secret);
-      formData.append('file', file);
+      formData.append('file', new File([blob], 'menu-image.jpg', { type: 'image/jpeg' }));
 
       const res = await fetch('/api/staff/menu/upload', {
         method: 'POST',
@@ -239,6 +241,17 @@ export default function StaffDashboard() {
 
   if (!authed) {
     return (
+      <>
+        {pendingCrop && (
+          <ImageCropModal
+            file={pendingCrop.file}
+            onConfirm={(blob) => {
+              handleImageUpload(pendingCrop.id, blob);
+              setPendingCrop(null);
+            }}
+            onCancel={() => setPendingCrop(null)}
+          />
+        )}
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-2xl shadow-sm p-6 w-full max-w-sm">
           <h1 className="text-xl font-bold text-[#103d2b] mb-1 text-center">🌿 Taza Staff</h1>
@@ -254,6 +267,7 @@ export default function StaffDashboard() {
           </button>
         </div>
       </div>
+      </>
     );
   }
 
@@ -262,6 +276,17 @@ export default function StaffDashboard() {
   const todayRevenue = todayOrders.reduce((sum, o) => sum + o.total_santim, 0);
 
   return (
+    <>
+      {pendingCrop && (
+        <ImageCropModal
+          file={pendingCrop.file}
+          onConfirm={(blob) => {
+            handleImageUpload(pendingCrop.id, blob);
+            setPendingCrop(null);
+          }}
+          onCancel={() => setPendingCrop(null)}
+        />
+      )}
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar Navigation */}
       <aside className="w-full md:w-64 bg-white border-r border-gray-200 md:min-h-screen flex flex-col">
@@ -431,7 +456,8 @@ export default function StaffDashboard() {
                                 className="hidden"
                                 onChange={(e) => {
                                   const file = e.target.files?.[0];
-                                  if (file) handleImageUpload(item.id, file);
+                                  if (file) setPendingCrop({ id: item.id, file });
+                                  e.target.value = '';
                                 }}
                               />
                             </label>
@@ -516,5 +542,6 @@ export default function StaffDashboard() {
         )}
       </main>
     </div>
+    </>
   );
 }
