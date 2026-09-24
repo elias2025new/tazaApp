@@ -194,8 +194,8 @@ function MenuCard({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden active:scale-[0.98] transition-transform">
-      {/* Image Container — strict 1:1 ratio using padding hack, never stretches */}
+    <div className={`flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden active:scale-[0.98] transition-all duration-200 hover:shadow-md ${!item.is_available ? 'opacity-75 grayscale-[0.2]' : ''}`}>
+      {/* Image Container */}
       <div className="relative w-full overflow-hidden bg-gray-50" style={{ paddingBottom: '100%' }}>
         <div className="absolute inset-0">
           {item.image_path ? (
@@ -205,39 +205,54 @@ function MenuCard({
               <span className="text-3xl opacity-30">🥗</span>
             </div>
           )}
+          {/* Subtle gradient overlay for depth */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
+          
+          {/* Sold out overlay */}
+          {!item.is_available && (
+            <div className="absolute inset-0 bg-white/30 backdrop-blur-[1px] flex items-center justify-center z-10">
+              <span className="bg-white text-gray-800 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm border border-gray-100">Sold Out</span>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Name + Price row */}
-      <div className="px-2 pt-1.5 pb-0">
-        <p className="text-[11px] font-semibold text-gray-800 leading-tight line-clamp-2">{item.name_en}</p>
-        <p className="text-[11px] font-bold text-[#103d2b] mt-0.5">{formatPrice(item.base_price_santim)}</p>
+      <div className="px-2 pt-2 pb-0 flex-1 flex flex-col">
+        <p className="text-[11px] font-bold text-gray-800 leading-tight line-clamp-2">{item.name_en}</p>
+        <div className="mt-1.5 mb-1">
+          <span className="inline-block text-[10px] font-bold text-[#103d2b] bg-[#103d2b]/[0.08] px-1.5 py-0.5 rounded">
+            {formatPrice(item.base_price_santim)}
+          </span>
+        </div>
       </div>
 
-      {/* Add / Qty controls — full-width row at bottom */}
-      <div className="px-2 pb-2 pt-1 mt-auto">
+      {/* Add / Qty controls */}
+      <div className="px-2 pb-2 mt-auto">
         {qty === 0 ? (
           <button
             onClick={onAdd}
-            className="w-full h-7 flex items-center justify-center gap-1 bg-[#103d2b] text-white rounded-lg text-[10px] font-bold active:scale-95 transition-transform"
+            disabled={!item.is_available}
+            className="w-full h-[30px] flex items-center justify-center gap-1 bg-gradient-to-r from-[#103d2b] to-[#17543d] text-white rounded-xl text-[11px] font-bold shadow-sm shadow-[#103d2b]/20 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none"
           >
             <Plus className="w-3 h-3" />
             Add
           </button>
         ) : (
-          <div className="w-full h-7 flex items-center justify-between bg-[#103d2b] rounded-lg overflow-hidden">
+          <div className="w-full h-[30px] flex items-center justify-between bg-gradient-to-r from-[#103d2b] to-[#17543d] rounded-xl shadow-sm shadow-[#103d2b]/20 overflow-hidden transition-all">
             <button
               onClick={onRemove}
-              className="h-full px-2 flex items-center justify-center text-white active:bg-[#0c2f21] transition-colors"
+              className="h-full w-8 flex items-center justify-center text-white active:bg-black/20 transition-colors"
             >
-              <Minus className="w-3 h-3" />
+              <Minus className="w-3.5 h-3.5" />
             </button>
-            <span className="text-[11px] font-bold text-white">{qty}</span>
+            <span className="text-[11px] font-bold text-white flex-1 text-center">{qty}</span>
             <button
               onClick={onAdd}
-              className="h-full px-2 flex items-center justify-center text-white active:bg-[#0c2f21] transition-colors"
+              disabled={!item.is_available}
+              className="h-full w-8 flex items-center justify-center text-white active:bg-black/20 transition-colors disabled:opacity-50"
             >
-              <Plus className="w-3 h-3" />
+              <Plus className="w-3.5 h-3.5" />
             </button>
           </div>
         )}
