@@ -209,36 +209,38 @@ function MenuCard({
 
       {/* Content */}
       <div className="p-2 flex flex-col flex-1">
-        <p className="text-[11px] font-bold text-gray-800 leading-tight line-clamp-2 min-h-[30px]">{item.name_en}</p>
-        <p className="text-[11px] font-bold text-[#103d2b] mt-1">{formatPrice(item.base_price_santim)}</p>
-      </div>
-
-      {/* Floating Add/Qty Controls */}
-      <div className="absolute top-1.5 right-1.5">
-        {qty === 0 ? (
-          <button
-            onClick={onAdd}
-            className="w-7 h-7 flex items-center justify-center bg-white/90 backdrop-blur-md text-[#103d2b] rounded-full shadow-sm border border-gray-100/50 active:scale-90 transition-transform"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-        ) : (
-          <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md rounded-full shadow-sm border border-gray-100/50 p-1">
-            <button
-              onClick={onRemove}
-              className="w-5 h-5 flex items-center justify-center bg-gray-100 text-gray-700 rounded-full active:scale-90 transition-transform"
-            >
-              <Minus className="w-3 h-3" />
-            </button>
-            <span className="text-[10px] font-bold text-[#103d2b] min-w-[12px] text-center">{qty}</span>
-            <button
-              onClick={onAdd}
-              className="w-5 h-5 flex items-center justify-center bg-[#103d2b] text-white rounded-full active:scale-90 transition-transform"
-            >
-              <Plus className="w-3 h-3" />
-            </button>
+        <p className="text-[11px] font-bold text-gray-800 leading-tight line-clamp-2 min-h-[28px]">{item.name_en}</p>
+        
+        <div className="mt-auto flex items-end justify-between pt-1">
+          <p className="text-[11px] font-bold text-[#103d2b]">{formatPrice(item.base_price_santim)}</p>
+          
+          <div className="flex-shrink-0 ml-1">
+            {qty === 0 ? (
+              <button
+                onClick={onAdd}
+                className="w-6 h-6 flex items-center justify-center bg-[#103d2b] text-white rounded-full shadow-sm active:scale-90 transition-transform"
+              >
+                <Plus className="w-3 h-3" />
+              </button>
+            ) : (
+              <div className="flex items-center bg-gray-100 rounded-full border border-gray-200">
+                <button
+                  onClick={onRemove}
+                  className="w-5 h-5 flex items-center justify-center bg-white text-gray-700 rounded-full shadow-sm active:scale-90 transition-transform"
+                >
+                  <Minus className="w-3 h-3" />
+                </button>
+                <span className="text-[10px] font-bold text-[#103d2b] w-[14px] text-center">{qty}</span>
+                <button
+                  onClick={onAdd}
+                  className="w-5 h-5 flex items-center justify-center bg-[#103d2b] text-white rounded-full shadow-sm active:scale-90 transition-transform"
+                >
+                  <Plus className="w-3 h-3" />
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
