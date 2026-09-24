@@ -207,6 +207,36 @@ export default function StaffDashboard() {
     setUpdating(null);
   }
 
+  const [uploadingImageId, setUploadingImageId] = useState<string | null>(null);
+
+  const handleImageUpload = async (id: string, file: File) => {
+    if (!secret) return;
+    setUploadingImageId(id);
+    try {
+      const formData = new FormData();
+      formData.append('id', id);
+      formData.append('staff_secret', secret);
+      formData.append('file', file);
+
+      const res = await fetch('/api/staff/menu/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setMenuItems((prev) =>
+          prev.map((m) => (m.id === id ? { ...m, image_path: data.url } : m))
+        );
+      } else {
+        alert(data.error || 'Upload failed');
+      }
+    } catch (err) {
+      alert('Failed to upload image');
+    } finally {
+      setUploadingImageId(null);
+    }
+  };
+
   if (!authed) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
@@ -389,19 +419,23 @@ export default function StaffDashboard() {
                           ) : (
                             <div className="w-8 h-8 bg-gray-100 rounded border flex-shrink-0 flex items-center justify-center text-[10px] text-gray-400">None</div>
                           )}
-                          <input
-                            type="url"
-                            placeholder="https://..."
-                            defaultValue={item.image_path || ''}
-                            onBlur={(e) => {
-                              const val = e.target.value.trim();
-                              const newVal = val === '' ? null : val;
-                              if (newVal !== item.image_path) {
-                                updateMenu(item.id, { image_path: newVal });
-                              }
-                            }}
-                            className="w-full min-w-[120px] px-2 py-1 border border-gray-200 rounded text-xs outline-none focus:border-[#103d2b]"
-                          />
+                          
+                          {uploadingImageId === item.id ? (
+                            <span className="text-xs text-gray-400 ml-2">Uploading...</span>
+                          ) : (
+                            <label className="cursor-pointer bg-gray-50 border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-lg hover:bg-gray-100 active:scale-95 transition-all">
+                              {item.image_path ? 'Replace' : 'Upload'}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleImageUpload(item.id, file);
+                                }}
+                              />
+                            </label>
+                          )}
                         </div>
                       </td>
                       <td className="p-4">
