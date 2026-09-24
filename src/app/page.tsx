@@ -194,53 +194,51 @@ function MenuCard({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative active:scale-[0.98] transition-transform">
+    <div className="flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden active:scale-[0.98] transition-transform">
       {/* Image Container */}
-      <div className="w-full aspect-square bg-gray-50 relative border-b border-gray-50">
+      <div className="w-full aspect-square bg-gray-50 border-b border-gray-100">
         {item.image_path ? (
           <img src={item.image_path} alt={item.name_en} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
-            {/* Fallback to emoji if no image */}
-            <span className="text-3xl opacity-50">🥗</span>
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-3xl opacity-30">🥗</span>
           </div>
         )}
       </div>
 
-      {/* Content */}
-      <div className="p-2 flex flex-col flex-1">
-        <p className="text-[11px] font-bold text-gray-800 leading-tight line-clamp-2 min-h-[28px]">{item.name_en}</p>
-        
-        <div className="mt-auto flex items-center justify-between pt-1 h-[24px]">
-          <p className="text-[10px] sm:text-[11px] font-bold text-[#103d2b] truncate pr-1">{formatPrice(item.base_price_santim)}</p>
-          
-          <div className="flex-shrink-0 w-[54px] flex justify-end">
-            {qty === 0 ? (
-              <button
-                onClick={onAdd}
-                className="w-6 h-6 flex items-center justify-center bg-[#103d2b] text-white rounded-full shadow-sm active:scale-90 transition-transform"
-              >
-                <Plus className="w-3 h-3" />
-              </button>
-            ) : (
-              <div className="flex items-center justify-between w-full bg-gray-100 rounded-full border border-gray-200">
-                <button
-                  onClick={onRemove}
-                  className="w-[22px] h-[22px] flex items-center justify-center bg-white text-gray-700 rounded-full shadow-sm active:scale-90 transition-transform"
-                >
-                  <Minus className="w-2.5 h-2.5" />
-                </button>
-                <span className="text-[9px] font-bold text-[#103d2b] text-center">{qty}</span>
-                <button
-                  onClick={onAdd}
-                  className="w-[22px] h-[22px] flex items-center justify-center bg-[#103d2b] text-white rounded-full shadow-sm active:scale-90 transition-transform"
-                >
-                  <Plus className="w-2.5 h-2.5" />
-                </button>
-              </div>
-            )}
+      {/* Name + Price row */}
+      <div className="px-2 pt-1.5 pb-0">
+        <p className="text-[11px] font-semibold text-gray-800 leading-tight line-clamp-2">{item.name_en}</p>
+        <p className="text-[11px] font-bold text-[#103d2b] mt-0.5">{formatPrice(item.base_price_santim)}</p>
+      </div>
+
+      {/* Add / Qty controls — full-width row at bottom */}
+      <div className="px-2 pb-2 pt-1 mt-auto">
+        {qty === 0 ? (
+          <button
+            onClick={onAdd}
+            className="w-full h-7 flex items-center justify-center gap-1 bg-[#103d2b] text-white rounded-lg text-[10px] font-bold active:scale-95 transition-transform"
+          >
+            <Plus className="w-3 h-3" />
+            Add
+          </button>
+        ) : (
+          <div className="w-full h-7 flex items-center justify-between bg-[#103d2b] rounded-lg overflow-hidden">
+            <button
+              onClick={onRemove}
+              className="h-full px-2 flex items-center justify-center text-white active:bg-[#0c2f21] transition-colors"
+            >
+              <Minus className="w-3 h-3" />
+            </button>
+            <span className="text-[11px] font-bold text-white">{qty}</span>
+            <button
+              onClick={onAdd}
+              className="h-full px-2 flex items-center justify-center text-white active:bg-[#0c2f21] transition-colors"
+            >
+              <Plus className="w-3 h-3" />
+            </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
