@@ -73,6 +73,7 @@ export function ImageCropModal({ file, onConfirm, onCancel }: ImageCropModalProp
 
   const handleTouchStart = (e: React.TouchEvent) => {
     const t = e.touches[0];
+    if (!t) return;
     setDragging(true);
     dragStart.current = { mx: t.clientX, my: t.clientY, ox: offset.x, oy: offset.y };
   };
@@ -80,6 +81,7 @@ export function ImageCropModal({ file, onConfirm, onCancel }: ImageCropModalProp
     if (!dragging || !dragStart.current) return;
     e.preventDefault();
     const t = e.touches[0];
+    if (!t) return;
     const dx = t.clientX - dragStart.current.mx;
     const dy = t.clientY - dragStart.current.my;
     setOffset(clampOffset(dragStart.current.ox + dx, dragStart.current.oy + dy));
