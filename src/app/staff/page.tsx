@@ -20,6 +20,7 @@ type MenuItem = {
   name_en: string;
   base_price_santim: number;
   is_available: boolean;
+  image_path: string | null;
 };
 
 const NEXT_STATUS: Record<string, { label: string; next: string; color: string }[]> = {
@@ -371,6 +372,7 @@ export default function StaffDashboard() {
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200">
                     <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Item Name</th>
+                    <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Image URL</th>
                     <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Price (Birr)</th>
                     <th className="p-4 text-xs font-semibold text-gray-500 uppercase text-center">Available</th>
                     <th className="p-4 text-xs font-semibold text-gray-500 uppercase text-right">Actions</th>
@@ -380,6 +382,28 @@ export default function StaffDashboard() {
                   {menuItems.map((item) => (
                     <tr key={item.id} className="hover:bg-gray-50/50">
                       <td className="p-4 text-sm font-semibold text-gray-800">{item.name_en}</td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
+                          {item.image_path ? (
+                            <img src={item.image_path} alt="" className="w-8 h-8 rounded object-cover border flex-shrink-0" />
+                          ) : (
+                            <div className="w-8 h-8 bg-gray-100 rounded border flex-shrink-0 flex items-center justify-center text-[10px] text-gray-400">None</div>
+                          )}
+                          <input
+                            type="url"
+                            placeholder="https://..."
+                            defaultValue={item.image_path || ''}
+                            onBlur={(e) => {
+                              const val = e.target.value.trim();
+                              const newVal = val === '' ? null : val;
+                              if (newVal !== item.image_path) {
+                                updateMenu(item.id, { image_path: newVal });
+                              }
+                            }}
+                            className="w-full min-w-[120px] px-2 py-1 border border-gray-200 rounded text-xs outline-none focus:border-[#103d2b]"
+                          />
+                        </div>
+                      </td>
                       <td className="p-4">
                         <input
                           type="number"

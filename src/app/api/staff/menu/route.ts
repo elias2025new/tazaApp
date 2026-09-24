@@ -5,7 +5,7 @@ import type { Database } from '@/lib/supabase/types';
 
 export async function POST(req: Request) {
   try {
-    const { id, is_available, base_price_santim, staff_secret } = await req.json();
+    const { id, is_available, base_price_santim, image_path, staff_secret } = await req.json();
 
     if (staff_secret !== serverEnv.TELEGRAM_WEBHOOK_SECRET) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -22,6 +22,7 @@ export async function POST(req: Request) {
     const updates: any = {};
     if (typeof is_available === 'boolean') updates.is_available = is_available;
     if (typeof base_price_santim === 'number') updates.base_price_santim = base_price_santim;
+    if (typeof image_path === 'string' || image_path === null) updates.image_path = image_path;
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json({ ok: true });
