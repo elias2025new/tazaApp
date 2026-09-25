@@ -252,8 +252,13 @@ function MenuCard({
         {item.image_path ? (
           <img src={item.image_path} alt={item.name_en} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-3xl opacity-30">🥗</span>
+          <div className="w-full h-full flex items-center justify-center bg-[#103d2b]/5 p-6">
+             <Image 
+               src="/brand/logo.jpg" 
+               alt="Taza Greens Fallback" 
+               fill
+               className="object-contain opacity-20 p-6"
+             />
           </div>
         )}
       </div>
