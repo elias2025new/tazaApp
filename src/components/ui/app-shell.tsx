@@ -14,7 +14,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   // Customer pages now use mobile layout
   return (
-    <main className="mx-auto max-w-md bg-white min-h-screen shadow-xl relative overflow-hidden pb-16">
+    <main className="mx-auto max-w-md bg-white h-[100dvh] shadow-xl relative overflow-hidden pb-16">
       {children}
       <BottomNav />
     </main>

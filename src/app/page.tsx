@@ -64,10 +64,10 @@ export default function HomePage() {
   const activeCategoryName = activeCategory === 'all' ? 'All' : categories.find(c => c.id === activeCategory)?.name_en || '';
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-[#103d2b] font-sans overflow-hidden">
+    <div className="flex h-full bg-[#103d2b] font-sans overflow-hidden pt-[50px]">
       
       {/* LEFT SIDEBAR (Dark Green) - Thinner on small screens */}
-      <div className="w-[85px] min-[400px]:w-[105px] flex-shrink-0 flex flex-col pt-12 pb-24 overflow-y-auto no-scrollbar z-10">
+      <div className="w-[85px] min-[400px]:w-[105px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
         
         {/* Logo & Address */}
         <div className="px-2 min-[400px]:px-3 mb-8 flex flex-col items-center">
@@ -104,13 +104,10 @@ export default function HomePage() {
       </div>
 
       {/* RIGHT MAIN CONTENT AREA (Cream/Paper) */}
-      <div className="flex-1 bg-[#fbf8ed] rounded-l-[24px] min-[400px]:rounded-l-[32px] shadow-[-5px_0_20px_rgba(0,0,0,0.15)] overflow-hidden relative flex flex-col z-20 h-[calc(100vh-4rem)]">
+      <div className="flex-1 bg-[#fbf8ed] rounded-l-[24px] min-[400px]:rounded-l-[32px] shadow-[-5px_0_20px_rgba(0,0,0,0.15)] overflow-hidden relative flex flex-col z-20">
         
-        {/* Top Floating Actions (Search + Cart) */}
-        <div className="absolute top-6 right-3 min-[400px]:top-8 min-[400px]:right-4 z-50 flex items-center gap-2 min-[400px]:gap-3">
-          <button className="w-9 h-9 min-[400px]:w-10 min-[400px]:h-10 bg-white rounded-full shadow-md flex items-center justify-center text-[#103d2b]">
-            <Search className="w-[16px] h-[16px] min-[400px]:w-[18px] min-[400px]:h-[18px] stroke-[2.5]" />
-          </button>
+        {/* Top Floating Actions (Cart) */}
+        <div className="absolute top-4 right-3 min-[400px]:right-4 z-50 flex items-center gap-2 min-[400px]:gap-3">
           <button 
             onClick={() => router.push('/cart')}
             className="h-9 px-3 min-[400px]:h-10 min-[400px]:px-[14px] bg-[#103d2b] text-white rounded-full flex items-center gap-1.5 min-[400px]:gap-2 shadow-[0_4px_12px_rgba(16,61,43,0.3)] relative"
@@ -176,8 +173,8 @@ export default function HomePage() {
             <p className="text-[10px] min-[400px]:text-[11px] text-gray-500 mt-1 font-medium">Start your day with something delicious</p>
           </div>
 
-          {/* Menu Grid - 1 col on small screens, 2 cols on slightly larger screens */}
-          <div className="px-3 min-[400px]:px-4 grid grid-cols-1 min-[400px]:grid-cols-2 gap-3 pb-8">
+          {/* Menu Grid - 2 cols on all screens */}
+          <div className="px-3 min-[400px]:px-4 grid grid-cols-2 gap-2 min-[400px]:gap-3 pb-8">
             {filteredItems.length === 0 ? (
                <div className="col-span-full text-center py-10 text-gray-400">
                  <p className="text-sm">No items found</p>
