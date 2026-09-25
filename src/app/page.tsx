@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ShoppingBag, Search, Plus, Minus } from 'lucide-react';
+import { Search, Plus, Minus, ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/cart-store';
 import { formatPrice, calcOrderTotals } from '@/lib/money';
@@ -47,138 +47,188 @@ export default function HomePage() {
     return matchCat && matchSearch;
   });
 
-
   function getQty(itemId: string) {
     return cartItems.find((c) => c.id === itemId)?.quantity || 0;
   }
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#103d2b] border-t-transparent" />
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-[#103d2b]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-white/20 border-t-white" />
+      </div>
+    );
+  }
+
+  // Find active category name
+  const activeCategoryName = activeCategory === 'all' ? 'All' : categories.find(c => c.id === activeCategory)?.name_en || '';
+
+  return (
+    <div className="flex min-h-[calc(100vh-4rem)] bg-[#103d2b] font-sans overflow-hidden">
+      
+      {/* LEFT SIDEBAR (Dark Green) */}
+      <div className="w-[105px] flex-shrink-0 flex flex-col pt-12 pb-24 overflow-y-auto no-scrollbar z-10">
+        
+        {/* Logo & Address */}
+        <div className="px-3 mb-8 flex flex-col items-center">
+          <div className="w-[60px] h-[60px] rounded-full mb-3 flex items-center justify-center">
+             {/* Note: you can use a real img here, using text placeholder for now */}
+             <div className="text-white text-center leading-tight">
+                <span className="text-3xl block">🌿</span>
+             </div>
+          </div>
+          <h1 className="text-white font-fraunces text-[13px] font-bold text-center leading-tight mb-1">Taza Greens</h1>
+          <p className="text-[8px] text-white/70 text-center leading-[1.3]">Bole Rwanda,<br/>Addis Ababa</p>
+        </div>
+
+        {/* Categories List */}
+        <div className="flex flex-col gap-0 relative">
+          <SidebarItem 
+            name="All" 
+            isActive={activeCategory === 'all'} 
+            onClick={() => setActiveCategory('all')} 
+          />
+          {categories.map((cat) => (
+            <SidebarItem 
+              key={cat.id} 
+              name={cat.name_en} 
+              isActive={activeCategory === cat.id} 
+              onClick={() => setActiveCategory(cat.id)} 
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* RIGHT MAIN CONTENT AREA (Cream/Paper) */}
+      <div className="flex-1 bg-[#fbf8ed] rounded-l-3xl shadow-[-5px_0_20px_rgba(0,0,0,0.15)] overflow-hidden relative flex flex-col z-20 h-[calc(100vh-4rem)]">
+        
+        {/* Top Floating Actions (Search + Cart) */}
+        <div className="absolute top-8 right-4 z-50 flex items-center gap-3">
+          <button className="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-[#103d2b]">
+            <Search className="w-[18px] h-[18px] stroke-[2.5]" />
+          </button>
+          <button 
+            onClick={() => router.push('/cart')}
+            className="h-10 px-[14px] bg-[#103d2b] text-white rounded-full flex items-center gap-2 shadow-[0_4px_12px_rgba(16,61,43,0.3)] relative"
+          >
+            <ShoppingCart className="w-[18px] h-[18px]" />
+            <span className="text-[13px] font-bold">{formatPrice(cartTotal)}</span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-[#e8a838] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold border-2 border-[#103d2b]">
+                {cartCount}
+              </span>
+            )}
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto pb-8 no-scrollbar relative">
+          
+          {/* Hero Section */}
+          <div className="relative w-full h-[220px] bg-[#f5f0df]">
+             {/* Mimicking the food image with styling and text */}
+             <div className="absolute inset-0 right-0 left-auto w-[70%] bg-black/5 rounded-l-full overflow-hidden">
+               {/* Food image placeholder */}
+               <div className="w-full h-full bg-[#e6ddc5] flex items-center justify-center">
+                 <span className="text-5xl opacity-40">🍳</span>
+               </div>
+             </div>
+             
+             {/* Gradient overlay to fade left to right */}
+             <div className="absolute inset-0 bg-gradient-to-r from-[#fbf8ed] via-[#fbf8ed]/90 to-transparent flex flex-col justify-center pl-5 pr-10 pt-4">
+                <h2 className="text-[26px] font-bold font-fraunces text-[#12291f] leading-tight tracking-tight">Good Food<br/>Brighter Days</h2>
+                <div className="flex items-center gap-1.5 mt-4">
+                  <span className="text-[8px] tracking-[0.1em] text-[#103d2b] font-bold uppercase">Fresh</span>
+                  <span className="w-1 h-1 rounded-full bg-[#103d2b]"></span>
+                  <span className="text-[8px] tracking-[0.1em] text-[#103d2b] font-bold uppercase">Healthy</span>
+                  <span className="w-1 h-1 rounded-full bg-[#103d2b]"></span>
+                  <span className="text-[8px] tracking-[0.1em] text-[#103d2b] font-bold uppercase">Delicious</span>
+                </div>
+             </div>
+          </div>
+
+          {/* Search Bar (Below Hero) */}
+          <div className="px-4 -mt-5 relative z-10">
+            <div className="bg-white rounded-[16px] shadow-[0_2px_12px_rgba(0,0,0,0.06)] flex items-center px-4 h-[48px]">
+              <Search className="w-4 h-4 text-gray-400" />
+              <input 
+                type="text" 
+                placeholder="Search menu..." 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="flex-1 bg-transparent border-none outline-none pl-3 text-[13px] text-[#12291f] placeholder:text-gray-400 font-medium" 
+              />
+            </div>
+          </div>
+
+          {/* Category Title Header */}
+          <div className="px-4 mt-8 mb-5">
+            <div className="relative inline-block">
+              <h3 className="text-[22px] font-bold font-fraunces text-[#12291f] relative z-10 pb-1">
+                {activeCategoryName}
+              </h3>
+              {/* Yellow underline */}
+              <div className="absolute bottom-1 left-0 w-8 h-[3px] bg-[#e8a838] rounded-full z-0"></div>
+            </div>
+            <p className="text-[11px] text-gray-500 mt-1 font-medium">Start your day with something delicious</p>
+          </div>
+
+          {/* Menu Grid */}
+          <div className="px-4 grid grid-cols-2 gap-3 pb-8">
+            {filteredItems.length === 0 ? (
+               <div className="col-span-2 text-center py-10 text-gray-400">
+                 <p className="text-sm">No items found</p>
+               </div>
+            ) : (
+              filteredItems.map((item) => (
+                <MenuCard 
+                  key={item.id} 
+                  item={item} 
+                  qty={getQty(item.id)}
+                  onAdd={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
+                  onRemove={() => removeItem(item.id)}
+                />
+              ))
+            )}
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SidebarItem({ name, isActive, onClick }: { name: string, isActive: boolean, onClick: () => void }) {
+  if (isActive) {
+    return (
+      <div className="relative w-full">
+        {/* Top inverse curve */}
+        <div className="absolute -top-[14px] right-0 w-[14px] h-[14px] bg-[#fbf8ed] z-0">
+          <div className="w-full h-full bg-[#103d2b] rounded-br-[14px]"></div>
+        </div>
+        
+        {/* Bottom inverse curve */}
+        <div className="absolute -bottom-[14px] right-0 w-[14px] h-[14px] bg-[#fbf8ed] z-0">
+          <div className="w-full h-full bg-[#103d2b] rounded-tr-[14px]"></div>
+        </div>
+
+        <button 
+          onClick={onClick}
+          className="relative w-[calc(100%-12px)] ml-3 py-[18px] px-2 text-left bg-[#fbf8ed] rounded-l-[14px] flex flex-col justify-center z-10"
+        >
+          {/* Left Orange Bar */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-8 bg-[#e8a838] rounded-r-sm"></div>
+          <span className="text-[11px] font-bold text-[#12291f] pl-3 leading-tight pr-1">{name}</span>
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="bg-white shadow-sm flex-shrink-0 z-40">
-        <div className="px-4 pt-24 pb-3">
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h1 className="text-xl font-bold text-[#103d2b] tracking-tight">🌿 Taza Greens</h1>
-              <p className="text-xs text-gray-400">Bole Rwanda, Addis Ababa</p>
-            </div>
-            {cartCount > 0 && (
-              <button
-                onClick={() => router.push('/cart')}
-                className="relative flex items-center gap-2 bg-[#103d2b] text-white text-sm font-semibold px-4 py-2 rounded-full shadow-md active:scale-95 transition-transform"
-              >
-                <ShoppingBag className="w-4 h-4" />
-                <span>{formatPrice(cartTotal)}</span>
-                <span className="absolute -top-2 -right-2 bg-[#e8a838] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
-                  {cartCount}
-                </span>
-              </button>
-            )}
-          </div>
-
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search menu..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm outline-none focus:bg-gray-200 transition-colors"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex-1 flex overflow-hidden bg-white">
-        {/* Vertical Category Nav Sidebar */}
-        <div className="w-[84px] bg-gray-50/50 flex-shrink-0 overflow-y-auto scroll-smooth border-r border-gray-100 flex flex-col no-scrollbar">
-          <button
-            onClick={() => setActiveCategory('all')}
-            className={`flex flex-col items-center justify-center py-4 px-2 border-l-4 transition-all ${
-              activeCategory === 'all'
-                ? 'bg-white border-[#103d2b]'
-                : 'border-transparent text-gray-500'
-            }`}
-          >
-            <span className="text-xl mb-1">🌟</span>
-            <span className={`text-[10px] text-center leading-tight ${activeCategory === 'all' ? 'font-bold text-[#103d2b]' : 'font-medium'}`}>
-              All
-            </span>
-          </button>
-          
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`flex flex-col items-center justify-center py-4 px-2 border-l-4 transition-all ${
-                activeCategory === cat.id
-                  ? 'bg-white border-[#103d2b]'
-                  : 'border-transparent text-gray-500'
-              }`}
-            >
-              <span className="text-xl mb-1">{cat.emoji}</span>
-              <span className={`text-[10px] text-center leading-tight ${activeCategory === cat.id ? 'font-bold text-[#103d2b]' : 'font-medium'}`}>
-                {cat.name_en}
-              </span>
-            </button>
-          ))}
-          <div className="h-24" /> {/* Padding bottom */}
-        </div>
-
-        {/* Menu Items Grid */}
-        <div className="flex-1 overflow-y-auto scroll-smooth p-3 pb-32">
-          {activeCategory === 'all' ? (
-            // Grouped by category
-            <div className="space-y-6">
-              {categories.map((cat) => {
-                const catItems = filteredItems.filter((i) => i.category_id === cat.id);
-                if (catItems.length === 0) return null;
-                return (
-                  <section key={cat.id}>
-                    <h2 className="text-sm font-bold text-gray-800 mb-3 sticky top-0 bg-white/90 backdrop-blur-md py-1 z-10 flex items-center gap-1.5">
-                      <span>{cat.name_en}</span>
-                    </h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {catItems.map((item) => (
-                        <MenuCard key={item.id} item={item} qty={getQty(item.id)}
-                          onAdd={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
-                          onRemove={() => removeItem(item.id)}
-                        />
-                      ))}
-                    </div>
-                  </section>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {filteredItems.length === 0 ? (
-                <div className="col-span-full text-center py-12 text-gray-400">
-                  <p className="text-4xl mb-2">🔍</p>
-                  <p className="text-sm">No items found</p>
-                </div>
-              ) : (
-                filteredItems.map((item) => (
-                  <MenuCard key={item.id} item={item} qty={getQty(item.id)}
-                    onAdd={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
-                    onRemove={() => removeItem(item.id)}
-                  />
-                ))
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    <button 
+      onClick={onClick}
+      className="w-full py-[16px] pl-[26px] pr-2 text-left group relative z-10"
+    >
+      <span className="text-[11px] text-white/60 group-hover:text-white font-medium leading-tight">{name}</span>
+    </button>
   );
 }
 
@@ -194,68 +244,52 @@ function MenuCard({
   onRemove: () => void;
 }) {
   return (
-    <div className={`flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden active:scale-[0.98] transition-all duration-200 hover:shadow-md ${!item.is_available ? 'opacity-75 grayscale-[0.2]' : ''}`}>
+    <div className={`flex flex-col bg-white rounded-[18px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden transition-transform duration-200 ${!item.is_available ? 'opacity-75 grayscale-[0.2]' : ''}`}>
       {/* Image Container */}
-      <div className="relative w-full overflow-hidden bg-gray-50" style={{ paddingBottom: '100%' }}>
-        <div className="absolute inset-0">
-          {item.image_path ? (
-            <img src={item.image_path} alt={item.name_en} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-3xl opacity-30">🥗</span>
-            </div>
-          )}
-          {/* Subtle gradient overlay for depth */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
-          
-          {/* Sold out overlay */}
-          {!item.is_available && (
-            <div className="absolute inset-0 bg-white/30 backdrop-blur-[1px] flex items-center justify-center z-10">
-              <span className="bg-white text-gray-800 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm border border-gray-100">Sold Out</span>
-            </div>
-          )}
-        </div>
+      <div className="w-full aspect-[4/3] bg-gray-50 overflow-hidden relative">
+        {item.image_path ? (
+          <img src={item.image_path} alt={item.name_en} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-3xl opacity-30">🥗</span>
+          </div>
+        )}
       </div>
 
-      {/* Name + Price row */}
-      <div className="px-2 pt-2 pb-0 flex-1 flex flex-col">
-        <p className="text-[11px] font-bold text-gray-800 leading-tight line-clamp-2">{item.name_en}</p>
-        <div className="mt-1.5 mb-1">
-          <span className="inline-block text-[10px] font-bold text-[#103d2b] bg-[#103d2b]/[0.08] px-1.5 py-0.5 rounded">
+      {/* Content */}
+      <div className="p-3 pb-3 flex-1 flex flex-col">
+        <h4 className="text-[13px] font-bold text-[#12291f] leading-[1.2] mb-1">{item.name_en}</h4>
+        
+        <p className="text-[10px] text-gray-500 leading-[1.3] line-clamp-2 mb-3 min-h-[26px]">
+          {item.description_en || 'Delicious freshly prepared meal.'}
+        </p>
+        
+        <div className="mt-auto flex items-center justify-between">
+          <span className="text-[13px] font-bold text-[#12291f]">
             {formatPrice(item.base_price_santim)}
           </span>
-        </div>
-      </div>
-
-      {/* Add / Qty controls */}
-      <div className="px-2 pb-2 mt-auto">
-        {qty === 0 ? (
-          <button
-            onClick={onAdd}
-            disabled={!item.is_available}
-            className="w-full h-[30px] flex items-center justify-center gap-1 bg-gradient-to-r from-[#103d2b] to-[#17543d] text-white rounded-xl text-[11px] font-bold shadow-sm shadow-[#103d2b]/20 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none"
-          >
-            <Plus className="w-3 h-3" />
-            Add
-          </button>
-        ) : (
-          <div className="w-full h-[30px] flex items-center justify-between bg-gradient-to-r from-[#103d2b] to-[#17543d] rounded-xl shadow-sm shadow-[#103d2b]/20 overflow-hidden transition-all">
-            <button
-              onClick={onRemove}
-              className="h-full w-8 flex items-center justify-center text-white active:bg-black/20 transition-colors"
-            >
-              <Minus className="w-3.5 h-3.5" />
-            </button>
-            <span className="text-[11px] font-bold text-white flex-1 text-center">{qty}</span>
+          
+          {qty === 0 ? (
             <button
               onClick={onAdd}
               disabled={!item.is_available}
-              className="h-full w-8 flex items-center justify-center text-white active:bg-black/20 transition-colors disabled:opacity-50"
+              className="h-[26px] min-h-[26px] min-w-0 px-3 bg-[#103d2b] text-white rounded-[8px] flex items-center justify-center gap-1.5 text-[11px] font-bold disabled:opacity-50"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-2.5 h-2.5" />
+              Add
             </button>
-          </div>
-        )}
+          ) : (
+            <div className="h-[26px] bg-[#103d2b] rounded-[8px] flex items-center overflow-hidden">
+              <button onClick={onRemove} className="w-7 min-h-0 min-w-0 h-full flex items-center justify-center text-white">
+                <Minus className="w-2.5 h-2.5" />
+              </button>
+              <span className="text-[11px] font-bold text-white min-w-[14px] text-center">{qty}</span>
+              <button onClick={onAdd} disabled={!item.is_available} className="w-7 min-h-0 min-w-0 h-full flex items-center justify-center text-white disabled:opacity-50">
+                <Plus className="w-2.5 h-2.5" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

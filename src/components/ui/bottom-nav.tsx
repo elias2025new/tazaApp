@@ -24,12 +24,15 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center space-y-1 w-full h-full ${
+              className={`flex flex-col items-center justify-center space-y-1 w-full h-full relative ${
                 isActive ? 'text-[#103d2b]' : 'text-gray-400 hover:text-gray-600'
               }`}
             >
               <Icon className="h-6 w-6" strokeWidth={isActive ? 2.5 : 2} />
               <span className="text-[10px] font-medium">{item.label}</span>
+              {isActive && (
+                <div className="absolute bottom-1 w-6 h-1 bg-[#103d2b] rounded-full" />
+              )}
             </Link>
           );
         })}
