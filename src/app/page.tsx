@@ -71,7 +71,7 @@ export default function HomePage() {
             src="/splash.jpg" 
             alt="Welcome to Taza Greens" 
             fill
-            className="object-cover object-center"
+            className="object-cover object-center animate-breathe"
             priority
           />
         </div>
