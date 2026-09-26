@@ -34,6 +34,8 @@ declare global {
 export function TelegramProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showSplash, setShowSplash] = useState(true);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
@@ -115,5 +117,24 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {showSplash && (
+        <div 
+          className={`fixed inset-0 z-[9999] cursor-pointer bg-[#103d2b] transition-opacity duration-700 ease-in-out ${isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+          onClick={() => {
+            setIsFadingOut(true);
+            setTimeout(() => setShowSplash(false), 700);
+          }}
+        >
+          <img 
+            src="/splash.jpg" 
+            alt="Welcome to Taza Greens" 
+            className="w-full h-full object-cover object-center animate-breathe"
+          />
+        </div>
+      )}
+      {children}
+    </>
+  );
 }

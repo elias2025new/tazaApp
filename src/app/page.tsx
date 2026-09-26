@@ -26,8 +26,6 @@ export default function HomePage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showSplash, setShowSplash] = useState(true);
-  const [isFadingOut, setIsFadingOut] = useState(false);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -78,24 +76,6 @@ export default function HomePage() {
 
   return (
     <>
-      {showSplash && (
-        <div 
-          className={`fixed inset-0 z-[9999] cursor-pointer bg-[#103d2b] transition-opacity duration-700 ease-in-out ${isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-          onClick={() => {
-            setIsFadingOut(true);
-            setTimeout(() => setShowSplash(false), 700);
-          }}
-        >
-          <Image 
-            src="/splash.jpg" 
-            alt="Welcome to Taza Greens" 
-            fill
-            className="object-cover object-center animate-breathe"
-            priority
-          />
-        </div>
-      )}
-
       <div className="flex h-full bg-[#103d2b] font-body overflow-hidden pt-[70px]">
       
       {/* LEFT SIDEBAR (Dark Green) - Thinner on small screens */}
