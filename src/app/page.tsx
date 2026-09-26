@@ -67,11 +67,11 @@ export default function HomePage() {
     <div className="flex h-full bg-[#103d2b] font-sans overflow-hidden pt-[70px]">
       
       {/* LEFT SIDEBAR (Dark Green) - Thinner on small screens */}
-      <div className="w-[85px] min-[400px]:w-[105px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
+      <div className="w-[75px] min-[400px]:w-[90px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
         
         {/* Logo & Address */}
-        <div className="px-2 min-[400px]:px-3 mb-8 flex flex-col items-center">
-          <div className="w-[50px] h-[50px] min-[400px]:w-[60px] min-[400px]:h-[60px] rounded-full mb-3 flex items-center justify-center overflow-hidden bg-white/10">
+        <div className="px-2 mb-8 flex flex-col items-center">
+          <div className="w-[45px] h-[45px] min-[400px]:w-[54px] min-[400px]:h-[54px] rounded-full mb-3 flex items-center justify-center overflow-hidden bg-white/10">
              <Image 
                src="/brand/logo.jpg" 
                alt="Taza Greens Logo" 
@@ -218,7 +218,7 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
         >
           {/* Left Orange Bar */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 min-[400px]:h-8 bg-[#e8a838] rounded-r-sm"></div>
-          <span className="text-[10px] min-[400px]:text-[11px] font-bold text-[#12291f] pl-2 min-[400px]:pl-3 leading-tight pr-1">{name}</span>
+          <span className="text-[9px] min-[400px]:text-[10px] font-bold text-[#12291f] pl-2 min-[400px]:pl-3 leading-tight pr-1 break-words">{name}</span>
         </button>
       </div>
     );
@@ -227,9 +227,9 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
   return (
     <button 
       onClick={onClick}
-      className="w-full py-[14px] min-[400px]:py-[16px] pl-[18px] min-[400px]:pl-[26px] pr-2 text-left group relative z-10"
+      className="w-full py-[14px] min-[400px]:py-[16px] pl-[16px] min-[400px]:pl-[24px] pr-2 text-left group relative z-10"
     >
-      <span className="text-[10px] min-[400px]:text-[11px] text-white/60 group-hover:text-white font-medium leading-tight">{name}</span>
+      <span className="text-[9px] min-[400px]:text-[10px] text-white/60 group-hover:text-white font-medium leading-tight break-words">{name}</span>
     </button>
   );
 }
