@@ -161,18 +161,18 @@ export default function HomePage() {
           </div>
 
           {/* Search Bar (Below Hero) */}
-          <div className="px-3 min-[400px]:px-4 -mt-5 relative z-10">
-            <div className="bg-white rounded-[14px] min-[400px]:rounded-[16px] shadow-[0_2px_12px_rgba(0,0,0,0.06)] flex items-center px-3 min-[400px]:px-4 h-[44px] min-[400px]:h-[48px]">
-              <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <div className="px-4 min-[400px]:px-5 -mt-6 relative z-10">
+            <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center px-4 h-[52px] border border-gray-100/80 transition-all duration-300 focus-within:shadow-[0_8px_30px_rgb(16,61,43,0.12)] focus-within:ring-2 focus-within:ring-[#103d2b]/10 focus-within:border-transparent">
+              <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
               <input 
                 type="text" 
                 placeholder="Search menu..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 w-full bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus:border-transparent text-center text-[12px] min-[400px]:text-[13px] text-[#12291f] placeholder:text-gray-400 font-medium" 
+                className="flex-1 w-full bg-transparent appearance-none border-none outline-none focus:outline-none focus:ring-0 text-center text-[16px] text-[#12291f] placeholder:text-gray-400/80 font-medium" 
               />
               {/* Invisible spacer to perfectly center the text considering the left Search icon */}
-              <div className="w-4 h-4 flex-shrink-0" />
+              <div className="w-5 h-5 flex-shrink-0" />
             </div>
           </div>
 
