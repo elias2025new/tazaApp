@@ -85,7 +85,7 @@ export default function HomePage() {
       <div className="flex h-full bg-[#103d2b] font-body overflow-hidden pt-[70px]">
       
       {/* LEFT SIDEBAR (Dark Green) - Thinner on small screens */}
-      <div className="w-[75px] min-[400px]:w-[90px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
+      <div className="w-[95px] min-[400px]:w-[110px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
         
         {/* Logo & Address */}
         <div className="px-2 mb-8 flex flex-col items-center">
@@ -255,11 +255,11 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
 
         <button 
           onClick={onClick}
-          className="relative w-[calc(100%-8px)] min-[400px]:w-[calc(100%-12px)] ml-2 min-[400px]:ml-3 py-[16px] min-[400px]:py-[18px] px-2 text-left bg-[#fbf8ed] rounded-l-[12px] min-[400px]:rounded-l-[14px] flex flex-col justify-center z-10"
+          className="relative w-[calc(100%-8px)] min-[400px]:w-[calc(100%-12px)] ml-2 min-[400px]:ml-3 py-[12px] min-[400px]:py-[14px] px-2 text-left bg-[#fbf8ed] rounded-l-[12px] min-[400px]:rounded-l-[14px] flex flex-col justify-center z-10"
         >
           {/* Left Orange Bar */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 min-[400px]:h-8 bg-[#e8a838] rounded-r-sm"></div>
-          <span className="text-[9px]/[13px] min-[400px]:text-[10px]/[14px] font-bold text-[#12291f] pl-2 min-[400px]:pl-3 pr-1">{name}</span>
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[70%] bg-[#e8a838] rounded-r-sm"></div>
+          <span className="text-[12px]/[14px] min-[400px]:text-[13px]/[15px] font-bold text-[#12291f] pl-2 min-[400px]:pl-3 pr-1">{name}</span>
         </button>
       </div>
     );
@@ -268,9 +268,9 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
   return (
     <button 
       onClick={onClick}
-      className="w-full py-[14px] min-[400px]:py-[16px] pl-[16px] min-[400px]:pl-[24px] pr-2 text-left group relative z-10"
+      className="w-full py-[10px] min-[400px]:py-[12px] pl-[16px] min-[400px]:pl-[24px] pr-2 text-left group relative z-10"
     >
-      <span className="text-[9px]/[13px] min-[400px]:text-[10px]/[14px] text-white/60 group-hover:text-white font-medium">{name}</span>
+      <span className="text-[12px]/[14px] min-[400px]:text-[13px]/[15px] text-white/60 group-hover:text-white font-medium">{name}</span>
     </button>
   );
 }
