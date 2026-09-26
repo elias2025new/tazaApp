@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search, Plus, Minus, ShoppingCart } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Search, Plus, Minus, ShoppingCart, Loader2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/cart-store';
 import { formatPrice, calcOrderTotals } from '@/lib/money';
@@ -23,10 +23,20 @@ export default function HomePage() {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showSplash, setShowSplash] = useState(true);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setDebouncedSearch(search);
+    setIsSearching(false);
+    inputRef.current?.blur();
+  };
 
   const { items: cartItems, addItem, removeItem, count, total } = useCartStore();
   const cartCount = count();
@@ -44,9 +54,18 @@ export default function HomePage() {
       .catch(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    setIsSearching(true);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setIsSearching(false);
+    }, 400); // 400ms delay to simulate loading/searching and provide visual feedback
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const filteredItems = items.filter((item) => {
     const matchCat = activeCategory === 'all' || item.category_id === activeCategory;
-    const matchSearch = item.name_en.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = item.name_en.toLowerCase().includes(debouncedSearch.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -162,19 +181,38 @@ export default function HomePage() {
 
           {/* Search Bar (Below Hero) */}
           <div className="px-4 min-[400px]:px-5 -mt-6 relative z-10">
-            <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center px-4 h-[52px] border-none outline-none focus-within:shadow-[0_8px_30px_rgb(16,61,43,0.12)]" style={{ WebkitTapHighlightColor: 'transparent' }}>
-              <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            <form 
+              onSubmit={handleSearchSubmit}
+              className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center px-4 h-[52px] border-none outline-none focus-within:shadow-[0_8px_30px_rgb(16,61,43,0.12)]" 
+              style={{ WebkitTapHighlightColor: 'transparent' }}
+            >
+              {isSearching ? (
+                <Loader2 className="w-5 h-5 text-[#103d2b] flex-shrink-0 animate-spin" />
+              ) : (
+                <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
+              )}
               <input 
+                ref={inputRef}
                 type="text" 
+                enterKeyHint="search"
                 placeholder="Search menu..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="flex-1 w-full bg-transparent appearance-none border-none outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:border-transparent ring-0 focus:shadow-none text-center text-[16px] text-[#12291f] placeholder:text-gray-400/80 font-medium" 
                 style={{ WebkitTapHighlightColor: 'transparent', outline: 'none' }}
               />
-              {/* Invisible spacer to perfectly center the text considering the left Search icon */}
-              <div className="w-5 h-5 flex-shrink-0" />
-            </div>
+              {search.length > 0 ? (
+                <button 
+                  type="button" 
+                  onClick={() => { setSearch(''); setDebouncedSearch(''); inputRef.current?.focus(); }}
+                  className="w-5 h-5 flex-shrink-0 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              ) : (
+                <div className="w-5 h-5 flex-shrink-0" />
+              )}
+            </form>
           </div>
 
           {/* Category Title Header */}
@@ -190,7 +228,7 @@ export default function HomePage() {
           </div>
 
           {/* Menu Grid - 2 cols on all screens */}
-          <div className="px-3 min-[400px]:px-4 grid grid-cols-2 gap-2 min-[400px]:gap-3 pb-8">
+          <div className={`px-3 min-[400px]:px-4 grid grid-cols-2 gap-2 min-[400px]:gap-3 pb-8 transition-opacity duration-300 ${isSearching ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
             {filteredItems.length === 0 ? (
                <div className="col-span-full text-center py-10 text-gray-400">
                  <p className="text-sm">No items found</p>
