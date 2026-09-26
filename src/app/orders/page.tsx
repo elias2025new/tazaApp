@@ -16,12 +16,12 @@ type Order = {
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   pending:          { label: 'Pending',          color: 'bg-yellow-100 text-yellow-700' },
   accepted:         { label: 'Accepted',          color: 'bg-blue-100 text-blue-700' },
-  preparing:        { label: 'Preparing',          color: 'bg-purple-100 text-purple-700' },
+  preparing:        { label: 'Preparing',         color: 'bg-purple-100 text-purple-700' },
   ready:            { label: 'Ready!',             color: 'bg-green-100 text-green-700' },
   out_for_delivery: { label: 'On the way',         color: 'bg-orange-100 text-orange-700' },
-  delivered:        { label: 'Delivered',           color: 'bg-gray-100 text-gray-600' },
-  rejected:         { label: 'Rejected',            color: 'bg-red-100 text-red-600' },
-  cancelled:        { label: 'Cancelled',           color: 'bg-gray-100 text-gray-500' },
+  delivered:        { label: 'Delivered',          color: 'bg-gray-100 text-gray-600' },
+  rejected:         { label: 'Rejected',           color: 'bg-red-100 text-red-600' },
+  cancelled:        { label: 'Cancelled',          color: 'bg-gray-100 text-gray-500' },
 };
 
 export default function OrdersPage() {
@@ -66,12 +66,19 @@ export default function OrdersPage() {
           orders.map((order) => {
             const statusInfo = STATUS_LABELS[order.status] ?? { label: order.status, color: 'bg-gray-100 text-gray-600' };
             const isActive = !['delivered', 'rejected', 'cancelled'].includes(order.status);
+            // Pass basic data in URL so the track page renders immediately without waiting for the API
+            const params = new URLSearchParams({
+              status: order.status,
+              fulfillment_type: order.fulfillment_type,
+              total_santim: String(order.total_santim),
+              placed_at: order.placed_at,
+            });
 
             return (
               <Link
                 key={order.id}
-                href={`/orders/${order.id}`}
-                className="block bg-white rounded-2xl shadow-sm p-4 active:scale-[0.99] transition-transform"
+                href={`/orders/${order.id}?${params.toString()}`}
+                className="block bg-white rounded-2xl shadow-sm p-4 active:scale-[0.98] active:bg-gray-50 transition-all duration-100"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
