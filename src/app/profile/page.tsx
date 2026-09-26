@@ -52,14 +52,14 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-full items-center justify-center bg-gray-50">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#103d2b] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col pb-24">
+    <div className="h-full overflow-y-auto bg-gray-50 flex flex-col pb-24">
       {/* Header */}
       <div className="bg-[#103d2b] text-white px-4 pt-24 pb-12">
         

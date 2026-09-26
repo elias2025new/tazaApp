@@ -40,14 +40,14 @@ export default function OrdersPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex h-full items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#103d2b] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-full overflow-y-auto bg-gray-50 pb-8">
       <div className="sticky top-0 z-40 bg-white border-b border-gray-100 px-4 pt-24 pb-4">
         <h1 className="text-xl font-bold text-gray-800">My Orders</h1>
       </div>

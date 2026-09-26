@@ -92,7 +92,7 @@ export default function CartPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
+      <div className="h-full bg-white flex flex-col items-center justify-center p-6 text-center">
         <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-4">
           <CheckCircle className="w-10 h-10 text-green-500" />
         </div>
@@ -113,7 +113,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
+      <div className="h-full bg-white flex flex-col items-center justify-center p-6 text-center">
         <p className="text-5xl mb-4">🛒</p>
         <h2 className="text-lg font-semibold text-gray-700 mb-2">Your cart is empty</h2>
         <p className="text-sm text-gray-400 mb-6">Add some items from the menu to get started!</p>
@@ -128,7 +128,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-full overflow-y-auto bg-gray-50">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white border-b border-gray-100 flex items-center gap-3 px-4 pt-24 pb-4">
         <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100">

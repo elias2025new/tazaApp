@@ -75,7 +75,7 @@ export default function OrderTrackerPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex h-full items-center justify-center">
         <Loader2 className="w-8 h-8 text-[#103d2b] animate-spin" />
       </div>
     );
@@ -83,7 +83,7 @@ export default function OrderTrackerPage() {
 
   if (!order) {
     return (
-      <div className="flex flex-col min-h-screen items-center justify-center p-6 text-center">
+      <div className="flex flex-col h-full items-center justify-center p-6 text-center">
         <p className="text-gray-400 text-sm">Order not found.</p>
         <button onClick={() => router.push('/orders')} className="mt-4 text-[#103d2b] font-semibold text-sm">
           Back to Orders
@@ -98,7 +98,7 @@ export default function OrderTrackerPage() {
   const isCompleted = order.status === 'delivered';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-full overflow-y-auto bg-gray-50 pb-8">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white border-b border-gray-100 flex items-center gap-3 px-4 pt-24 pb-4">
         <button onClick={() => router.push('/orders')} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100">
