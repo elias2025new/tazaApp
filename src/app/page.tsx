@@ -110,12 +110,12 @@ export default function HomePage() {
         <div className="absolute top-4 right-3 min-[400px]:right-4 z-50 flex items-center gap-2 min-[400px]:gap-3">
           <button 
             onClick={() => router.push('/cart')}
-            className="h-9 px-3 min-[400px]:h-10 min-[400px]:px-[14px] bg-[#103d2b] text-white rounded-full flex items-center gap-1.5 min-[400px]:gap-2 shadow-[0_4px_12px_rgba(16,61,43,0.3)] relative"
+            className="h-9 px-3 min-[400px]:h-10 min-[400px]:px-[14px] bg-[#c8e72f] text-[#12291f] rounded-full flex items-center gap-1.5 min-[400px]:gap-2 shadow-[0_4px_12px_rgba(200,231,47,0.4)] relative transition-transform active:scale-95"
           >
             <ShoppingCart className="w-[16px] h-[16px] min-[400px]:w-[18px] min-[400px]:h-[18px]" />
             <span className="text-[12px] min-[400px]:text-[13px] font-bold">{formatPrice(cartTotal)}</span>
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-[#e8a838] text-white text-[9px] min-[400px]:text-[10px] w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 flex items-center justify-center rounded-full font-bold border-2 border-[#103d2b]">
+              <span className="absolute -top-1.5 -right-1.5 bg-[#e8a838] text-white text-[9px] min-[400px]:text-[10px] w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 flex items-center justify-center rounded-full font-bold border-2 border-[#c8e72f]">
                 {cartCount}
               </span>
             )}
