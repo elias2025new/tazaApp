@@ -162,7 +162,7 @@ export default function HomePage() {
 
           {/* Search Bar (Below Hero) */}
           <div className="px-4 min-[400px]:px-5 -mt-6 relative z-10">
-            <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center px-4 h-[52px] border border-gray-100/80 transition-all duration-300 focus-within:shadow-[0_8px_30px_rgb(16,61,43,0.12)] focus-within:ring-2 focus-within:ring-[#103d2b]/10 focus-within:border-transparent">
+            <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center px-4 h-[52px] border-none transition-all duration-300 focus-within:shadow-[0_8px_30px_rgb(16,61,43,0.12)] focus-within:ring-2 focus-within:ring-[#103d2b]/10">
               <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
               <input 
                 type="text" 
