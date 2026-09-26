@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Trash2, MapPin, MessageSquare, CheckCircle } from 'lucide-react';
 import { useCartStore } from '@/lib/cart-store';
@@ -25,14 +25,12 @@ export default function CartPage() {
   const [scheduleTime, setScheduleTime] = useState('');
 
   // Fetch store status on mount
-  import('react').then(({ useEffect }) => {
-    useEffect(() => {
-      fetch('/api/store')
-        .then((r) => r.json())
-        .then((d) => setStoreOpen(d.is_open))
-        .catch(() => {}); // default to true if error
-    }, []);
-  });
+  useEffect(() => {
+    fetch('/api/store')
+      .then((r) => r.json())
+      .then((d) => setStoreOpen(d.is_open))
+      .catch(() => {}); // default to true if error
+  }, []);
 
   const subtotal = total();
   const { transactionFee, deliveryFee, total: grandTotal } = calcOrderTotals(subtotal);
