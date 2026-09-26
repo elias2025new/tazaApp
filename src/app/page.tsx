@@ -64,7 +64,7 @@ export default function HomePage() {
   const activeCategoryName = activeCategory === 'all' ? 'All' : categories.find(c => c.id === activeCategory)?.name_en || '';
 
   return (
-    <div className="flex h-full bg-[#103d2b] font-sans overflow-hidden pt-[50px]">
+    <div className="flex h-full bg-[#103d2b] font-sans overflow-hidden pt-[70px]">
       
       {/* LEFT SIDEBAR (Dark Green) - Thinner on small screens */}
       <div className="w-[85px] min-[400px]:w-[105px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
