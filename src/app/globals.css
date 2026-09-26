@@ -84,3 +84,11 @@ button, a, [role="button"] {
 /* Safe area insets for Telegram WebView */
 .safe-top    { padding-top: var(--safe-area-top); }
 .safe-bottom { padding-bottom: var(--safe-area-bottom); }
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.animate-heartbeat {
+  animation: heartbeat 3s ease-in-out infinite;
+}

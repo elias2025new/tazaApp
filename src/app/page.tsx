@@ -25,6 +25,7 @@ export default function HomePage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [showSplash, setShowSplash] = useState(true);
+  const [isFadingOut, setIsFadingOut] = useState(false);
   const router = useRouter();
 
   const { items: cartItems, addItem, removeItem, count, total } = useCartStore();
@@ -53,28 +54,30 @@ export default function HomePage() {
     return cartItems.find((c) => c.id === itemId)?.quantity || 0;
   }
 
-  if (showSplash) {
-    return (
-      <div 
-        className="fixed inset-0 z-[9999] cursor-pointer bg-[#103d2b]"
-        onClick={() => setShowSplash(false)}
-      >
-        <Image 
-          src="/splash.jpg" 
-          alt="Welcome to Taza Greens" 
-          fill
-          className="object-cover object-center"
-          priority
-        />
-      </div>
-    );
-  }
-
   // Find active category name
   const activeCategoryName = activeCategory === 'all' ? 'All' : categories.find(c => c.id === activeCategory)?.name_en || '';
 
   return (
-    <div className="flex h-full bg-[#103d2b] font-body overflow-hidden pt-[70px]">
+    <>
+      {showSplash && (
+        <div 
+          className={`fixed inset-0 z-[9999] cursor-pointer bg-[#103d2b] transition-opacity duration-700 ease-in-out ${isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+          onClick={() => {
+            setIsFadingOut(true);
+            setTimeout(() => setShowSplash(false), 700);
+          }}
+        >
+          <Image 
+            src="/splash.jpg" 
+            alt="Welcome to Taza Greens" 
+            fill
+            className="object-cover object-center animate-heartbeat"
+            priority
+          />
+        </div>
+      )}
+
+      <div className="flex h-full bg-[#103d2b] font-body overflow-hidden pt-[70px]">
       
       {/* LEFT SIDEBAR (Dark Green) - Thinner on small screens */}
       <div className="w-[75px] min-[400px]:w-[90px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
@@ -207,6 +210,7 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
