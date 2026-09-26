@@ -24,6 +24,7 @@ export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(true);
   const router = useRouter();
 
   const { items: cartItems, addItem, removeItem, count, total } = useCartStore();
@@ -50,6 +51,23 @@ export default function HomePage() {
 
   function getQty(itemId: string) {
     return cartItems.find((c) => c.id === itemId)?.quantity || 0;
+  }
+
+  if (showSplash) {
+    return (
+      <div 
+        className="fixed inset-0 z-[9999] cursor-pointer bg-[#103d2b]"
+        onClick={() => setShowSplash(false)}
+      >
+        <Image 
+          src="/splash.jpg" 
+          alt="Welcome to Taza Greens" 
+          fill
+          className="object-cover object-center"
+          priority
+        />
+      </div>
+    );
   }
 
   if (loading) {
@@ -156,8 +174,10 @@ export default function HomePage() {
                 placeholder="Search menu..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 bg-transparent border-none outline-none pl-2 min-[400px]:pl-3 text-[12px] min-[400px]:text-[13px] text-[#12291f] placeholder:text-gray-400 font-medium" 
+                className="flex-1 w-full bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus:border-transparent text-center text-[12px] min-[400px]:text-[13px] text-[#12291f] placeholder:text-gray-400 font-medium" 
               />
+              {/* Invisible spacer to perfectly center the text considering the left Search icon */}
+              <div className="w-4 h-4 flex-shrink-0" />
             </div>
           </div>
 
