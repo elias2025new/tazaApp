@@ -181,7 +181,7 @@ export default function HomePage() {
                 ref={inputRef}
                 type="text" 
                 enterKeyHint="search"
-                placeholder="Search menu..." 
+                placeholder="Search food and drinks..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="flex-1 w-full bg-transparent appearance-none border-none outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:border-transparent ring-0 focus:shadow-none text-center text-[16px] text-[#12291f] placeholder:text-gray-400/80 font-medium" 
