@@ -218,7 +218,7 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
         >
           {/* Left Orange Bar */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 min-[400px]:h-8 bg-[#e8a838] rounded-r-sm"></div>
-          <span className="text-[9px] min-[400px]:text-[10px] font-bold text-[#12291f] pl-2 min-[400px]:pl-3 leading-tight pr-1 break-words">{name}</span>
+          <span className="text-[9px]/[13px] min-[400px]:text-[10px]/[14px] font-bold text-[#12291f] pl-2 min-[400px]:pl-3 pr-1">{name}</span>
         </button>
       </div>
     );
@@ -229,7 +229,7 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
       onClick={onClick}
       className="w-full py-[14px] min-[400px]:py-[16px] pl-[16px] min-[400px]:pl-[24px] pr-2 text-left group relative z-10"
     >
-      <span className="text-[9px] min-[400px]:text-[10px] text-white/60 group-hover:text-white font-medium leading-tight break-words">{name}</span>
+      <span className="text-[9px]/[13px] min-[400px]:text-[10px]/[14px] text-white/60 group-hover:text-white font-medium">{name}</span>
     </button>
   );
 }
