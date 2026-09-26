@@ -293,10 +293,10 @@ export default function StaffDashboard() {
         <div className="pt-24 pb-8 px-6 md:p-8 border-b border-gray-100">
           <h1 className="text-4xl font-black text-[#103d2b] tracking-tighter">🌿 Taza Staff</h1>
         </div>
-        <nav className="p-6 space-y-4 flex-1">
+        <nav className="p-6 space-y-2 flex-1">
           <button
             onClick={() => setActiveTab('orders')}
-            className={`w-full flex items-center gap-5 px-6 py-5 rounded-2xl text-2xl font-bold transition-all duration-200 ${
+            className={`w-full flex items-center gap-4 px-5 py-3 rounded-2xl text-2xl font-bold transition-all duration-200 ${
               activeTab === 'orders' ? 'bg-[#103d2b] text-white shadow-lg scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
@@ -307,7 +307,7 @@ export default function StaffDashboard() {
           </button>
           <button
             onClick={() => setActiveTab('menu')}
-            className={`w-full flex items-center gap-5 px-6 py-5 rounded-2xl text-2xl font-bold transition-all duration-200 ${
+            className={`w-full flex items-center gap-4 px-5 py-3 rounded-2xl text-2xl font-bold transition-all duration-200 ${
               activeTab === 'menu' ? 'bg-[#103d2b] text-white shadow-lg scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
@@ -315,7 +315,7 @@ export default function StaffDashboard() {
           </button>
           <button
             onClick={() => setActiveTab('settings')}
-            className={`w-full flex items-center gap-5 px-6 py-5 rounded-2xl text-2xl font-bold transition-all duration-200 ${
+            className={`w-full flex items-center gap-4 px-5 py-3 rounded-2xl text-2xl font-bold transition-all duration-200 ${
               activeTab === 'settings' ? 'bg-[#103d2b] text-white shadow-lg scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
