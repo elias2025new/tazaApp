@@ -55,8 +55,8 @@
   --color-step-pending: #c4bda3;
 
   /* Typography */
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Instrument Sans', system-ui, sans-serif;
+  --font-display: 'Poppins', sans-serif;
+  --font-body: 'Poppins', sans-serif;
   --font-ethiopic: 'Noto Sans Ethiopic', 'Ethiopic', sans-serif;
 
   /* Type scale (mobile base 16px) */

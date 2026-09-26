@@ -64,7 +64,7 @@ export default function HomePage() {
   const activeCategoryName = activeCategory === 'all' ? 'All' : categories.find(c => c.id === activeCategory)?.name_en || '';
 
   return (
-    <div className="flex h-full bg-[#103d2b] font-sans overflow-hidden pt-[70px]">
+    <div className="flex h-full bg-[#103d2b] font-body overflow-hidden pt-[70px]">
       
       {/* LEFT SIDEBAR (Dark Green) - Thinner on small screens */}
       <div className="w-[75px] min-[400px]:w-[90px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
@@ -81,7 +81,7 @@ export default function HomePage() {
                priority
              />
           </div>
-          <h1 className="text-white font-fraunces text-[11px] min-[400px]:text-[13px] font-bold text-center leading-tight mb-1">Taza Greens</h1>
+          <h1 className="text-white font-display text-[11px] min-[400px]:text-[13px] font-bold text-center leading-tight mb-1">Taza Greens</h1>
           <p className="text-[7px] min-[400px]:text-[8px] text-white/70 text-center leading-[1.3]">Bole Rwanda,<br/>Addis Ababa</p>
         </div>
 
@@ -140,7 +140,7 @@ export default function HomePage() {
              
              {/* Gradient overlay to fade left to right */}
              <div className="absolute inset-0 bg-gradient-to-r from-[#fbf8ed] via-[#fbf8ed]/80 to-transparent flex flex-col justify-center pl-4 pr-8 min-[400px]:pl-5 min-[400px]:pr-10 pt-4">
-                <h2 className="text-[20px] min-[400px]:text-[26px] font-bold font-fraunces text-[#12291f] leading-tight tracking-tight relative z-10">Good Food<br/>Brighter Days</h2>
+                <h2 className="text-[20px] min-[400px]:text-[26px] font-bold font-display text-[#12291f] leading-tight tracking-tight relative z-10">Good Food<br/>Brighter Days</h2>
                 <div className="flex items-center mt-2 min-[400px]:mt-3 relative z-10">
                   <span className="text-[9px] min-[400px]:text-[10px] tracking-wide text-[#103d2b] font-bold uppercase">Healthy Bites, Happy Hearts</span>
                 </div>
@@ -164,7 +164,7 @@ export default function HomePage() {
           {/* Category Title Header */}
           <div className="px-3 min-[400px]:px-4 mt-6 min-[400px]:mt-8 mb-4 min-[400px]:mb-5">
             <div className="relative inline-block">
-              <h3 className="text-[18px] min-[400px]:text-[22px] font-bold font-fraunces text-[#12291f] relative z-10 pb-1">
+              <h3 className="text-[18px] min-[400px]:text-[22px] font-bold font-display text-[#12291f] relative z-10 pb-1">
                 {activeCategoryName}
               </h3>
               {/* Yellow underline */}
