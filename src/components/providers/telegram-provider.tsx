@@ -117,8 +117,12 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
 
   if (!isReady) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#103d2b]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-white/20 border-t-white" />
+      <div className="fixed inset-0 z-[9999] bg-[#103d2b]">
+        <img 
+          src="/splash.jpg" 
+          alt="Welcome to Taza Greens" 
+          className="w-full h-full object-cover object-center"
+        />
       </div>
     );
   }

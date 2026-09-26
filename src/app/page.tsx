@@ -54,8 +54,14 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-[#103d2b]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-white/20 border-t-white" />
+      <div className="fixed inset-0 z-[9999] bg-[#103d2b]">
+        <Image 
+          src="/splash.jpg" 
+          alt="Welcome to Taza Greens" 
+          fill
+          className="object-cover object-center"
+          priority
+        />
       </div>
     );
   }
