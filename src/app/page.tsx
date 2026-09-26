@@ -24,7 +24,6 @@ export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [showSplash, setShowSplash] = useState(true);
   const router = useRouter();
 
   const { items: cartItems, addItem, removeItem, count, total } = useCartStore();
@@ -51,23 +50,6 @@ export default function HomePage() {
 
   function getQty(itemId: string) {
     return cartItems.find((c) => c.id === itemId)?.quantity || 0;
-  }
-
-  if (showSplash) {
-    return (
-      <div 
-        className="fixed inset-0 z-[9999] cursor-pointer bg-[#103d2b]"
-        onClick={() => setShowSplash(false)}
-      >
-        <Image 
-          src="/splash.jpg" 
-          alt="Welcome to Taza Greens" 
-          fill
-          className="object-cover object-center"
-          priority
-        />
-      </div>
-    );
   }
 
   if (loading) {
