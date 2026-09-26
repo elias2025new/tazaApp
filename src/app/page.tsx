@@ -169,8 +169,8 @@ export default function HomePage() {
                 placeholder="Search menu..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 w-full bg-transparent appearance-none border-none outline-none focus:outline-none focus:ring-0 focus:border-transparent ring-0 focus:shadow-none text-center text-[16px] text-[#12291f] placeholder:text-gray-400/80 font-medium" 
-                style={{ WebkitTapHighlightColor: 'transparent' }}
+                className="flex-1 w-full bg-transparent appearance-none border-none outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:border-transparent ring-0 focus:shadow-none text-center text-[16px] text-[#12291f] placeholder:text-gray-400/80 font-medium" 
+                style={{ WebkitTapHighlightColor: 'transparent', outline: 'none' }}
               />
               {/* Invisible spacer to perfectly center the text considering the left Search icon */}
               <div className="w-5 h-5 flex-shrink-0" />

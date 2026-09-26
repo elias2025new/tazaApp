@@ -26,59 +26,61 @@
 }
 
 /* ─── Base styles ────────────────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-  -webkit-text-size-adjust: 100%;
-  scroll-behavior: smooth;
-}
-
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  line-height: 1.6;
-  min-height: 100dvh;
-  overscroll-behavior-y: contain;
-}
-
-/* Ethiopic (Amharic) text must render with the Ethiopic font */
-:lang(am), [lang="am"] {
-  font-family: var(--font-ethiopic), var(--font-body);
-  line-height: 1.8;
-}
-
-/* Display headings */
-h1, h2, h3, [data-display] {
-  font-family: var(--font-display);
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-/* Respect reduced motion — do not animate if user prefers it */
-@media (prefers-reduced-motion: reduce) {
+@layer base {
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    box-sizing: border-box;
   }
-}
 
-/* Visible focus rings — accessibility */
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
+  html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
 
-/* Minimum touch targets */
-button, a, [role="button"] {
-  min-height: 44px;
-  min-width: 44px;
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    min-height: 100dvh;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Ethiopic (Amharic) text must render with the Ethiopic font */
+  :lang(am), [lang="am"] {
+    font-family: var(--font-ethiopic), var(--font-body);
+    line-height: 1.8;
+  }
+
+  /* Display headings */
+  h1, h2, h3, [data-display] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  /* Respect reduced motion — do not animate if user prefers it */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Visible focus rings — accessibility */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Minimum touch targets */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 /* Safe area insets for Telegram WebView */
