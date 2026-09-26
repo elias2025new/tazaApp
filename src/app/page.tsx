@@ -125,24 +125,24 @@ export default function HomePage() {
         <div className="flex-1 overflow-y-auto pb-8 no-scrollbar relative">
           
           {/* Hero Section */}
-          <div className="relative w-full h-[180px] min-[400px]:h-[220px] bg-[#f5f0df]">
-             {/* Mimicking the food image with styling and text */}
-             <div className="absolute inset-0 right-0 left-auto w-[70%] bg-black/5 rounded-l-full overflow-hidden">
-               {/* Food image placeholder */}
-               <div className="w-full h-full bg-[#e6ddc5] flex items-center justify-center">
-                 <span className="text-4xl min-[400px]:text-5xl opacity-40">🍳</span>
-               </div>
+          <div className="relative w-full h-[180px] min-[400px]:h-[220px] bg-[#fbf8ed] overflow-hidden">
+             
+             {/* Food image */}
+             <div className="absolute inset-0 w-full h-full">
+               <Image 
+                 src="/brand/hero.webp" 
+                 alt="Taza Greens Hero" 
+                 fill
+                 className="object-cover object-right"
+                 priority
+               />
              </div>
              
              {/* Gradient overlay to fade left to right */}
-             <div className="absolute inset-0 bg-gradient-to-r from-[#fbf8ed] via-[#fbf8ed]/90 to-transparent flex flex-col justify-center pl-4 pr-8 min-[400px]:pl-5 min-[400px]:pr-10 pt-4">
-                <h2 className="text-[20px] min-[400px]:text-[26px] font-bold font-fraunces text-[#12291f] leading-tight tracking-tight">Good Food<br/>Brighter Days</h2>
-                <div className="flex items-center gap-1 min-[400px]:gap-1.5 mt-2 min-[400px]:mt-4 flex-wrap max-w-[150px] min-[400px]:max-w-none">
-                  <span className="text-[7px] min-[400px]:text-[8px] tracking-[0.1em] text-[#103d2b] font-bold uppercase">Fresh</span>
-                  <span className="w-1 h-1 rounded-full bg-[#103d2b]"></span>
-                  <span className="text-[7px] min-[400px]:text-[8px] tracking-[0.1em] text-[#103d2b] font-bold uppercase">Healthy</span>
-                  <span className="w-1 h-1 rounded-full bg-[#103d2b]"></span>
-                  <span className="text-[7px] min-[400px]:text-[8px] tracking-[0.1em] text-[#103d2b] font-bold uppercase mt-1 min-[400px]:mt-0">Delicious</span>
+             <div className="absolute inset-0 bg-gradient-to-r from-[#fbf8ed] via-[#fbf8ed]/80 to-transparent flex flex-col justify-center pl-4 pr-8 min-[400px]:pl-5 min-[400px]:pr-10 pt-4">
+                <h2 className="text-[20px] min-[400px]:text-[26px] font-bold font-fraunces text-[#12291f] leading-tight tracking-tight relative z-10">Good Food<br/>Brighter Days</h2>
+                <div className="flex items-center mt-2 min-[400px]:mt-3 relative z-10">
+                  <span className="text-[9px] min-[400px]:text-[10px] tracking-wide text-[#103d2b] font-bold uppercase">Healthy Bites, Happy Hearts</span>
                 </div>
              </div>
           </div>
