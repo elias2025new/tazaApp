@@ -9,6 +9,7 @@ declare global {
       WebApp: {
         ready: () => void;
         expand: () => void;
+        disableVerticalSwipes?: () => void;
         requestFullscreen?: () => void;
         platform: string;
         initData: string;
@@ -54,6 +55,15 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
 
     // 2. Expand to full height
     tg.expand();
+
+    // Prevent pull-to-close gesture
+    try {
+      if (typeof tg.disableVerticalSwipes === 'function') {
+        tg.disableVerticalSwipes();
+      }
+    } catch (e) {
+      console.warn('disableVerticalSwipes not supported', e);
+    }
     
     // Attempt to request full screen (removes native telegram header and bottom bar on mobile)
     try {
