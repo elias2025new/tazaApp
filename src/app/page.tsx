@@ -18,14 +18,16 @@ type MenuItem = {
   is_available: boolean;
 };
 
+let cachedMenuData: { categories: Category[]; items: MenuItem[] } | null = null;
+
 export default function HomePage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [items, setItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>(cachedMenuData?.categories || []);
+  const [items, setItems] = useState<MenuItem[]>(cachedMenuData?.items || []);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedMenuData);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -42,11 +44,15 @@ export default function HomePage() {
   const { total: cartTotal } = calcOrderTotals(cartSubtotal);
 
   useEffect(() => {
+    if (cachedMenuData) return;
+
     fetch('/api/menu')
       .then((r) => r.json())
       .then((d) => {
-        setCategories(d.categories || []);
-        setItems(d.items || []);
+        const fetchedData = { categories: d.categories || [], items: d.items || [] };
+        cachedMenuData = fetchedData;
+        setCategories(fetchedData.categories);
+        setItems(fetchedData.items);
         setLoading(false);
       })
       .catch(() => setLoading(false));
