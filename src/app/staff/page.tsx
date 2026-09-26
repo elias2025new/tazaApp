@@ -289,41 +289,41 @@ export default function StaffDashboard() {
       )}
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar Navigation */}
-      <aside className="w-full md:w-72 bg-white border-r border-gray-200 md:min-h-screen flex flex-col">
+      <aside className="w-full md:w-80 bg-white border-r border-gray-200 md:min-h-screen flex flex-col">
         <div className="pt-24 pb-8 px-6 md:p-8 border-b border-gray-100">
-          <h1 className="text-2xl font-black text-[#103d2b] tracking-tight">🌿 Taza Staff</h1>
+          <h1 className="text-4xl font-black text-[#103d2b] tracking-tighter">🌿 Taza Staff</h1>
         </div>
-        <nav className="p-6 space-y-3 flex-1">
+        <nav className="p-6 space-y-4 flex-1">
           <button
             onClick={() => setActiveTab('orders')}
-            className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-bold transition-all duration-200 ${
-              activeTab === 'orders' ? 'bg-[#103d2b] text-white shadow-md scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            className={`w-full flex items-center gap-5 px-6 py-5 rounded-2xl text-2xl font-bold transition-all duration-200 ${
+              activeTab === 'orders' ? 'bg-[#103d2b] text-white shadow-lg scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
-            <ListOrdered className="w-6 h-6" /> Live Orders
+            <ListOrdered className="w-8 h-8" /> Live Orders
             {activeOrders.length > 0 && (
-              <span className="ml-auto bg-red-500 text-white text-xs px-2.5 py-1 rounded-full font-black">{activeOrders.length}</span>
+              <span className="ml-auto bg-red-500 text-white text-base px-3 py-1 rounded-full font-black">{activeOrders.length}</span>
             )}
           </button>
           <button
             onClick={() => setActiveTab('menu')}
-            className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-bold transition-all duration-200 ${
-              activeTab === 'menu' ? 'bg-[#103d2b] text-white shadow-md scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            className={`w-full flex items-center gap-5 px-6 py-5 rounded-2xl text-2xl font-bold transition-all duration-200 ${
+              activeTab === 'menu' ? 'bg-[#103d2b] text-white shadow-lg scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
-            <Utensils className="w-6 h-6" /> Menu Items
+            <Utensils className="w-8 h-8" /> Menu Items
           </button>
           <button
             onClick={() => setActiveTab('settings')}
-            className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-bold transition-all duration-200 ${
-              activeTab === 'settings' ? 'bg-[#103d2b] text-white shadow-md scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            className={`w-full flex items-center gap-5 px-6 py-5 rounded-2xl text-2xl font-bold transition-all duration-200 ${
+              activeTab === 'settings' ? 'bg-[#103d2b] text-white shadow-lg scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
-            <Store className="w-6 h-6" /> Store Settings
+            <Store className="w-8 h-8" /> Store Settings
           </button>
         </nav>
-        <div className="p-8 border-t border-gray-100 text-sm font-medium text-gray-400 flex items-center justify-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span> Logged in securely
+        <div className="p-8 border-t border-gray-100 text-lg font-medium text-gray-400 flex items-center justify-center gap-3">
+          <span className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span> Logged in securely
         </div>
       </aside>
 
