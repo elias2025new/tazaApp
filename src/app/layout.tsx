@@ -44,7 +44,7 @@ export default function RootLayout({
         {/* Load Telegram WebApp SDK — must be first so window.Telegram.WebApp is available */}
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className="bg-[--tg-theme-bg-color,var(--color-sand)] text-[--tg-theme-text-color,var(--color-ink)]" suppressHydrationWarning>
+      <body className="bg-[#fbf8ed] text-[#12291f]" suppressHydrationWarning>
         <TelegramProvider>
           <AppShell>{children}</AppShell>
         </TelegramProvider>
