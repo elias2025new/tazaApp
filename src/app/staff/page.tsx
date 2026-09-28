@@ -147,11 +147,11 @@ export default function StaffDashboard() {
 
   const fetchMenu = useCallback(async () => {
     try {
-      const res = await fetch('/api/menu');
+      const res = await fetch('/api/staff/menu', { headers: { 'x-staff-secret': secret } });
       const d = await res.json();
       setMenuItems(d.items ?? []);
     } catch {}
-  }, []);
+  }, [secret]);
 
   const fetchSettings = useCallback(async () => {
     try {
@@ -289,40 +289,40 @@ export default function StaffDashboard() {
       )}
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar Navigation */}
-      <aside className="w-full md:w-80 bg-white border-r border-gray-200 md:min-h-screen flex flex-col">
-        <div className="pt-24 pb-8 px-6 md:p-8 border-b border-gray-100">
-          <h1 className="text-4xl font-black text-[#103d2b] tracking-tighter">🌿 Taza Staff</h1>
+      <aside className="w-full md:w-80 bg-white border-r border-gray-200 md:min-h-screen flex flex-col shrink-0 sticky top-0 z-10 md:static">
+        <div className="pt-6 md:pt-24 pb-4 md:pb-8 px-4 md:px-6 md:p-8 border-b border-gray-100 flex justify-between items-center md:block">
+          <h1 className="text-2xl md:text-4xl font-black text-[#103d2b] tracking-tighter">🌿 Taza Staff</h1>
         </div>
-        <nav className="p-6 space-y-2 flex-1">
+        <nav className="p-4 md:p-6 flex flex-row md:flex-col overflow-x-auto md:overflow-visible gap-2 md:gap-2 space-y-0 md:space-y-2 flex-1 no-scrollbar items-center md:items-stretch">
           <button
             onClick={() => setActiveTab('orders')}
-            className={`w-full flex items-center gap-4 px-5 py-3 rounded-2xl text-2xl font-bold transition-all duration-200 ${
-              activeTab === 'orders' ? 'bg-[#103d2b] text-white shadow-lg scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            className={`flex-none md:w-full flex items-center gap-2 md:gap-4 px-4 md:px-5 py-2 md:py-3 rounded-xl md:rounded-2xl text-sm md:text-2xl font-bold transition-all duration-200 ${
+              activeTab === 'orders' ? 'bg-[#103d2b] text-white shadow-md md:shadow-lg md:scale-[1.02]' : 'text-gray-600 bg-gray-50 md:bg-transparent hover:bg-gray-100 md:hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
-            <ListOrdered className="w-8 h-8" /> Live Orders
+            <ListOrdered className="w-5 h-5 md:w-8 md:h-8" /> Live Orders
             {activeOrders.length > 0 && (
-              <span className="ml-auto bg-red-500 text-white text-base px-3 py-1 rounded-full font-black">{activeOrders.length}</span>
+              <span className="ml-1 md:ml-auto bg-red-500 text-white text-xs md:text-base px-2 md:px-3 py-0.5 md:py-1 rounded-full font-black">{activeOrders.length}</span>
             )}
           </button>
           <button
             onClick={() => setActiveTab('menu')}
-            className={`w-full flex items-center gap-4 px-5 py-3 rounded-2xl text-2xl font-bold transition-all duration-200 ${
-              activeTab === 'menu' ? 'bg-[#103d2b] text-white shadow-lg scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            className={`flex-none md:w-full flex items-center gap-2 md:gap-4 px-4 md:px-5 py-2 md:py-3 rounded-xl md:rounded-2xl text-sm md:text-2xl font-bold transition-all duration-200 ${
+              activeTab === 'menu' ? 'bg-[#103d2b] text-white shadow-md md:shadow-lg md:scale-[1.02]' : 'text-gray-600 bg-gray-50 md:bg-transparent hover:bg-gray-100 md:hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
-            <Utensils className="w-8 h-8" /> Menu Items
+            <Utensils className="w-5 h-5 md:w-8 md:h-8" /> Menu Items
           </button>
           <button
             onClick={() => setActiveTab('settings')}
-            className={`w-full flex items-center gap-4 px-5 py-3 rounded-2xl text-2xl font-bold transition-all duration-200 ${
-              activeTab === 'settings' ? 'bg-[#103d2b] text-white shadow-lg scale-[1.02]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            className={`flex-none md:w-full flex items-center gap-2 md:gap-4 px-4 md:px-5 py-2 md:py-3 rounded-xl md:rounded-2xl text-sm md:text-2xl font-bold transition-all duration-200 ${
+              activeTab === 'settings' ? 'bg-[#103d2b] text-white shadow-md md:shadow-lg md:scale-[1.02]' : 'text-gray-600 bg-gray-50 md:bg-transparent hover:bg-gray-100 md:hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
-            <Store className="w-8 h-8" /> Store Settings
+            <Store className="w-5 h-5 md:w-8 md:h-8" /> Store Settings
           </button>
         </nav>
-        <div className="p-8 border-t border-gray-100 text-lg font-medium text-gray-400 flex items-center justify-center gap-3">
+        <div className="hidden md:flex p-8 border-t border-gray-100 text-lg font-medium text-gray-400 items-center justify-center gap-3">
           <span className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span> Logged in securely
         </div>
       </aside>
@@ -477,14 +477,18 @@ export default function StaffDashboard() {
                           className="w-24 px-3 py-1.5 border border-gray-200 rounded-lg text-sm"
                         />
                       </td>
-                      <td className="p-4 text-center">
+                      <td className="p-4 flex justify-center">
                         <button
                           onClick={() => updateMenu(item.id, { is_available: !item.is_available })}
                           disabled={updating === item.id}
-                          className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 focus:outline-none"
-                          style={{ backgroundColor: item.is_available ? '#103d2b' : '#e5e7eb' }}
+                          className="relative inline-flex h-[31px] w-[51px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50"
+                          style={{ backgroundColor: item.is_available ? '#34C759' : '#e5e7eb' }}
                         >
-                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${item.is_available ? 'translate-x-6' : 'translate-x-1'}`} />
+                          <span
+                            className={`pointer-events-none inline-block h-[27px] w-[27px] transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                              item.is_available ? 'translate-x-[20px]' : 'translate-x-0'
+                            }`}
+                          />
                         </button>
                       </td>
                       <td className="p-4 text-right">

@@ -3,6 +3,29 @@ import { createClient } from '@supabase/supabase-js';
 import { serverEnv, publicEnv } from '@/lib/env';
 import type { Database } from '@/lib/supabase/types';
 
+export async function GET(req: Request) {
+  const staffSecret = req.headers.get('x-staff-secret');
+  if (staffSecret !== serverEnv.TELEGRAM_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const supabase = createClient<Database>(
+    publicEnv.NEXT_PUBLIC_SUPABASE_URL,
+    serverEnv.SUPABASE_SERVICE_ROLE_KEY
+  );
+
+  const { data: items, error } = await supabase
+    .from('menu_items')
+    .select('id, category_id, name_en, description_en, base_price_santim, image_path, is_available')
+    .order('sort_order');
+
+  if (error) {
+    return NextResponse.json({ error: 'Failed to fetch menu items' }, { status: 500 });
+  }
+
+  return NextResponse.json({ items: items ?? [] });
+}
+
 export async function POST(req: Request) {
   try {
     const { id, is_available, base_price_santim, image_path, staff_secret } = await req.json();
