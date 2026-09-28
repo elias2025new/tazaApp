@@ -24,6 +24,8 @@ declare global {
         };
         colorScheme: 'light' | 'dark';
         themeParams: Record<string, string>;
+        onEvent?: (eventType: string, eventHandler: () => void) => void;
+        offEvent?: (eventType: string, eventHandler: () => void) => void;
         MainButton: { text: string; show: () => void; hide: () => void };
         close: () => void;
       };

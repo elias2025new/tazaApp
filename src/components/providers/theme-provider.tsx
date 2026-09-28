@@ -32,7 +32,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     applyTheme();
 
     // Listen to Telegram theme changes if we are on 'system'
-    const tg = typeof window !== 'undefined' ? window.Telegram?.WebApp : null;
+    const tg = typeof window !== 'undefined' ? window.Telegram?.WebApp as any : null;
     if (tg && typeof tg.onEvent === 'function') {
       const handleThemeChange = () => {
         if (useThemeStore.getState().theme === 'system') {
