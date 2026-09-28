@@ -100,7 +100,7 @@ export default function HomePage() {
              />
           </div>
           <h1 className="text-white font-display text-[11px] min-[400px]:text-[13px] font-bold text-center leading-tight mb-1">Taza Greens</h1>
-          <p className="text-[7px] min-[400px]:text-[8px] text-white/70 text-center leading-[1.3]">Bole Rwanda,<br/>Addis Ababa</p>
+          <p className="text-[7px] min-[400px]:text-[8px] text-white opacity-70 text-center leading-[1.3]">Bole Rwanda,<br/>Addis Ababa</p>
         </div>
 
         {/* Categories List */}
@@ -268,9 +268,9 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
   return (
     <button 
       onClick={onClick}
-      className="w-full py-[10px] min-[400px]:py-[12px] pl-[16px] min-[400px]:pl-[24px] pr-2 text-left group relative z-10"
+      className="w-full py-[10px] min-[400px]:py-[12px] pl-[16px] min-[400px]:pl-[24px] pr-2 text-left group relative z-10 text-white opacity-60 hover:opacity-100 transition-opacity"
     >
-      <span className="text-[12px]/[14px] min-[400px]:text-[13px]/[15px] text-white/60 group-hover:text-white font-medium">{name}</span>
+      <span className="text-[12px]/[14px] min-[400px]:text-[13px]/[15px] font-medium text-inherit">{name}</span>
     </button>
   );
 }
