@@ -14,7 +14,29 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (theme === 'system') {
         // Use Telegram's native theme if available, otherwise match media
         if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
-          isDark = window.Telegram.WebApp.colorScheme === 'dark';
+          
+          const hash = window.location.hash.substring(1);
+          const params = new URLSearchParams(hash);
+          const themeParamsStr = params.get('tgWebAppThemeParams');
+          if (themeParamsStr) {
+            try {
+              const themeParams = JSON.parse(decodeURIComponent(themeParamsStr));
+              if (themeParams.bg_color) {
+                const hex = themeParams.bg_color.replace('#', '');
+                if (hex.length === 6) {
+                  const r = parseInt(hex.substr(0, 2), 16);
+                  const g = parseInt(hex.substr(2, 2), 16);
+                  const b = parseInt(hex.substr(4, 2), 16);
+                  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                  isDark = brightness < 128;
+                }
+              }
+            } catch (e) {}
+          }
+          if (!isDark) {
+            isDark = window.Telegram.WebApp.colorScheme === 'dark';
+          }
+
         } else {
           isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         }
