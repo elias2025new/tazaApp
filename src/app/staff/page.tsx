@@ -107,6 +107,12 @@ export default function StaffDashboard() {
     // Load saved sound preference
     const saved = localStorage.getItem('taza_staff_sound');
     if (saved) setSoundChoice(saved);
+
+    const savedSecret = localStorage.getItem('taza_staff_secret');
+    if (savedSecret) {
+      setSecret(savedSecret);
+      setAuthed(true);
+    }
   }, []);
 
   const handleSoundChange = (val: string) => {
@@ -131,6 +137,11 @@ export default function StaffDashboard() {
   const fetchOrders = useCallback(async () => {
     try {
       const res = await fetch('/api/staff/orders', { headers: { 'x-staff-secret': secret } });
+      if (res.status === 401) {
+        setAuthed(false);
+        localStorage.removeItem('taza_staff_secret');
+        return;
+      }
       const d = await res.json();
       const newOrders = d.orders ?? [];
       
@@ -262,7 +273,13 @@ export default function StaffDashboard() {
             onChange={(e) => setSecret(e.target.value)}
             className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#103d2b] mb-4"
           />
-          <button onClick={() => setAuthed(true)} className="w-full bg-[#103d2b] text-white font-semibold py-3 rounded-xl">
+          <button 
+            onClick={() => {
+              localStorage.setItem('taza_staff_secret', secret);
+              setAuthed(true);
+            }} 
+            className="w-full bg-[#103d2b] text-white font-semibold py-3 rounded-xl"
+          >
             Login
           </button>
         </div>
@@ -322,82 +339,93 @@ export default function StaffDashboard() {
             <Store className="w-5 h-5 md:w-8 md:h-8" /> Store Settings
           </button>
         </nav>
-        <div className="hidden md:flex p-8 border-t border-gray-100 text-lg font-medium text-gray-400 items-center justify-center gap-3">
-          <span className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span> Logged in securely
+        <div className="hidden md:flex p-6 border-t border-gray-100 items-center justify-between">
+          <div className="flex items-center gap-2 text-base font-medium text-gray-400">
+            <span className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span> Securely logged in
+          </div>
+          <button 
+            onClick={() => {
+              setAuthed(false);
+              localStorage.removeItem('taza_staff_secret');
+            }}
+            className="text-sm font-bold text-gray-400 hover:text-red-500 transition-colors"
+          >
+            Logout
+          </button>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-6 lg:p-10 max-h-screen overflow-y-auto">
+      <main className="flex-1 p-4 md:p-6 lg:p-10 md:max-h-screen md:overflow-y-auto">
         {activeTab === 'orders' && (
-          <div className="max-w-6xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-800">Live Orders</h2>
-              <div className="flex gap-4">
-                <div className="bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
-                  <p className="text-xs text-gray-400">Today&apos;s Orders</p>
-                  <p className="font-bold text-gray-800">{todayOrders.length}</p>
+          <div className="max-w-6xl mx-auto space-y-4 md:space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-800">Live Orders</h2>
+              <div className="flex gap-2 md:gap-4 w-full md:w-auto">
+                <div className="bg-white px-3 md:px-4 py-2 rounded-xl border border-gray-200 shadow-sm flex-1 md:flex-none">
+                  <p className="text-[10px] md:text-xs text-gray-400">Today&apos;s Orders</p>
+                  <p className="text-sm md:text-base font-bold text-gray-800">{todayOrders.length}</p>
                 </div>
-                <div className="bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
-                  <p className="text-xs text-gray-400">Today&apos;s Revenue</p>
-                  <p className="font-bold text-[#103d2b]">{formatPrice(todayRevenue)}</p>
+                <div className="bg-white px-3 md:px-4 py-2 rounded-xl border border-gray-200 shadow-sm flex-1 md:flex-none">
+                  <p className="text-[10px] md:text-xs text-gray-400">Today&apos;s Revenue</p>
+                  <p className="text-sm md:text-base font-bold text-[#103d2b]">{formatPrice(todayRevenue)}</p>
                 </div>
               </div>
             </div>
 
             {loading ? (
-              <p className="text-gray-400">Loading...</p>
+              <p className="text-gray-400 text-sm md:text-base">Loading...</p>
             ) : (
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
                 {activeOrders.map((order) => {
                   const actions = NEXT_STATUS[order.status] ?? [];
                   return (
-                    <div key={order.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-                      <div className="p-5 border-b border-gray-50 bg-gray-50/50 flex justify-between items-start">
+                    <div key={order.id} className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                      <div className="p-4 md:p-5 border-b border-gray-50 bg-gray-50/50 flex justify-between items-start">
                         <div>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${STATUS_BADGE[order.status]}`}>
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <span className={`text-[10px] md:text-xs font-bold px-2 md:px-2.5 py-1 rounded-full ${STATUS_BADGE[order.status]}`}>
                               {order.status.replace(/_/g, ' ').toUpperCase()}
                             </span>
                             {order.scheduled_for && (
-                              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-orange-100 text-orange-700 flex items-center gap-1">
+                              <span className="text-[10px] md:text-xs font-bold px-2 md:px-2.5 py-1 rounded-full bg-orange-100 text-orange-700 flex items-center gap-1">
                                 🕒 Scheduled: {new Date(order.scheduled_for).toLocaleString()}
                               </span>
                             )}
                           </div>
-                          <p className="text-sm font-bold text-gray-800">
+                          <p className="text-xs md:text-sm font-bold text-gray-800">
                             {order.fulfillment_type === 'pickup' ? '🏃 Pickup' : '🛵 Delivery'} · {formatPrice(order.total_santim)}
                           </p>
-                          <p className="text-xs text-gray-400 mt-1">Placed: {new Date(order.placed_at).toLocaleTimeString()}</p>
+                          <p className="text-[10px] md:text-xs text-gray-400 mt-1">Placed: {new Date(order.placed_at).toLocaleTimeString()}</p>
                         </div>
-                        <p className="text-xs text-gray-400 font-mono">#{order.id.slice(0, 8).toUpperCase()}</p>
+                        <p className="text-[10px] md:text-xs text-gray-400 font-mono">#{order.id.slice(0, 8).toUpperCase()}</p>
                       </div>
 
-                      <div className="p-5 flex-1">
+                      <div className="p-4 md:p-5 flex-1">
                         <ul className="space-y-2">
                           {order.order_items.map((item, i) => (
-                            <li key={i} className="flex justify-between text-sm">
+                            <li key={i} className="flex justify-between text-xs md:text-sm">
                               <span className="text-gray-700 font-medium">{item.quantity}x {item.name_snapshot}</span>
                               <span className="text-gray-400">{formatPrice(item.line_total_santim)}</span>
                             </li>
                           ))}
                         </ul>
                         {order.customer_note && (
-                          <div className="mt-4 bg-amber-50 rounded-xl p-3 border border-amber-100">
-                            <p className="text-xs font-semibold text-amber-800 mb-1">Customer Note:</p>
-                            <p className="text-sm text-amber-900">{order.customer_note}</p>
+                          <div className="mt-3 md:mt-4 bg-amber-50 rounded-lg md:rounded-xl p-2.5 md:p-3 border border-amber-100">
+                            <p className="text-[10px] md:text-xs font-semibold text-amber-800 mb-1">Customer Note:</p>
+                            <p className="text-xs md:text-sm text-amber-900">{order.customer_note}</p>
                           </div>
                         )}
                       </div>
 
                       {actions.length > 0 && (
-                        <div className="p-4 bg-gray-50/50 border-t border-gray-100 flex gap-3">
+                        <div className="p-3 md:p-4 bg-gray-50/50 border-t border-gray-100 flex gap-2 md:gap-3">
                           {actions.map((action) => (
                             <button
                               key={action.next}
                               onClick={() => transitionStatus(order.id, action.next)}
                               disabled={updating === order.id + action.next}
-                              className={`flex-1 ${action.color} text-white text-sm font-semibold py-3 rounded-xl disabled:opacity-50 transition-transform active:scale-[0.98]`}
+                              className={`flex-1 ${action.color} text-white text-xs md:text-sm font-semibold py-2.5 md:py-3 rounded-lg md:rounded-xl disabled:opacity-50 transition-transform active:scale-[0.98]`}
                             >
                               {updating === order.id + action.next ? '...' : action.label}
                             </button>
@@ -411,19 +439,19 @@ export default function StaffDashboard() {
             )}
             
             {activeOrders.length === 0 && !loading && (
-              <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-                <p className="text-4xl mb-4">🎉</p>
-                <p className="text-gray-500 font-medium">All caught up! No active orders.</p>
+              <div className="text-center py-10 md:py-20 bg-white rounded-2xl md:rounded-3xl border border-dashed border-gray-200 px-4">
+                <p className="text-3xl md:text-4xl mb-2 md:mb-4">🎉</p>
+                <p className="text-sm md:text-base text-gray-500 font-medium">All caught up! No active orders.</p>
               </div>
             )}
           </div>
         )}
 
         {activeTab === 'menu' && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800">Menu Management</h2>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-              <table className="w-full text-left border-collapse">
+          <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-800">Menu Management</h2>
+            <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[500px]">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200">
                     <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Item Name</th>
@@ -503,19 +531,20 @@ export default function StaffDashboard() {
         )}
 
         {activeTab === 'settings' && (
-          <div className="max-w-2xl mx-auto space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800">Store Settings</h2>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex items-center justify-between">
+          <div className="max-w-2xl mx-auto space-y-4 md:space-y-6">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-800">Store Settings</h2>
+            
+            <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h3 className="font-bold text-gray-800 text-lg">Store Status</h3>
-                <p className="text-sm text-gray-500 mt-1">
+                <h3 className="font-bold text-gray-800 text-base md:text-lg">Store Status</h3>
+                <p className="text-xs md:text-sm text-gray-500 mt-1">
                   When closed, customers can still browse the menu but must schedule orders for a later time.
                 </p>
               </div>
               <button
                 onClick={() => toggleStore(!storeOpen)}
                 disabled={updating === 'store'}
-                className={`px-6 py-3 rounded-xl font-bold text-white transition-colors disabled:opacity-50 ${
+                className={`w-full sm:w-auto px-6 py-2.5 md:py-3 rounded-lg md:rounded-xl font-bold text-white transition-colors disabled:opacity-50 whitespace-nowrap ${
                   storeOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-[#103d2b] hover:bg-[#0c2f21]'
                 }`}
               >
@@ -523,17 +552,17 @@ export default function StaffDashboard() {
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex items-center justify-between">
+            <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h3 className="font-bold text-gray-800 text-lg">Notification Sound</h3>
-                <p className="text-sm text-gray-500 mt-1">
+                <h3 className="font-bold text-gray-800 text-base md:text-lg">Notification Sound</h3>
+                <p className="text-xs md:text-sm text-gray-500 mt-1">
                   Choose the alert sound for new incoming orders on this device.
                 </p>
               </div>
               <select
                 value={soundChoice}
                 onChange={(e) => handleSoundChange(e.target.value)}
-                className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-[#103d2b] cursor-pointer"
+                className="w-full sm:w-auto px-3 md:px-4 py-2 md:py-2.5 bg-gray-50 border border-gray-200 rounded-lg md:rounded-xl text-sm font-semibold outline-none focus:border-[#103d2b] cursor-pointer"
               >
                 <option value="message">📱 Message (iPhone-style)</option>
                 <option value="chime">🚪 Store Chime</option>
