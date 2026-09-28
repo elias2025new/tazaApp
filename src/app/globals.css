@@ -37,7 +37,11 @@
     scroll-behavior: smooth;
   }
 
-  body {
+  :root {
+  color-scheme: light dark;
+}
+
+body {
     background-color: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-body);
