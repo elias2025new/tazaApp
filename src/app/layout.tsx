@@ -30,6 +30,7 @@ export const viewport: Viewport = {
   userScalable: false,
   themeColor: '#103d2b', // --color-forest, matches the brand primary
 };
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import { TelegramProvider } from '@/components/providers/telegram-provider';
 import { AppShell } from '@/components/ui/app-shell';
 
@@ -44,10 +45,12 @@ export default function RootLayout({
         {/* Load Telegram WebApp SDK — must be first so window.Telegram.WebApp is available */}
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className="bg-[#fbf8ed] text-[#12291f]" suppressHydrationWarning>
+      <body className="bg-bg text-text" suppressHydrationWarning>
+        <ThemeProvider>
         <TelegramProvider>
           <AppShell>{children}</AppShell>
         </TelegramProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -40,7 +40,7 @@ const STATUS_BADGE: Record<string, string> = {
   preparing:        'bg-purple-100 text-purple-700',
   ready:            'bg-green-100 text-green-700',
   out_for_delivery: 'bg-orange-100 text-orange-700',
-  delivered:        'bg-gray-100 text-gray-500',
+  delivered:        'bg-gray-100 text-text-muted',
   rejected:         'bg-red-100 text-red-500',
 };
 
@@ -263,22 +263,22 @@ export default function StaffDashboard() {
             onCancel={() => setPendingCrop(null)}
           />
         )}
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-2xl shadow-sm p-6 w-full max-w-sm">
-          <h1 className="text-xl font-bold text-[#103d2b] mb-1 text-center">🌿 Taza Staff</h1>
-          <p className="text-sm text-gray-400 mb-6 text-center">Enter staff secret</p>
+      <div className="min-h-screen bg-surface-raised flex items-center justify-center p-6">
+        <div className="bg-surface rounded-2xl shadow-sm p-6 w-full max-w-sm">
+          <h1 className="text-xl font-bold text-primary mb-1 text-center">🌿 Taza Staff</h1>
+          <p className="text-sm text-text-muted mb-6 text-center">Enter staff secret</p>
           <input
             type="password"
             value={secret}
             onChange={(e) => setSecret(e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#103d2b] mb-4"
+            className="w-full border border-border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#103d2b] mb-4"
           />
           <button 
             onClick={() => {
               localStorage.setItem('taza_staff_secret', secret);
               setAuthed(true);
             }} 
-            className="w-full bg-[#103d2b] text-white font-semibold py-3 rounded-xl"
+            className="w-full bg-primary text-white font-semibold py-3 rounded-xl"
           >
             Login
           </button>
@@ -304,17 +304,17 @@ export default function StaffDashboard() {
           onCancel={() => setPendingCrop(null)}
         />
       )}
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-surface-raised flex flex-col md:flex-row">
       {/* Sidebar Navigation */}
-      <aside className="w-full md:w-80 bg-white border-r border-gray-200 md:min-h-screen flex flex-col shrink-0 sticky top-0 z-10 md:static">
-        <div className="pt-6 md:pt-24 pb-4 md:pb-8 px-4 md:px-6 md:p-8 border-b border-gray-100 flex justify-between items-center md:block">
-          <h1 className="text-2xl md:text-4xl font-black text-[#103d2b] tracking-tighter">🌿 Taza Staff</h1>
+      <aside className="w-full md:w-80 bg-surface border-r border-border md:min-h-screen flex flex-col shrink-0 sticky top-0 z-10 md:static">
+        <div className="pt-6 md:pt-24 pb-4 md:pb-8 px-4 md:px-6 md:p-8 border-b border-border flex justify-between items-center md:block">
+          <h1 className="text-2xl md:text-4xl font-black text-primary tracking-tighter">🌿 Taza Staff</h1>
         </div>
         <nav className="p-4 md:p-6 flex flex-row md:flex-col overflow-x-auto md:overflow-visible gap-2 md:gap-2 space-y-0 md:space-y-2 flex-1 no-scrollbar items-center md:items-stretch">
           <button
             onClick={() => setActiveTab('orders')}
             className={`flex-none md:w-full flex items-center gap-2 md:gap-4 px-4 md:px-5 py-2 md:py-3 rounded-xl md:rounded-2xl text-sm md:text-2xl font-bold transition-all duration-200 ${
-              activeTab === 'orders' ? 'bg-[#103d2b] text-white shadow-md md:shadow-lg md:scale-[1.02]' : 'text-gray-600 bg-gray-50 md:bg-transparent hover:bg-gray-100 md:hover:bg-gray-50 hover:text-gray-900'
+              activeTab === 'orders' ? 'bg-primary text-white shadow-md md:shadow-lg md:scale-[1.02]' : 'text-text-muted bg-surface-raised md:bg-transparent hover:bg-gray-100 md:hover:bg-surface-raised hover:text-text-muted'
             }`}
           >
             <ListOrdered className="w-5 h-5 md:w-8 md:h-8" /> Live Orders
@@ -325,7 +325,7 @@ export default function StaffDashboard() {
           <button
             onClick={() => setActiveTab('menu')}
             className={`flex-none md:w-full flex items-center gap-2 md:gap-4 px-4 md:px-5 py-2 md:py-3 rounded-xl md:rounded-2xl text-sm md:text-2xl font-bold transition-all duration-200 ${
-              activeTab === 'menu' ? 'bg-[#103d2b] text-white shadow-md md:shadow-lg md:scale-[1.02]' : 'text-gray-600 bg-gray-50 md:bg-transparent hover:bg-gray-100 md:hover:bg-gray-50 hover:text-gray-900'
+              activeTab === 'menu' ? 'bg-primary text-white shadow-md md:shadow-lg md:scale-[1.02]' : 'text-text-muted bg-surface-raised md:bg-transparent hover:bg-gray-100 md:hover:bg-surface-raised hover:text-text-muted'
             }`}
           >
             <Utensils className="w-5 h-5 md:w-8 md:h-8" /> Menu Items
@@ -333,14 +333,14 @@ export default function StaffDashboard() {
           <button
             onClick={() => setActiveTab('settings')}
             className={`flex-none md:w-full flex items-center gap-2 md:gap-4 px-4 md:px-5 py-2 md:py-3 rounded-xl md:rounded-2xl text-sm md:text-2xl font-bold transition-all duration-200 ${
-              activeTab === 'settings' ? 'bg-[#103d2b] text-white shadow-md md:shadow-lg md:scale-[1.02]' : 'text-gray-600 bg-gray-50 md:bg-transparent hover:bg-gray-100 md:hover:bg-gray-50 hover:text-gray-900'
+              activeTab === 'settings' ? 'bg-primary text-white shadow-md md:shadow-lg md:scale-[1.02]' : 'text-text-muted bg-surface-raised md:bg-transparent hover:bg-gray-100 md:hover:bg-surface-raised hover:text-text-muted'
             }`}
           >
             <Store className="w-5 h-5 md:w-8 md:h-8" /> Store Settings
           </button>
         </nav>
-        <div className="hidden md:flex p-6 border-t border-gray-100 items-center justify-between">
-          <div className="flex items-center gap-2 text-base font-medium text-gray-400">
+        <div className="hidden md:flex p-6 border-t border-border items-center justify-between">
+          <div className="flex items-center gap-2 text-base font-medium text-text-muted">
             <span className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span> Securely logged in
           </div>
           <button 
@@ -348,7 +348,7 @@ export default function StaffDashboard() {
               setAuthed(false);
               localStorage.removeItem('taza_staff_secret');
             }}
-            className="text-sm font-bold text-gray-400 hover:text-red-500 transition-colors"
+            className="text-sm font-bold text-text-muted hover:text-red-500 transition-colors"
           >
             Logout
           </button>
@@ -360,28 +360,28 @@ export default function StaffDashboard() {
         {activeTab === 'orders' && (
           <div className="max-w-6xl mx-auto space-y-4 md:space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800">Live Orders</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-text-muted">Live Orders</h2>
               <div className="flex gap-2 md:gap-4 w-full md:w-auto">
-                <div className="bg-white px-3 md:px-4 py-2 rounded-xl border border-gray-200 shadow-sm flex-1 md:flex-none">
-                  <p className="text-[10px] md:text-xs text-gray-400">Today&apos;s Orders</p>
-                  <p className="text-sm md:text-base font-bold text-gray-800">{todayOrders.length}</p>
+                <div className="bg-surface px-3 md:px-4 py-2 rounded-xl border border-border shadow-sm flex-1 md:flex-none">
+                  <p className="text-[10px] md:text-xs text-text-muted">Today&apos;s Orders</p>
+                  <p className="text-sm md:text-base font-bold text-text-muted">{todayOrders.length}</p>
                 </div>
-                <div className="bg-white px-3 md:px-4 py-2 rounded-xl border border-gray-200 shadow-sm flex-1 md:flex-none">
-                  <p className="text-[10px] md:text-xs text-gray-400">Today&apos;s Revenue</p>
-                  <p className="text-sm md:text-base font-bold text-[#103d2b]">{formatPrice(todayRevenue)}</p>
+                <div className="bg-surface px-3 md:px-4 py-2 rounded-xl border border-border shadow-sm flex-1 md:flex-none">
+                  <p className="text-[10px] md:text-xs text-text-muted">Today&apos;s Revenue</p>
+                  <p className="text-sm md:text-base font-bold text-primary">{formatPrice(todayRevenue)}</p>
                 </div>
               </div>
             </div>
 
             {loading ? (
-              <p className="text-gray-400 text-sm md:text-base">Loading...</p>
+              <p className="text-text-muted text-sm md:text-base">Loading...</p>
             ) : (
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
                 {activeOrders.map((order) => {
                   const actions = NEXT_STATUS[order.status] ?? [];
                   return (
-                    <div key={order.id} className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-                      <div className="p-4 md:p-5 border-b border-gray-50 bg-gray-50/50 flex justify-between items-start">
+                    <div key={order.id} className="bg-surface rounded-xl md:rounded-2xl shadow-sm border border-border overflow-hidden flex flex-col">
+                      <div className="p-4 md:p-5 border-b border-gray-50 bg-surface-raised/50 flex justify-between items-start">
                         <div>
                           <div className="flex flex-wrap items-center gap-2 mb-2">
                             <span className={`text-[10px] md:text-xs font-bold px-2 md:px-2.5 py-1 rounded-full ${STATUS_BADGE[order.status]}`}>
@@ -393,20 +393,20 @@ export default function StaffDashboard() {
                               </span>
                             )}
                           </div>
-                          <p className="text-xs md:text-sm font-bold text-gray-800">
+                          <p className="text-xs md:text-sm font-bold text-text-muted">
                             {order.fulfillment_type === 'pickup' ? '🏃 Pickup' : '🛵 Delivery'} · {formatPrice(order.total_santim)}
                           </p>
-                          <p className="text-[10px] md:text-xs text-gray-400 mt-1">Placed: {new Date(order.placed_at).toLocaleTimeString()}</p>
+                          <p className="text-[10px] md:text-xs text-text-muted mt-1">Placed: {new Date(order.placed_at).toLocaleTimeString()}</p>
                         </div>
-                        <p className="text-[10px] md:text-xs text-gray-400 font-mono">#{order.id.slice(0, 8).toUpperCase()}</p>
+                        <p className="text-[10px] md:text-xs text-text-muted font-mono">#{order.id.slice(0, 8).toUpperCase()}</p>
                       </div>
 
                       <div className="p-4 md:p-5 flex-1">
                         <ul className="space-y-2">
                           {order.order_items.map((item, i) => (
                             <li key={i} className="flex justify-between text-xs md:text-sm">
-                              <span className="text-gray-700 font-medium">{item.quantity}x {item.name_snapshot}</span>
-                              <span className="text-gray-400">{formatPrice(item.line_total_santim)}</span>
+                              <span className="text-text-muted font-medium">{item.quantity}x {item.name_snapshot}</span>
+                              <span className="text-text-muted">{formatPrice(item.line_total_santim)}</span>
                             </li>
                           ))}
                         </ul>
@@ -419,7 +419,7 @@ export default function StaffDashboard() {
                       </div>
 
                       {actions.length > 0 && (
-                        <div className="p-3 md:p-4 bg-gray-50/50 border-t border-gray-100 flex gap-2 md:gap-3">
+                        <div className="p-3 md:p-4 bg-surface-raised/50 border-t border-border flex gap-2 md:gap-3">
                           {actions.map((action) => (
                             <button
                               key={action.next}
@@ -439,9 +439,9 @@ export default function StaffDashboard() {
             )}
             
             {activeOrders.length === 0 && !loading && (
-              <div className="text-center py-10 md:py-20 bg-white rounded-2xl md:rounded-3xl border border-dashed border-gray-200 px-4">
+              <div className="text-center py-10 md:py-20 bg-surface rounded-2xl md:rounded-3xl border border-dashed border-border px-4">
                 <p className="text-3xl md:text-4xl mb-2 md:mb-4">🎉</p>
-                <p className="text-sm md:text-base text-gray-500 font-medium">All caught up! No active orders.</p>
+                <p className="text-sm md:text-base text-text-muted font-medium">All caught up! No active orders.</p>
               </div>
             )}
           </div>
@@ -449,34 +449,34 @@ export default function StaffDashboard() {
 
         {activeTab === 'menu' && (
           <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
-            <h2 className="text-xl md:text-2xl font-bold text-gray-800">Menu Management</h2>
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 overflow-x-auto">
+            <h2 className="text-xl md:text-2xl font-bold text-text-muted">Menu Management</h2>
+            <div className="bg-surface rounded-xl md:rounded-2xl shadow-sm border border-border overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[500px]">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
-                    <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Item Name</th>
-                    <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Image URL</th>
-                    <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Price (Birr)</th>
-                    <th className="p-4 text-xs font-semibold text-gray-500 uppercase text-center">Available</th>
-                    <th className="p-4 text-xs font-semibold text-gray-500 uppercase text-right">Actions</th>
+                  <tr className="bg-surface-raised border-b border-border">
+                    <th className="p-4 text-xs font-semibold text-text-muted uppercase">Item Name</th>
+                    <th className="p-4 text-xs font-semibold text-text-muted uppercase">Image URL</th>
+                    <th className="p-4 text-xs font-semibold text-text-muted uppercase">Price (Birr)</th>
+                    <th className="p-4 text-xs font-semibold text-text-muted uppercase text-center">Available</th>
+                    <th className="p-4 text-xs font-semibold text-text-muted uppercase text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {menuItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50/50">
-                      <td className="p-4 text-sm font-semibold text-gray-800">{item.name_en}</td>
+                    <tr key={item.id} className="hover:bg-surface-raised/50">
+                      <td className="p-4 text-sm font-semibold text-text-muted">{item.name_en}</td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">
                           {item.image_path ? (
                             <img src={item.image_path} alt="" className="w-8 h-8 rounded object-cover border flex-shrink-0" />
                           ) : (
-                            <div className="w-8 h-8 bg-gray-100 rounded border flex-shrink-0 flex items-center justify-center text-[10px] text-gray-400">None</div>
+                            <div className="w-8 h-8 bg-gray-100 rounded border flex-shrink-0 flex items-center justify-center text-[10px] text-text-muted">None</div>
                           )}
                           
                           {uploadingImageId === item.id ? (
-                            <span className="text-xs text-gray-400 ml-2">Uploading...</span>
+                            <span className="text-xs text-text-muted ml-2">Uploading...</span>
                           ) : (
-                            <label className="cursor-pointer bg-gray-50 border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-lg hover:bg-gray-100 active:scale-95 transition-all">
+                            <label className="cursor-pointer bg-surface-raised border border-border text-text-muted text-xs px-3 py-1.5 rounded-lg hover:bg-gray-100 active:scale-95 transition-all">
                               {item.image_path ? 'Replace' : 'Upload'}
                               <input
                                 type="file"
@@ -502,7 +502,7 @@ export default function StaffDashboard() {
                               updateMenu(item.id, { base_price_santim: newPrice });
                             }
                           }}
-                          className="w-24 px-3 py-1.5 border border-gray-200 rounded-lg text-sm"
+                          className="w-24 px-3 py-1.5 border border-border rounded-lg text-sm"
                         />
                       </td>
                       <td className="p-4 flex justify-center">
@@ -513,14 +513,14 @@ export default function StaffDashboard() {
                           style={{ backgroundColor: item.is_available ? '#34C759' : '#e5e7eb' }}
                         >
                           <span
-                            className={`pointer-events-none inline-block h-[27px] w-[27px] transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                            className={`pointer-events-none inline-block h-[27px] w-[27px] transform rounded-full bg-surface shadow ring-0 transition duration-200 ease-in-out ${
                               item.is_available ? 'translate-x-[20px]' : 'translate-x-0'
                             }`}
                           />
                         </button>
                       </td>
                       <td className="p-4 text-right">
-                        {updating === item.id && <span className="text-xs text-gray-400">Saving...</span>}
+                        {updating === item.id && <span className="text-xs text-text-muted">Saving...</span>}
                       </td>
                     </tr>
                   ))}
@@ -532,12 +532,12 @@ export default function StaffDashboard() {
 
         {activeTab === 'settings' && (
           <div className="max-w-2xl mx-auto space-y-4 md:space-y-6">
-            <h2 className="text-xl md:text-2xl font-bold text-gray-800">Store Settings</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-text-muted">Store Settings</h2>
             
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="bg-surface rounded-xl md:rounded-2xl shadow-sm border border-border p-4 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h3 className="font-bold text-gray-800 text-base md:text-lg">Store Status</h3>
-                <p className="text-xs md:text-sm text-gray-500 mt-1">
+                <h3 className="font-bold text-text-muted text-base md:text-lg">Store Status</h3>
+                <p className="text-xs md:text-sm text-text-muted mt-1">
                   When closed, customers can still browse the menu but must schedule orders for a later time.
                 </p>
               </div>
@@ -545,24 +545,24 @@ export default function StaffDashboard() {
                 onClick={() => toggleStore(!storeOpen)}
                 disabled={updating === 'store'}
                 className={`w-full sm:w-auto px-6 py-2.5 md:py-3 rounded-lg md:rounded-xl font-bold text-white transition-colors disabled:opacity-50 whitespace-nowrap ${
-                  storeOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-[#103d2b] hover:bg-[#0c2f21]'
+                  storeOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-primary hover:bg-[#0c2f21]'
                 }`}
               >
                 {storeOpen ? 'Close Store' : 'Open Store'}
               </button>
             </div>
 
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="bg-surface rounded-xl md:rounded-2xl shadow-sm border border-border p-4 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h3 className="font-bold text-gray-800 text-base md:text-lg">Notification Sound</h3>
-                <p className="text-xs md:text-sm text-gray-500 mt-1">
+                <h3 className="font-bold text-text-muted text-base md:text-lg">Notification Sound</h3>
+                <p className="text-xs md:text-sm text-text-muted mt-1">
                   Choose the alert sound for new incoming orders on this device.
                 </p>
               </div>
               <select
                 value={soundChoice}
                 onChange={(e) => handleSoundChange(e.target.value)}
-                className="w-full sm:w-auto px-3 md:px-4 py-2 md:py-2.5 bg-gray-50 border border-gray-200 rounded-lg md:rounded-xl text-sm font-semibold outline-none focus:border-[#103d2b] cursor-pointer"
+                className="w-full sm:w-auto px-3 md:px-4 py-2 md:py-2.5 bg-surface-raised border border-border rounded-lg md:rounded-xl text-sm font-semibold outline-none focus:border-[#103d2b] cursor-pointer"
               >
                 <option value="message">📱 Message (iPhone-style)</option>
                 <option value="chime">🚪 Store Chime</option>

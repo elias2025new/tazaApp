@@ -126,7 +126,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-screen items-center justify-center p-6 text-center">
         <div>
           <p className="text-xl font-semibold text-red-500 mb-2">⚠️ Open in Telegram</p>
-          <p className="text-gray-500 text-sm">{error}</p>
+          <p className="text-text-muted text-sm">{error}</p>
         </div>
       </div>
     );
@@ -136,7 +136,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     <>
       {showSplash && (
         <div 
-          className={`fixed inset-0 z-[9999] cursor-pointer bg-[#103d2b] transition-opacity duration-700 ease-in-out ${isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+          className={`fixed inset-0 z-[9999] cursor-pointer bg-primary transition-opacity duration-700 ease-in-out ${isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           onClick={() => {
             setIsFadingOut(true);
             setTimeout(() => setShowSplash(false), 700);

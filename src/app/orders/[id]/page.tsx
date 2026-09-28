@@ -90,7 +90,7 @@ export default function OrderTrackerPage() {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader2 className="w-8 h-8 text-[#103d2b] animate-spin" />
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
       </div>
     );
   }
@@ -98,8 +98,8 @@ export default function OrderTrackerPage() {
   if (!order && !hasSeeds) {
     return (
       <div className="flex flex-col h-full items-center justify-center p-6 text-center">
-        <p className="text-gray-400 text-sm">Order not found.</p>
-        <button onClick={() => router.push('/orders')} className="mt-4 text-[#103d2b] font-semibold text-sm">
+        <p className="text-text-muted text-sm">Order not found.</p>
+        <button onClick={() => router.push('/orders')} className="mt-4 text-primary font-semibold text-sm">
           Back to Orders
         </button>
       </div>
@@ -118,15 +118,15 @@ export default function OrderTrackerPage() {
   const isCompleted = status === 'delivered';
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50 pb-8">
+    <div className="h-full overflow-y-auto bg-surface-raised pb-8">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-white border-b border-gray-100 flex items-center gap-3 px-4 pt-24 pb-4">
+      <div className="sticky top-0 z-40 bg-surface border-b border-border flex items-center gap-3 px-4 pt-24 pb-4">
         <button onClick={() => router.push('/orders')} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100">
-          <ArrowLeft className="w-4 h-4 text-gray-600" />
+          <ArrowLeft className="w-4 h-4 text-text-muted" />
         </button>
         <div>
-          <h1 className="font-bold text-gray-800">Track Order</h1>
-          <p className="text-xs text-gray-400">
+          <h1 className="font-bold text-text-muted">Track Order</h1>
+          <p className="text-xs text-text-muted">
             #{(order?.id ?? orderId).slice(0, 8).toUpperCase()}
           </p>
         </div>
@@ -141,7 +141,7 @@ export default function OrderTrackerPage() {
       <div className="px-4 py-4 space-y-4">
         {/* Stepper — renders immediately from seed data */}
         {!isRejected ? (
-          <div className="bg-white rounded-2xl shadow-sm p-5">
+          <div className="bg-surface rounded-2xl shadow-sm p-5">
             <div className="space-y-0">
               {steps.map((step, idx) => {
                 const stepStatusIdx = STATUS_ORDER.indexOf(step.key);
@@ -154,8 +154,8 @@ export default function OrderTrackerPage() {
                     {/* Left: icon + line */}
                     <div className="flex flex-col items-center">
                       <div className={`w-9 h-9 rounded-full flex items-center justify-center text-base flex-shrink-0 transition-all ${
-                        isDone   ? 'bg-[#103d2b]' :
-                        isActive ? 'bg-[#103d2b] ring-4 ring-[#103d2b]/20' :
+                        isDone   ? 'bg-primary' :
+                        isActive ? 'bg-primary ring-4 ring-[#103d2b]/20' :
                         'bg-gray-100'
                       }`}>
                         {isDone ? (
@@ -163,25 +163,25 @@ export default function OrderTrackerPage() {
                         ) : isActive ? (
                           <span>{step.emoji}</span>
                         ) : (
-                          <Circle className="w-4 h-4 text-gray-300" />
+                          <Circle className="w-4 h-4 text-text-muted" />
                         )}
                       </div>
                       {idx < steps.length - 1 && (
-                        <div className={`w-0.5 h-8 mt-1 transition-all ${isDone ? 'bg-[#103d2b]' : 'bg-gray-100'}`} />
+                        <div className={`w-0.5 h-8 mt-1 transition-all ${isDone ? 'bg-primary' : 'bg-gray-100'}`} />
                       )}
                     </div>
 
                     {/* Right: label */}
                     <div className="pt-1.5 pb-8">
                       <p className={`text-sm font-semibold ${
-                        isDone   ? 'text-gray-500' :
-                        isActive ? 'text-[#103d2b]' :
-                        isPending ? 'text-gray-300' : 'text-gray-400'
+                        isDone   ? 'text-text-muted' :
+                        isActive ? 'text-primary' :
+                        isPending ? 'text-text-muted' : 'text-text-muted'
                       }`}>
                         {step.label}
                       </p>
                       {isActive && !isCompleted && (
-                        <p className="text-xs text-[#103d2b]/60 mt-0.5 animate-pulse">In progress...</p>
+                        <p className="text-xs text-primary/60 mt-0.5 animate-pulse">In progress...</p>
                       )}
                     </div>
                   </div>
@@ -205,7 +205,7 @@ export default function OrderTrackerPage() {
 
         {/* Order Details — skeleton while loading full data */}
         {detailLoading && !order ? (
-          <div className="bg-white rounded-2xl shadow-sm p-4 animate-pulse">
+          <div className="bg-surface rounded-2xl shadow-sm p-4 animate-pulse">
             <div className="h-4 w-28 bg-gray-100 rounded mb-4" />
             <div className="space-y-3">
               <div className="h-3 bg-gray-100 rounded w-full" />
@@ -219,23 +219,23 @@ export default function OrderTrackerPage() {
             </div>
           </div>
         ) : order ? (
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <h2 className="text-sm font-bold text-gray-700 mb-3">Order Details</h2>
+          <div className="bg-surface rounded-2xl shadow-sm p-4">
+            <h2 className="text-sm font-bold text-text-muted mb-3">Order Details</h2>
             <div className="space-y-2">
               {order.order_items.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">
-                  <span className="text-gray-600">{item.name_snapshot} × {item.quantity}</span>
-                  <span className="font-medium text-gray-800">{formatPrice(item.line_total_santim)}</span>
+                  <span className="text-text-muted">{item.name_snapshot} × {item.quantity}</span>
+                  <span className="font-medium text-text-muted">{formatPrice(item.line_total_santim)}</span>
                 </div>
               ))}
             </div>
 
             <div className="mt-3 pt-3 border-t border-gray-50 space-y-1">
-              <div className="flex justify-between text-sm text-gray-400">
+              <div className="flex justify-between text-sm text-text-muted">
                 <span>Subtotal</span>
                 <span>{formatPrice(order.subtotal_santim)}</span>
               </div>
-              <div className="flex justify-between text-sm text-gray-400">
+              <div className="flex justify-between text-sm text-text-muted">
                 <span>Transaction fee</span>
                 <span>{formatPrice(order.total_santim - order.subtotal_santim - order.delivery_fee_santim)}</span>
               </div>
@@ -243,30 +243,30 @@ export default function OrderTrackerPage() {
                 <span>Delivery</span>
                 <span>Free 🎉</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-gray-800 pt-1 border-t border-gray-50">
+              <div className="flex justify-between text-sm font-bold text-text-muted pt-1 border-t border-gray-50">
                 <span>Total</span>
-                <span className="text-[#103d2b]">{formatPrice(order.total_santim)}</span>
+                <span className="text-primary">{formatPrice(order.total_santim)}</span>
               </div>
             </div>
           </div>
         ) : (
           /* Fallback summary from seed data while API loads */
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <h2 className="text-sm font-bold text-gray-700 mb-3">Order Summary</h2>
-            <div className="flex justify-between text-sm font-bold text-gray-800">
+          <div className="bg-surface rounded-2xl shadow-sm p-4">
+            <h2 className="text-sm font-bold text-text-muted mb-3">Order Summary</h2>
+            <div className="flex justify-between text-sm font-bold text-text-muted">
               <span>Total</span>
-              <span className="text-[#103d2b]">{formatPrice(totalSantim)}</span>
+              <span className="text-primary">{formatPrice(totalSantim)}</span>
             </div>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-text-muted mt-1">
               {new Date(placedAt).toLocaleDateString('en-ET', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
             </p>
           </div>
         )}
 
         {order?.customer_note && (
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <p className="text-xs text-gray-400 font-medium mb-1">YOUR NOTE</p>
-            <p className="text-sm text-gray-600">{order.customer_note}</p>
+          <div className="bg-surface rounded-2xl shadow-sm p-4">
+            <p className="text-xs text-text-muted font-medium mb-1">YOUR NOTE</p>
+            <p className="text-sm text-text-muted">{order.customer_note}</p>
           </div>
         )}
       </div>

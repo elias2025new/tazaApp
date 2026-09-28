@@ -9,12 +9,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   if (isStaff) {
     // Staff pages handle their own full layout without TopNav
-    return <main className="bg-white min-h-screen relative">{children}</main>;
+    return <main className="bg-surface min-h-screen relative">{children}</main>;
   }
 
   // Customer pages now use mobile layout
   return (
-    <main className="mx-auto max-w-md bg-white h-[100dvh] shadow-xl relative overflow-hidden pb-16">
+    <main className="mx-auto max-w-md bg-surface h-[100dvh] shadow-xl relative overflow-hidden pb-16">
       {children}
       <BottomNav />
     </main>

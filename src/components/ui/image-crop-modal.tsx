@@ -104,16 +104,16 @@ export function ImageCropModal({ file, onConfirm, onCancel }: ImageCropModalProp
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-          <h2 className="font-bold text-gray-800">Crop Image</h2>
+      <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <h2 className="font-bold text-text-muted">Crop Image</h2>
           <button onClick={onCancel} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100">
-            <X className="w-4 h-4 text-gray-600" />
+            <X className="w-4 h-4 text-text-muted" />
           </button>
         </div>
 
         <div className="p-4">
-          <p className="text-xs text-gray-400 mb-3 text-center">Drag to reposition · Use slider to zoom</p>
+          <p className="text-xs text-text-muted mb-3 text-center">Drag to reposition · Use slider to zoom</p>
           <div
             className="mx-auto overflow-hidden rounded-xl border-2 border-[#103d2b] shadow-inner"
             style={{ width: CANVAS_SIZE, height: CANVAS_SIZE, cursor: dragging ? 'grabbing' : 'grab' }}
@@ -130,7 +130,7 @@ export function ImageCropModal({ file, onConfirm, onCancel }: ImageCropModalProp
 
           <div className="flex items-center gap-3 mt-4">
             <button onClick={() => handleZoom(Math.max(minZoom, zoom - 0.1))} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 flex-shrink-0">
-              <ZoomOut className="w-4 h-4 text-gray-600" />
+              <ZoomOut className="w-4 h-4 text-text-muted" />
             </button>
             <input
               type="range"
@@ -142,16 +142,16 @@ export function ImageCropModal({ file, onConfirm, onCancel }: ImageCropModalProp
               className="flex-1 accent-[#103d2b]"
             />
             <button onClick={() => handleZoom(Math.min(maxZoom, zoom + 0.1))} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 flex-shrink-0">
-              <ZoomIn className="w-4 h-4 text-gray-600" />
+              <ZoomIn className="w-4 h-4 text-text-muted" />
             </button>
           </div>
         </div>
 
         <div className="flex gap-3 px-4 pb-4">
-          <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">
+          <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl border border-border text-sm font-semibold text-text-muted">
             Cancel
           </button>
-          <button onClick={handleConfirm} className="flex-1 py-2.5 rounded-xl bg-[#103d2b] text-white text-sm font-semibold flex items-center justify-center gap-2">
+          <button onClick={handleConfirm} className="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold flex items-center justify-center gap-2">
             <Check className="w-4 h-4" />
             Use This Crop
           </button>
