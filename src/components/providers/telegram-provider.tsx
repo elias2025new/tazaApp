@@ -106,6 +106,21 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       });
   }, []);
 
+  // Auto-dismiss splash once app is ready
+  useEffect(() => {
+    if (!isReady) return;
+    const fadeTimer = setTimeout(() => {
+      setIsFadingOut(true);
+    }, 1500); // brief moment to show splash, then fade
+    const hideTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2200); // 1500ms delay + 700ms fade
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(hideTimer);
+    };
+  }, [isReady]);
+
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center p-6 text-center">
