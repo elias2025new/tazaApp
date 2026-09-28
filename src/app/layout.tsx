@@ -46,6 +46,7 @@ export default function RootLayout({
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
       <body className="bg-bg text-text" suppressHydrationWarning>
+        <script dangerouslySetInnerHTML={{ __html: "!function(){try{var t=localStorage.getItem('taza-theme-storage');var e='system';if(t){var o=JSON.parse(t);if(o&&o.state&&o.state.theme){e=o.state.theme}}var a=false;if(e==='system'){var r=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp.colorScheme:null;if(r){a=r==='dark'}else{a=window.matchMedia('(prefers-color-scheme: dark)').matches}}else{a=e==='dark'}if(a){document.documentElement.setAttribute('data-theme','dark')}else{document.documentElement.removeAttribute('data-theme')}}catch(t){}}();" }} />
         <ThemeProvider>
         <TelegramProvider>
           <AppShell>{children}</AppShell>

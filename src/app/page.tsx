@@ -157,7 +157,7 @@ export default function HomePage() {
              </div>
              
              {/* Gradient overlay to fade left to right */}
-             <div className="absolute inset-0 bg-gradient-to-r from-[#fbf8ed] via-[#fbf8ed]/80 to-transparent flex flex-col justify-center pl-4 pr-8 min-[400px]:pl-5 min-[400px]:pr-10 pt-4">
+             <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/80 to-transparent flex flex-col justify-center pl-4 pr-8 min-[400px]:pl-5 min-[400px]:pr-10 pt-4">
                 <h2 className="text-[20px] min-[400px]:text-[26px] font-bold font-display text-text leading-tight tracking-tight relative z-10">Good Food<br/>Brighter Days</h2>
                 <div className="flex items-center mt-2 min-[400px]:mt-3 relative z-10">
                   <span className="text-[9px] min-[400px]:text-[10px] tracking-wide text-primary font-bold uppercase">Healthy Bites, Happy Hearts</span>
