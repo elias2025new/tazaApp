@@ -24,8 +24,6 @@ declare global {
         };
         colorScheme: 'light' | 'dark';
         themeParams: Record<string, string>;
-        setBackgroundColor?: (color: string) => void;
-        setHeaderColor?: (color: string) => void;
         MainButton: { text: string; show: () => void; hide: () => void };
         close: () => void;
       };
@@ -56,14 +54,6 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
 
     // 1. Signal to Telegram that the app is ready
     tg.ready();
-
-    // Force consistent light theme on the native container
-    try {
-      if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#fbf8ed');
-      if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#103d2b');
-    } catch (e) {
-      console.warn('Failed to set native colors', e);
-    }
 
     // 2. Expand to full height
     tg.expand();
