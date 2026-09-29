@@ -1,3 +1,4 @@
+import { BuildStamp } from '@/components/ui/build-stamp';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import './globals.css';
@@ -46,12 +47,16 @@ export default function RootLayout({
           <meta name="supported-color-schemes" content="light dark" />
         {/* Load Telegram WebApp SDK — must be first so window.Telegram.WebApp is available */}
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
-      </head>
+      
+
+</head>
       <body className="bg-bg text-text" suppressHydrationWarning>
         
         <ThemeProvider>
         <TelegramProvider>
-          <AppShell>{children}</AppShell>
+          <AppShell>
+        <BuildStamp commitSha={process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'dev'} buildTime={new Date().toISOString()} />
+        {children}</AppShell>
         </TelegramProvider>
         </ThemeProvider>
       </body>
