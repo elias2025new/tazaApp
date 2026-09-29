@@ -46,7 +46,7 @@ export default function HomePage() {
   useEffect(() => {
     if (cachedMenuData) return;
 
-    fetch('/api/menu')
+    fetch('/api/menu', { cache: 'no-store' })
       .then((r) => r.json())
       .then((d) => {
         const fetchedData = { categories: d.categories || [], items: d.items || [] };
@@ -181,7 +181,7 @@ export default function HomePage() {
                 ref={inputRef}
                 type="text" 
                 enterKeyHint="search"
-                placeholder="Search food and drinks..." 
+                placeholder="Search menu..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="flex-1 w-full bg-transparent appearance-none border-none outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:border-transparent ring-0 focus:shadow-none text-center text-[16px] text-text placeholder:text-text-muted/80 font-medium" 
@@ -215,7 +215,11 @@ export default function HomePage() {
 
           {/* Menu Grid - 2 cols on all screens */}
           <div className={`px-3 min-[400px]:px-4 grid grid-cols-2 gap-2 min-[400px]:gap-3 pb-8 transition-opacity duration-300 ${isSearching ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
-            {filteredItems.length === 0 ? (
+            {loading ? (
+                 <div className="col-span-full flex justify-center py-10 text-text-muted">
+                   <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                 </div>
+              ) : filteredItems.length === 0 ? (
                <div className="col-span-full text-center py-10 text-text-muted">
                  <p className="text-sm">No items found</p>
                </div>

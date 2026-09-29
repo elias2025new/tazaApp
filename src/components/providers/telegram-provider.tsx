@@ -151,7 +151,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
           />
         </div>
       )}
-      {children}
+      {isReady && children}
     </>
   );
 }
