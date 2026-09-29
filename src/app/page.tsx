@@ -82,14 +82,14 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="flex h-full bg-primary-fixed font-body overflow-hidden">
+      <div className="flex h-full bg-gradient-to-b from-primary to-primary font-body overflow-hidden pt-[70px]">
       
       {/* LEFT SIDEBAR (Dark Green) */}
-      <div className="w-[115px] flex-shrink-0 flex flex-col pt-3 pb-20 overflow-y-auto no-scrollbar z-10">
+      <div className="w-[110px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
         
         {/* Logo & Address */}
-        <div className="px-1.5 mb-5 flex flex-col items-center">
-          <div className="w-[42px] h-[42px] min-[400px]:w-[48px] min-[400px]:h-[48px] rounded-full mb-2 flex items-center justify-center overflow-hidden bg-surface/10">
+        <div className="px-2 mb-8 flex flex-col items-center">
+          <div className="w-[45px] h-[45px] min-[400px]:w-[54px] min-[400px]:h-[54px] rounded-full mb-3 flex items-center justify-center overflow-hidden bg-surface/10">
              <Image 
                src="/brand/logo.jpg" 
                alt="Taza Greens Logo" 
@@ -99,12 +99,12 @@ export default function HomePage() {
                priority
              />
           </div>
-          <h1 className="text-white font-display text-[11px] min-[400px]:text-[12px] font-bold text-center leading-tight mb-0.5">Taza Greens</h1>
-          <p className="text-[7.5px] min-[400px]:text-[8px] text-white opacity-70 text-center leading-tight">Bole Rwanda,<br/>Addis Ababa</p>
+          <h1 className="text-white font-display text-[11px] min-[400px]:text-[13px] font-bold text-center leading-tight mb-1">Taza Greens</h1>
+          <p className="text-[7px] min-[400px]:text-[8px] text-white opacity-70 text-center leading-[1.3]">Bole Rwanda,<br/>Addis Ababa</p>
         </div>
 
         {/* Categories List */}
-        <div className="flex flex-col gap-0.5 relative">
+        <div className="flex flex-col gap-0 relative">
           <SidebarItem 
             name="All" 
             isActive={activeCategory === 'all'} 
@@ -122,10 +122,10 @@ export default function HomePage() {
       </div>
 
       {/* RIGHT MAIN CONTENT AREA (Cream/Paper) */}
-      <div className="flex-1 bg-bg-fixed rounded-tl-[24px] shadow-[-5px_0_20px_rgba(0,0,0,0.15)] overflow-hidden relative flex flex-col z-20">
+      <div className="flex-1 bg-gradient-to-b from-bg to-bg rounded-l-[24px] min-[400px]:rounded-l-[32px] shadow-[-5px_0_20px_rgba(0,0,0,0.15)] overflow-hidden relative flex flex-col z-20">
         
         {/* Top Floating Actions (Cart) */}
-        <div className="absolute top-3 right-3 z-50 flex items-center gap-2">
+        <div className="absolute top-4 right-3 min-[400px]:right-4 z-50 flex items-center gap-2 min-[400px]:gap-3">
           <button 
             onClick={() => router.push('/cart')}
             className="h-9 px-3 min-[400px]:h-10 min-[400px]:px-[14px] bg-accent text-text rounded-full flex items-center gap-1.5 min-[400px]:gap-2 shadow-[0_4px_12px_rgba(200,231,47,0.4)] relative transition-transform active:scale-95"
@@ -143,7 +143,7 @@ export default function HomePage() {
         <div className="flex-1 overflow-y-auto pb-8 no-scrollbar relative">
           
           {/* Hero Section */}
-          <div className="relative w-full h-[150px] min-[400px]:h-[180px] bg-bg overflow-hidden">
+          <div className="relative w-full h-[180px] min-[400px]:h-[220px] bg-bg overflow-hidden">
              
              {/* Food image */}
              <div className="absolute inset-0 w-full h-full">
@@ -157,25 +157,25 @@ export default function HomePage() {
              </div>
              
              {/* Gradient overlay to fade left to right */}
-             <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/85 to-transparent flex flex-col justify-center pl-4 pr-16 pt-2">
-                <h2 className="text-[19px] min-[400px]:text-[24px] font-bold font-display text-text leading-tight tracking-tight relative z-10">Good Food<br/>Brighter Days</h2>
-                <div className="flex items-center mt-1.5 relative z-10">
-                  <span className="text-[8px] min-[400px]:text-[9px] tracking-wide text-primary font-bold uppercase">Healthy Bites, Happy Hearts</span>
+             <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/80 to-transparent flex flex-col justify-center pl-4 pr-8 min-[400px]:pl-5 min-[400px]:pr-10 pt-4">
+                <h2 className="text-[20px] min-[400px]:text-[26px] font-bold font-display text-text leading-tight tracking-tight relative z-10">Good Food<br/>Brighter Days</h2>
+                <div className="flex items-center mt-2 min-[400px]:mt-3 relative z-10">
+                  <span className="text-[9px] min-[400px]:text-[10px] tracking-wide text-primary font-bold uppercase">Healthy Bites, Happy Hearts</span>
                 </div>
              </div>
           </div>
 
           {/* Search Bar (Below Hero) */}
-          <div className="px-3 min-[400px]:px-4 -mt-5 relative z-10">
+          <div className="px-4 min-[400px]:px-5 -mt-6 relative z-10">
             <form 
               onSubmit={handleSearchSubmit}
-              className="bg-surface-fixed rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center px-4 h-[46px] min-[400px]:h-[50px] border-none outline-none focus-within:shadow-[0_8px_30px_rgb(16,61,43,0.12)]" 
+              className="bg-gradient-to-b from-surface to-surface rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center px-4 h-[52px] border-none outline-none focus-within:shadow-[0_8px_30px_rgb(16,61,43,0.12)]" 
               style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               {isSearching ? (
-                <Loader2 className="w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 text-primary flex-shrink-0 animate-spin" />
+                <Loader2 className="w-5 h-5 text-primary flex-shrink-0 animate-spin" />
               ) : (
-                <Search className="w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 text-text-muted flex-shrink-0" />
+                <Search className="w-5 h-5 text-text-muted flex-shrink-0" />
               )}
               <input 
                 ref={inputRef}
@@ -184,7 +184,7 @@ export default function HomePage() {
                 placeholder="Search menu..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 w-full bg-transparent appearance-none border-none outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:border-transparent ring-0 focus:shadow-none text-center text-[14px] min-[400px]:text-[15px] text-text placeholder:text-text-muted/80 font-medium" 
+                className="flex-1 w-full bg-transparent appearance-none border-none outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:border-transparent ring-0 focus:shadow-none text-center text-[16px] text-text placeholder:text-text-muted/80 font-medium" 
                 style={{ WebkitTapHighlightColor: 'transparent', outline: 'none' }}
               />
               {search.length > 0 ? (
@@ -248,22 +248,22 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
     return (
       <div className="relative w-full">
         {/* Top inverse curve */}
-        <div className="absolute -top-[12px] right-0 w-[12px] h-[12px] bg-bg-fixed z-0">
-          <div className="w-full h-full bg-primary-fixed rounded-br-[12px]"></div>
+        <div className="absolute -top-[12px] right-0 w-[12px] h-[12px] bg-gradient-to-b from-bg to-bg z-0">
+          <div className="w-full h-full bg-gradient-to-b from-primary to-primary rounded-br-[12px]"></div>
         </div>
         
         {/* Bottom inverse curve */}
-        <div className="absolute -bottom-[12px] right-0 w-[12px] h-[12px] bg-bg-fixed z-0">
-          <div className="w-full h-full bg-primary-fixed rounded-tr-[12px]"></div>
+        <div className="absolute -bottom-[12px] right-0 w-[12px] h-[12px] bg-gradient-to-b from-bg to-bg z-0">
+          <div className="w-full h-full bg-gradient-to-b from-primary to-primary rounded-tr-[12px]"></div>
         </div>
 
         <button 
           onClick={onClick}
-          className="relative w-[calc(100%-6px)] ml-1.5 py-2.5 px-2 text-left bg-bg-fixed rounded-l-[12px] flex flex-col justify-center z-10"
+          className="relative w-[calc(100%-8px)] min-[400px]:w-[calc(100%-12px)] ml-2 min-[400px]:ml-3 py-[12px] min-[400px]:py-[14px] px-2 text-left bg-gradient-to-b from-bg to-bg rounded-l-[12px] min-[400px]:rounded-l-[14px] flex flex-col justify-center z-10"
         >
           {/* Left Orange Bar */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[70%] bg-emphasis rounded-r-sm"></div>
-          <span className="text-[11px] leading-[13px] font-bold text-text pl-2 pr-1 break-words line-clamp-2">{name}</span>
+          <span className="text-[11px] min-[400px]:text-[12px] leading-[13px] min-[400px]:leading-[14px] font-bold text-text pl-2 min-[400px]:pl-3 pr-1 break-words line-clamp-2">{name}</span>
         </button>
       </div>
     );
@@ -272,9 +272,9 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
   return (
     <button 
       onClick={onClick}
-      className="w-full py-2.5 pl-3 pr-2 text-left group relative z-10 text-white opacity-75 hover:opacity-100 transition-opacity"
+      className="w-full py-[10px] min-[400px]:py-[12px] pl-[14px] min-[400px]:pl-[20px] pr-2 text-left group relative z-10 text-white opacity-60 hover:opacity-100 transition-opacity"
     >
-      <span className="text-[11px] leading-[13px] font-medium text-inherit break-words line-clamp-2">{name}</span>
+      <span className="text-[11px] min-[400px]:text-[12px] leading-[13px] min-[400px]:leading-[14px] font-medium text-inherit break-words line-clamp-2">{name}</span>
     </button>
   );
 }

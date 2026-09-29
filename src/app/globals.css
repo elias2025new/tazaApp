@@ -100,21 +100,4 @@ body {
   animation: breathe 8s ease-in-out infinite;
 }
 
-/* Force Dark Mode Bypasses */
-.bg-bg-fixed {
-  background-color: #fbf8ed !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3Crect width='1' height='1' fill='%23fbf8ed'/%3E%3C/svg%3E") !important;
-  background-size: cover;
-}
 
-.bg-primary-fixed {
-  background-color: #103d2b !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3Crect width='1' height='1' fill='%23103d2b'/%3E%3C/svg%3E") !important;
-  background-size: cover;
-}
-
-.bg-surface-fixed {
-  background-color: #ffffff !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3Crect width='1' height='1' fill='%23ffffff'/%3E%3C/svg%3E") !important;
-  background-size: cover;
-}
