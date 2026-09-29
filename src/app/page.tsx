@@ -82,7 +82,7 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="flex h-full bg-gradient-to-b from-primary to-primary font-body overflow-hidden pt-[70px]">
+      <div className="flex h-full bg-primary-fixed font-body overflow-hidden pt-[70px]">
       
       {/* LEFT SIDEBAR (Dark Green) - Thinner on small screens */}
       <div className="w-[95px] min-[400px]:w-[110px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
@@ -122,7 +122,7 @@ export default function HomePage() {
       </div>
 
       {/* RIGHT MAIN CONTENT AREA (Cream/Paper) */}
-      <div className="flex-1 bg-gradient-to-b from-bg to-bg rounded-l-[24px] min-[400px]:rounded-l-[32px] shadow-[-5px_0_20px_rgba(0,0,0,0.15)] overflow-hidden relative flex flex-col z-20">
+      <div className="flex-1 bg-bg-fixed rounded-l-[24px] min-[400px]:rounded-l-[32px] shadow-[-5px_0_20px_rgba(0,0,0,0.15)] overflow-hidden relative flex flex-col z-20">
         
         {/* Top Floating Actions (Cart) */}
         <div className="absolute top-4 right-3 min-[400px]:right-4 z-50 flex items-center gap-2 min-[400px]:gap-3">
@@ -169,7 +169,7 @@ export default function HomePage() {
           <div className="px-4 min-[400px]:px-5 -mt-6 relative z-10">
             <form 
               onSubmit={handleSearchSubmit}
-              className="bg-gradient-to-b from-surface to-surface rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center px-4 h-[52px] border-none outline-none focus-within:shadow-[0_8px_30px_rgb(16,61,43,0.12)]" 
+              className="bg-surface-fixed rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center px-4 h-[52px] border-none outline-none focus-within:shadow-[0_8px_30px_rgb(16,61,43,0.12)]" 
               style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               {isSearching ? (
@@ -248,18 +248,18 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
     return (
       <div className="relative w-full">
         {/* Top inverse curve */}
-        <div className="absolute -top-[12px] right-0 w-[12px] h-[12px] bg-gradient-to-b from-bg to-bg z-0">
-          <div className="w-full h-full bg-gradient-to-b from-primary to-primary rounded-br-[12px]"></div>
+        <div className="absolute -top-[12px] right-0 w-[12px] h-[12px] bg-bg-fixed z-0">
+          <div className="w-full h-full bg-primary-fixed rounded-br-[12px]"></div>
         </div>
         
         {/* Bottom inverse curve */}
-        <div className="absolute -bottom-[12px] right-0 w-[12px] h-[12px] bg-gradient-to-b from-bg to-bg z-0">
-          <div className="w-full h-full bg-gradient-to-b from-primary to-primary rounded-tr-[12px]"></div>
+        <div className="absolute -bottom-[12px] right-0 w-[12px] h-[12px] bg-bg-fixed z-0">
+          <div className="w-full h-full bg-primary-fixed rounded-tr-[12px]"></div>
         </div>
 
         <button 
           onClick={onClick}
-          className="relative w-[calc(100%-8px)] min-[400px]:w-[calc(100%-12px)] ml-2 min-[400px]:ml-3 py-[12px] min-[400px]:py-[14px] px-2 text-left bg-gradient-to-b from-bg to-bg rounded-l-[12px] min-[400px]:rounded-l-[14px] flex flex-col justify-center z-10"
+          className="relative w-[calc(100%-8px)] min-[400px]:w-[calc(100%-12px)] ml-2 min-[400px]:ml-3 py-[12px] min-[400px]:py-[14px] px-2 text-left bg-bg-fixed rounded-l-[12px] min-[400px]:rounded-l-[14px] flex flex-col justify-center z-10"
         >
           {/* Left Orange Bar */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[70%] bg-emphasis rounded-r-sm"></div>

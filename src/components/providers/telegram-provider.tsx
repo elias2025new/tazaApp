@@ -42,12 +42,16 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
 
+    const completeInit = () => {
+      setTimeout(() => setIsReady(true), 350);
+    };
+
     // Check if we are inside Telegram
     if (!tg) {
       // Allow dev mode fallback if enabled
       if (process.env.NEXT_PUBLIC_DEV_MOCK_TELEGRAM === 'true') {
         console.warn('Telegram WebApp not detected — using dev mock mode.');
-        setIsReady(true);
+        completeInit();
         return;
       }
       setError('This app must be opened inside Telegram.');
@@ -81,7 +85,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     // 3. Authenticate with our backend (only if initData is available)
     if (!tg.initData) {
       // initData empty — still show app (happens in some Telegram Desktop versions)
-      setIsReady(true);
+      completeInit();
       return;
     }
 
@@ -93,18 +97,18 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.ok) {
-          setIsReady(true);
+          completeInit();
         } else {
           console.error('Auth error:', data.error);
           // Still show the app even if auth fails for now
           // so users aren't locked out by edge cases
-          setIsReady(true);
+          completeInit();
         }
       })
       .catch((err) => {
         console.error('Auth network error:', err);
         // Show the app anyway — auth will retry on next load
-        setIsReady(true);
+        completeInit();
       });
   }, []);
 

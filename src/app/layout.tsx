@@ -1,4 +1,3 @@
-import { BuildStamp } from '@/components/ui/build-stamp';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import './globals.css';
@@ -50,12 +49,11 @@ export default function RootLayout({
       
 
 </head>
-      <body className="bg-bg text-text" suppressHydrationWarning>
+      <body className="bg-bg-fixed text-text" suppressHydrationWarning>
         
         <ThemeProvider>
         <TelegramProvider>
           <AppShell>
-        <BuildStamp commitSha={process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'dev'} buildTime={new Date().toISOString()} />
         {children}</AppShell>
         </TelegramProvider>
         </ThemeProvider>
