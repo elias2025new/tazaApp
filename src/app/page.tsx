@@ -85,7 +85,7 @@ export default function HomePage() {
       <div className="flex h-full bg-primary-fixed font-body overflow-hidden pt-[70px]">
       
       {/* LEFT SIDEBAR (Dark Green) - Thinner on small screens */}
-      <div className="w-[95px] min-[400px]:w-[110px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
+      <div className="w-[110px] flex-shrink-0 flex flex-col pt-2 pb-24 overflow-y-auto no-scrollbar z-10">
         
         {/* Logo & Address */}
         <div className="px-2 mb-8 flex flex-col items-center">
@@ -214,7 +214,7 @@ export default function HomePage() {
           </div>
 
           {/* Menu Grid - 2 cols on all screens */}
-          <div className={`px-3 min-[400px]:px-4 grid grid-cols-2 gap-2 min-[400px]:gap-3 pb-8 transition-opacity duration-300 ${isSearching ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+          <div className={`px-3 min-[400px]:px-4 grid grid-cols-2 gap-2 min-[400px]:gap-3 pb-8 transition-opacity duration-300 ${isSearching ? 'opacity-100' : 'opacity-100'}`}>
             {loading ? (
                  <div className="col-span-full flex justify-center py-10 text-text-muted">
                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -259,7 +259,7 @@ function SidebarItem({ name, isActive, onClick }: { name: string, isActive: bool
 
         <button 
           onClick={onClick}
-          className="relative w-[calc(100%-8px)] min-[400px]:w-[calc(100%-12px)] ml-2 min-[400px]:ml-3 py-[12px] min-[400px]:py-[14px] px-2 text-left bg-bg-fixed rounded-l-[12px] min-[400px]:rounded-l-[14px] flex flex-col justify-center z-10"
+          className="relative w-[calc(100%-8px)] ml-2 min-[400px]:ml-3 py-[12px] min-[400px]:py-[14px] px-2 text-left bg-bg-fixed rounded-l-[12px] min-[400px]:rounded-l-[14px] flex flex-col justify-center z-10"
         >
           {/* Left Orange Bar */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[70%] bg-emphasis rounded-r-sm"></div>

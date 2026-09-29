@@ -28,6 +28,8 @@ declare global {
         offEvent?: (eventType: string, eventHandler: () => void) => void;
         MainButton: { text: string; show: () => void; hide: () => void };
         close: () => void;
+        setHeaderColor: (color: string) => void;
+        setBackgroundColor: (color: string) => void;
       };
     };
   }
@@ -63,6 +65,17 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
 
     // 2. Expand to full height
     tg.expand();
+
+    try {
+      if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#fbf8ed');
+      if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#fbf8ed');
+    } catch (e) {}
+
+      // 3. Force Telegram native window to match our light theme
+      try {
+        if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#fbf8ed');
+        if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#fbf8ed');
+      } catch (e) { console.error('Error setting colors', e); }
 
     // Prevent pull-to-close gesture
     try {
