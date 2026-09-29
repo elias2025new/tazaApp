@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import './globals.css';
+import { ThemeProvider } from '@/components/providers/theme-provider';
+import { TelegramProvider } from '@/components/providers/telegram-provider';
+import { AppShell } from '@/components/ui/app-shell';
 
 export const metadata: Metadata = {
   title: {
@@ -18,7 +21,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   robots: {
-    index: false, // Mini App, not intended for search indexing
+    index: false,
     follow: false,
   },
 };
@@ -26,13 +29,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1, // Prevents Telegram WebView zoom issues
+  maximumScale: 1,
   userScalable: false,
-  themeColor: '#103d2b', // --color-forest, matches the brand primary
+  themeColor: '#ffffff',
 };
-import { ThemeProvider } from '@/components/providers/theme-provider';
-import { TelegramProvider } from '@/components/providers/telegram-provider';
-import { AppShell } from '@/components/ui/app-shell';
 
 export default function RootLayout({
   children,
@@ -40,22 +40,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="bg-white" style={{ backgroundColor: '#ffffff' }} suppressHydrationWarning>
       <head>
-          <meta name="color-scheme" content="light dark" />
-          <meta name="supported-color-schemes" content="light dark" />
-        {/* Load Telegram WebApp SDK — must be first so window.Telegram.WebApp is available */}
+        <meta name="color-scheme" content="light dark" />
+        <meta name="supported-color-schemes" content="light dark" />
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
-      
-
-</head>
-      <body className="bg-bg text-text" suppressHydrationWarning>
-        
+      </head>
+      <body className="bg-white text-black min-h-screen" style={{ backgroundColor: '#ffffff' }} suppressHydrationWarning>
         <ThemeProvider>
-        <TelegramProvider>
-          <AppShell>
-        {children}</AppShell>
-        </TelegramProvider>
+          <TelegramProvider>
+            <AppShell>{children}</AppShell>
+          </TelegramProvider>
         </ThemeProvider>
       </body>
     </html>

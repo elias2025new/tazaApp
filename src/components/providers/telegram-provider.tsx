@@ -28,32 +28,23 @@ declare global {
         offEvent?: (eventType: string, eventHandler: () => void) => void;
         MainButton: { text: string; show: () => void; hide: () => void };
         close: () => void;
-        setHeaderColor: (color: string) => void;
-        setBackgroundColor: (color: string) => void;
+        setHeaderColor?: (color: string) => void;
+        setBackgroundColor?: (color: string) => void;
       };
     };
   }
 }
 
 export function TelegramProvider({ children }: { children: React.ReactNode }) {
-  const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showSplash, setShowSplash] = useState(true);
-  const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
 
-    const completeInit = () => {
-      setTimeout(() => setIsReady(true), 350);
-    };
-
     // Check if we are inside Telegram
     if (!tg) {
-      // Allow dev mode fallback if enabled
       if (process.env.NEXT_PUBLIC_DEV_MOCK_TELEGRAM === 'true') {
         console.warn('Telegram WebApp not detected — using dev mock mode.');
-        completeInit();
         return;
       }
       setError('This app must be opened inside Telegram.');
@@ -66,8 +57,6 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     // 2. Expand to full height
     tg.expand();
 
-    
-
     // Prevent pull-to-close gesture
     try {
       if (typeof tg.disableVerticalSwipes === 'function') {
@@ -77,7 +66,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       console.warn('disableVerticalSwipes not supported', e);
     }
     
-    // Attempt to request full screen (removes native telegram header and bottom bar on mobile)
+    // Attempt to request full screen
     try {
       if (typeof tg.requestFullscreen === 'function' && ['android', 'ios'].includes(tg.platform)) {
         tg.requestFullscreen();
@@ -86,80 +75,30 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       console.warn('requestFullscreen not supported on this platform', e);
     }
 
-    // 3. Authenticate with our backend (only if initData is available)
-    if (!tg.initData) {
-      // initData empty — still show app (happens in some Telegram Desktop versions)
-      completeInit();
-      return;
-    }
-
-    fetch('/api/auth/telegram', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ initDataRaw: tg.initData }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.ok) {
-          completeInit();
-        } else {
-          console.error('Auth error:', data.error);
-          // Still show the app even if auth fails for now
-          // so users aren't locked out by edge cases
-          completeInit();
-        }
+    // 3. Authenticate with backend in background if initData is available
+    if (tg.initData) {
+      fetch('/api/auth/telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ initDataRaw: tg.initData }),
       })
-      .catch((err) => {
-        console.error('Auth network error:', err);
-        // Show the app anyway — auth will retry on next load
-        completeInit();
-      });
+        .then((res) => res.json())
+        .catch((err) => {
+          console.error('Auth network error:', err);
+        });
+    }
   }, []);
-
-  // Auto-dismiss splash once app is ready
-  useEffect(() => {
-    if (!isReady) return;
-    const fadeTimer = setTimeout(() => {
-      setIsFadingOut(true);
-    }, 1500); // brief moment to show splash, then fade
-    const hideTimer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2200); // 1500ms delay + 700ms fade
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(hideTimer);
-    };
-  }, [isReady]);
 
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center p-6 text-center">
         <div>
           <p className="text-xl font-semibold text-red-500 mb-2">⚠️ Open in Telegram</p>
-          <p className="text-text-muted text-sm">{error}</p>
+          <p className="text-gray-500 text-sm">{error}</p>
         </div>
       </div>
     );
   }
 
-  return (
-    <>
-      {showSplash && (
-        <div 
-          className={`fixed inset-0 z-[9999] cursor-pointer bg-primary transition-opacity duration-700 ease-in-out ${isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-          onClick={() => {
-            setIsFadingOut(true);
-            setTimeout(() => setShowSplash(false), 700);
-          }}
-        >
-          <img 
-            src="/splash.jpg" 
-            alt="Welcome to Taza Greens" 
-            className="w-full h-full object-cover object-center animate-breathe"
-          />
-        </div>
-      )}
-      {isReady && children}
-    </>
-  );
+  return <>{children}</>;
 }
