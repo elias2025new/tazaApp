@@ -12,7 +12,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const applyTheme = () => {
       // Per design rules, cream/green is the single source of truth.
       // We do not let Telegram's colorScheme override it anymore.
-      const isDark = theme === 'dark';
+      const isDark = false; // Forced light mode per design rules
 
       if (isDark) {
         root.setAttribute('data-theme', 'dark');

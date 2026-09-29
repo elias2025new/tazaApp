@@ -9,13 +9,13 @@ export async function GET() {
     .from('menu_categories')
     .select('id, name_en, emoji, sort_order')
     .eq('is_active', true)
-    .order('sort_order');
+    .order('sort_order').order('name_en');
 
   const { data: items, error: itemError } = await supabase
     .from('menu_items')
     .select('id, category_id, name_en, description_en, base_price_santim, image_path, is_available')
     .eq('is_available', true)
-    .order('sort_order');
+    .order('sort_order').order('name_en');
 
   if (catError || itemError) {
     console.error('Menu fetch error:', catError || itemError);

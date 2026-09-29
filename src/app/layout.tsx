@@ -42,8 +42,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-          <meta name="color-scheme" content="light dark" />
-          <meta name="supported-color-schemes" content="light dark" />
+          <meta name="color-scheme" content="light only" />
+          <meta name="supported-color-schemes" content="light" />
         {/* Load Telegram WebApp SDK — must be first so window.Telegram.WebApp is available */}
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       

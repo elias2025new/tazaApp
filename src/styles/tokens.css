@@ -19,6 +19,7 @@
 
 /* ─── Light mode (default) ─────────────────────────────────────────── */
 :root {
+  color-scheme: light;
   /* Core brand palette */
   --color-forest: #103d2b;
   --color-forest-deep: #092a1d;

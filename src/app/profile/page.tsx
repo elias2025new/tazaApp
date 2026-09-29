@@ -125,7 +125,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="bg-surface rounded-2xl shadow-sm p-2 mb-4">
-          <ThemeToggle />
+          
         </div>
 
         <div className="text-center mt-auto pt-8">
