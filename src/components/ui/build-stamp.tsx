@@ -7,7 +7,7 @@ export function BuildStamp({ commitSha, buildTime }: { commitSha: string; buildT
   useEffect(() => {
     const currentLoc = window.location.origin + window.location.pathname;
     setLoc(currentLoc);
-    console.log(BUILD STAMP:\nLocation: \nSHA: \nTime: );
+    console.log(`BUILD STAMP:\nLocation: ${currentLoc}\nSHA: ${commitSha}\nTime: ${buildTime}`);
   }, [commitSha, buildTime]);
 
   if (!loc) return null;
