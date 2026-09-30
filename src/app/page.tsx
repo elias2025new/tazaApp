@@ -696,43 +696,165 @@ export default function HomePage() {
             )}
           </div>
         ) : activeCategory === 'all' ? (
-          /* "All" active: Stack every category as its own section with header */
+          /* "All" active: Master Header + Quick-Jump Chips + Stack every category as its own section */
           <div style={{ padding: '16px 0 24px' }}>
-            {categories.map((cat) => {
+            {/* Master "All Categories" Header */}
+            <div style={{ padding: '0 12px 14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h2
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '24px',
+                    fontWeight: 700,
+                    color: INK,
+                    margin: 0,
+                    lineHeight: 1.1,
+                  }}
+                >
+                  All Categories
+                </h2>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    color: SECONDARY,
+                    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                    padding: '3px 10px',
+                    borderRadius: '9999px',
+                  }}
+                >
+                  {items.length} {items.length === 1 ? 'dish' : 'dishes'}
+                </span>
+              </div>
+              <div
+                style={{
+                  width: '52px',
+                  height: '3px',
+                  backgroundColor: AMBER,
+                  borderRadius: '9999px',
+                  marginTop: '6px',
+                }}
+              />
+              <p
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '13px',
+                  color: SECONDARY,
+                  marginTop: '8px',
+                  marginBottom: 0,
+                }}
+              >
+                {getCategorySubtitle('all')}
+              </p>
+            </div>
+
+            {/* Quick-jump category chips */}
+            <div
+              style={{
+                display: 'flex',
+                gap: '6px',
+                overflowX: 'auto',
+                padding: '0 12px 16px',
+                scrollbarWidth: 'none',
+                WebkitOverflowScrolling: 'touch',
+              }}
+            >
+              {categories.map((cat) => {
+                const count = items.filter((it) => it.category_id === cat.id).length;
+                if (count === 0) return null;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => {
+                      triggerHaptic('light');
+                      const el = document.getElementById(`cat-section-${cat.id}`);
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }}
+                    style={{
+                      flexShrink: 0,
+                      padding: '5px 11px',
+                      borderRadius: '9999px',
+                      backgroundColor: CARD_BG,
+                      border: '1px solid rgba(0, 0, 0, 0.08)',
+                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '11.5px',
+                      fontWeight: 600,
+                      color: INK,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {cat.emoji && <span>{cat.emoji}</span>}
+                    <span>{cat.name_en}</span>
+                    <span style={{ fontSize: '10.5px', color: PLACEHOLDER }}>({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Stacked Category Sections */}
+            {categories.map((cat, catIdx) => {
               const catItems = items.filter((it) => it.category_id === cat.id);
               if (catItems.length === 0) return null;
 
               return (
-                <div key={cat.id} style={{ marginBottom: '24px' }}>
+                <div key={cat.id} id={`cat-section-${cat.id}`} style={{ marginBottom: '28px' }}>
                   {/* Category Section Header */}
-                  <div style={{ padding: '0 12px 12px' }}>
-                    <h2
-                      style={{
-                        fontFamily: 'var(--font-serif)',
-                        fontSize: '24px',
-                        fontWeight: 700,
-                        color: INK,
-                        margin: 0,
-                        lineHeight: 1.1,
-                      }}
-                    >
-                      {cat.name_en}
-                    </h2>
+                  <div style={{ padding: '0 12px 10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <h3
+                        style={{
+                          fontFamily: 'var(--font-serif)',
+                          fontSize: '20px',
+                          fontWeight: 700,
+                          color: INK,
+                          margin: 0,
+                          lineHeight: 1.15,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                        }}
+                      >
+                        {cat.emoji && <span>{cat.emoji}</span>}
+                        <span>{cat.name_en}</span>
+                      </h3>
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-sans)',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          color: SECONDARY,
+                          backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                          padding: '2px 8px',
+                          borderRadius: '9999px',
+                        }}
+                      >
+                        {catItems.length} {catItems.length === 1 ? 'item' : 'items'}
+                      </span>
+                    </div>
                     <div
                       style={{
-                        width: '52px',
-                        height: '3px',
+                        width: '36px',
+                        height: '2.5px',
                         backgroundColor: AMBER,
                         borderRadius: '9999px',
-                        marginTop: '6px',
+                        marginTop: '5px',
                       }}
                     />
                     <p
                       style={{
                         fontFamily: 'var(--font-sans)',
-                        fontSize: '13px',
+                        fontSize: '12px',
                         color: SECONDARY,
-                        marginTop: '8px',
+                        marginTop: '6px',
                         marginBottom: 0,
                       }}
                     >
@@ -769,6 +891,17 @@ export default function HomePage() {
                       />
                     ))}
                   </div>
+
+                  {/* Divider between categories */}
+                  {catIdx < categories.length - 1 && (
+                    <div
+                      style={{
+                        height: '1px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.07)',
+                        margin: '24px 12px 0',
+                      }}
+                    />
+                  )}
                 </div>
               );
             })}
