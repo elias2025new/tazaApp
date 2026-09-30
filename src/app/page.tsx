@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Search, ShoppingCart, Plus, Minus, X, Loader2 } from 'lucide-react';
-import { BottomNav } from '@/components/ui/bottom-nav';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/cart-store';
 import { formatPrice, calcOrderTotals } from '@/lib/money';
+import { BottomNav } from '@/components/ui/bottom-nav';
 
 type Category = { id: string; name_en: string; emoji: string; sort_order: number };
 type MenuItem = {
@@ -18,6 +18,12 @@ type MenuItem = {
   is_available: boolean;
 };
 
+const FOREST = '#103d2b';
+const INK = '#12291f';
+const MUTED = '#5c7063';
+const CITRUS = '#c8e72f';
+const BORDER = '#ece7d4';
+
 export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
@@ -26,7 +32,7 @@ export default function HomePage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const mainRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const { items: cartItems, addItem, removeItem, count, total } = useCartStore();
   const cartCount = count();
@@ -45,8 +51,8 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 300);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(t);
   }, [search]);
 
   const filteredItems = items.filter((item) => {
@@ -55,73 +61,113 @@ export default function HomePage() {
     return matchCat && matchSearch;
   });
 
-  function getQty(itemId: string) {
-    return cartItems.find((c) => c.id === itemId)?.quantity || 0;
+  function getQty(id: string) {
+    return cartItems.find((c) => c.id === id)?.quantity ?? 0;
   }
 
   const activeLabel =
     activeCategory === 'all'
       ? 'All'
-      : categories.find((c) => c.id === activeCategory)?.name_en ?? 'All';
+      : (categories.find((c) => c.id === activeCategory)?.name_en ?? 'All');
 
-  const allNavItems = [
+  const navItems = [
     { id: 'all', label: 'All' },
     ...categories.map((c) => ({ id: c.id, label: c.name_en })),
   ];
 
-  return (
-    /* Root: full height, no overflow — two columns side by side */
-    <div className="flex h-[100dvh] overflow-hidden bg-[#103d2b]">
+  function selectCategory(id: string) {
+    setActiveCategory(id);
+    scrollRef.current?.scrollTo({ top: 0 });
+  }
 
-      {/* ─── LEFT SIDEBAR ───────────────────────────────────────────── */}
+  return (
+    <div
+      style={{
+        display: 'flex',
+        height: '100dvh',
+        overflow: 'hidden',
+        backgroundColor: FOREST,
+      }}
+    >
+      {/* ══════════════════════════════════════════════
+          SIDEBAR
+      ══════════════════════════════════════════════ */}
       <aside
-        className="flex flex-col shrink-0 overflow-y-auto"
-        style={{ width: '82px', backgroundColor: '#103d2b' }}
+        style={{
+          width: '100px',
+          flexShrink: 0,
+          backgroundColor: FOREST,
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+        }}
       >
-        {/* Logo area */}
-        <div className="flex flex-col items-center pt-5 pb-4 px-2 gap-1">
-          {/* Logo mark */}
+        {/* Logo block */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: '20px 8px 14px',
+            gap: '6px',
+          }}
+        >
           <div
-            className="w-12 h-12 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: 'rgba(255,255,255,0.12)' }}
+            style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(255,255,255,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+            }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/brand/logo.jpg"
-              alt="Taza Greens"
-              className="w-10 h-10 rounded-full object-cover"
+              alt="Taza Greens logo"
+              style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '50%' }}
             />
           </div>
-          <p className="text-white text-center leading-tight" style={{ fontSize: '10px', fontWeight: 600 }}>
+          <p style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textAlign: 'center', lineHeight: 1.3, margin: 0 }}>
             Taza Greens
           </p>
-          <p className="text-center leading-tight" style={{ fontSize: '8px', color: 'rgba(255,255,255,0.55)' }}>
-            Bole Rwanda,{'\n'}Addis Ababa
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '9px', textAlign: 'center', lineHeight: 1.4, margin: 0 }}>
+            Bole Rwanda,<br />Addis Ababa
           </p>
         </div>
 
         {/* Divider */}
-        <div className="mx-3 mb-2" style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.12)' }} />
+        <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.12)', margin: '0 12px 6px' }} />
 
-        {/* Category nav */}
-        <nav className="flex flex-col flex-1 gap-0.5 px-1 pb-4">
-          {allNavItems.map((cat) => {
+        {/* Category list */}
+        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: '16px' }}>
+          {navItems.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
               <button
                 key={cat.id}
-                onClick={() => {
-                  setActiveCategory(cat.id);
-                  mainRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="w-full text-left px-2 py-2.5 rounded-lg transition-colors"
+                onClick={() => selectCategory(cat.id)}
                 style={{
-                  backgroundColor: isActive ? 'rgba(255,255,255,0.18)' : 'transparent',
-                  color: isActive ? '#ffffff' : 'rgba(255,255,255,0.65)',
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '10px 0 10px 14px',
+                  fontSize: '13px',
                   fontWeight: isActive ? 600 : 400,
-                  fontSize: '11px',
-                  lineHeight: 1.3,
-                  borderLeft: isActive ? '3px solid #ffffff' : '3px solid transparent',
+                  lineHeight: 1.35,
+                  color: isActive ? FOREST : 'rgba(255,255,255,0.75)',
+                  backgroundColor: isActive ? '#ffffff' : 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  /* Rounded left side only — connects flush to white panel on the right */
+                  borderRadius: isActive ? '20px 0 0 20px' : '0',
+                  marginLeft: isActive ? '8px' : '0',
+                  paddingLeft: isActive ? '14px' : '14px',
+                  transition: 'background-color 0.15s, color 0.15s',
                 }}
               >
                 {cat.label}
@@ -131,212 +177,304 @@ export default function HomePage() {
         </nav>
       </aside>
 
-      {/* ─── MAIN CONTENT PANEL ─────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════
+          MAIN PANEL
+      ══════════════════════════════════════════════ */}
       <div
-        className="flex-1 flex flex-col overflow-hidden"
         style={{
+          flex: 1,
           backgroundColor: '#ffffff',
-          borderTopLeftRadius: '20px',
-          borderBottomLeftRadius: '20px',
+          borderTopLeftRadius: '24px',
+          borderBottomLeftRadius: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          minWidth: 0,
         }}
       >
-        {/* Scrollable content area */}
-        <div ref={mainRef} className="flex-1 overflow-y-auto">
-        {/* ── HERO BANNER ─────────────────────────────────────────── */}
-        <div
-          className="relative overflow-hidden"
-          style={{ minHeight: '180px', backgroundColor: '#d4e8d8' }}
-        >
-          {/* Hero background image */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/brand/hero.webp"
-            alt=""
-            aria-hidden
-            className="absolute inset-0 w-full h-full object-cover opacity-70"
-          />
+        {/* Scrollable body */}
+        <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
 
-          {/* Cart pill — top right */}
-          <button
-            onClick={() => router.push('/cart')}
-            className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-2 rounded-full shadow-md"
-            style={{ backgroundColor: '#c8e72f', zIndex: 10 }}
+          {/* ── HERO ─────────────────────────────────── */}
+          <div
+            style={{
+              position: 'relative',
+              minHeight: '190px',
+              backgroundColor: '#c9e6d4',
+              overflow: 'hidden',
+            }}
           >
-            <ShoppingCart className="w-4 h-4" style={{ color: '#103d2b' }} />
-            <span className="text-sm font-bold" style={{ color: '#103d2b' }}>
-              {cartCount > 0 ? `${cartCount} · ` : ''}{formatPrice(cartTotal)}
-            </span>
-          </button>
+            {/* Background food image */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/brand/hero.webp"
+              alt=""
+              aria-hidden
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center',
+                opacity: 0.75,
+              }}
+            />
 
-          {/* Hero text */}
-          <div className="relative z-10 px-5 pt-5 pb-3">
-            <h1
-              className="font-bold leading-tight"
-              style={{ fontSize: '26px', color: '#12291f' }}
+            {/* Cart pill — absolute top-right */}
+            <button
+              onClick={() => router.push('/cart')}
+              style={{
+                position: 'absolute',
+                top: '14px',
+                right: '14px',
+                zIndex: 10,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: CITRUS,
+                borderRadius: '9999px',
+                padding: '8px 14px',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              }}
             >
-              Good Food<br />Brighter Days
-            </h1>
-            <p
-              className="mt-1 font-semibold tracking-wide"
-              style={{ fontSize: '10px', color: '#12291f', letterSpacing: '0.08em' }}
+              <ShoppingCart style={{ width: '16px', height: '16px', color: FOREST }} />
+              <span style={{ fontSize: '13px', fontWeight: 700, color: FOREST }}>
+                {cartCount > 0 ? `${cartCount} · ` : ''}{formatPrice(cartTotal)}
+              </span>
+            </button>
+
+            {/* Hero text — sits on top of image */}
+            <div style={{ position: 'relative', zIndex: 1, padding: '20px 16px 24px' }}>
+              <h1
+                style={{
+                  fontSize: '26px',
+                  fontWeight: 800,
+                  lineHeight: 1.15,
+                  color: INK,
+                  margin: 0,
+                }}
+              >
+                Good Food<br />Brighter Days
+              </h1>
+              <p
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  letterSpacing: '0.1em',
+                  color: INK,
+                  marginTop: '6px',
+                  marginBottom: 0,
+                }}
+              >
+                HEALTHY BITES, HAPPY HEARTS
+              </p>
+            </div>
+          </div>
+
+          {/* ── SEARCH BAR — floats below hero ───────── */}
+          <div style={{ padding: '0 12px', marginTop: '-20px', position: 'relative', zIndex: 10 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                backgroundColor: '#ffffff',
+                borderRadius: '14px',
+                padding: '12px 16px',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+              }}
             >
-              HEALTHY BITES, HAPPY HEARTS
+              <Search style={{ width: '16px', height: '16px', color: '#9ca3af', flexShrink: 0 }} />
+              <input
+                type="text"
+                placeholder="Search menu..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  outline: 'none',
+                  fontSize: '14px',
+                  color: INK,
+                  backgroundColor: 'transparent',
+                }}
+              />
+              {search.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setSearch('')}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                >
+                  <X style={{ width: '16px', height: '16px', color: '#9ca3af' }} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* ── SECTION HEADING ──────────────────────── */}
+          <div style={{ padding: '20px 14px 10px' }}>
+            <h2
+              style={{
+                fontSize: '18px',
+                fontWeight: 700,
+                color: INK,
+                margin: '0 0 2px',
+                display: 'inline-block',
+                borderBottom: `2.5px solid ${INK}`,
+                paddingBottom: '2px',
+              }}
+            >
+              {activeLabel}
+            </h2>
+            <p style={{ fontSize: '13px', color: MUTED, margin: '4px 0 0' }}>
+              Start your day with something delicious
             </p>
           </div>
-        </div>
 
-        {/* ── SEARCH BAR ──────────────────────────────────────────── */}
-        <div className="px-4 -mt-5 mb-4 relative z-10">
-          <div
-            className="flex items-center gap-2 px-4 py-3 rounded-2xl shadow-md"
-            style={{ backgroundColor: '#ffffff' }}
-          >
-            <Search className="w-4 h-4 shrink-0" style={{ color: '#9ca3af' }} />
-            <input
-              type="text"
-              placeholder="Search menu..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 text-sm outline-none bg-transparent placeholder-gray-400"
-              style={{ color: '#12291f' }}
-            />
-            {search.length > 0 && (
-              <button type="button" onClick={() => setSearch('')}>
-                <X className="w-4 h-4" style={{ color: '#9ca3af' }} />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* ── SECTION HEADING ─────────────────────────────────────── */}
-        <div className="px-4 mb-3">
-          <h2
-            className="font-bold"
-            style={{ fontSize: '18px', color: '#12291f', borderBottom: '2px solid #12291f', display: 'inline-block', paddingBottom: '2px' }}
-          >
-            {activeLabel}
-          </h2>
-          <p className="mt-1 text-sm" style={{ color: '#5c7063' }}>
-            Start your day with something delicious
-          </p>
-        </div>
-
-        {/* ── MENU GRID ───────────────────────────────────────────── */}
-        <div className="px-4 pb-24">
-          {loading ? (
-            <div className="flex justify-center py-16">
-              <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#103d2b' }} />
-            </div>
-          ) : filteredItems.length === 0 ? (
-            <div className="text-center py-16 text-sm" style={{ color: '#5c7063' }}>
-              No items found
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {filteredItems.map((item) => {
-                const qty = getQty(item.id);
-                return (
-                  <div
-                    key={item.id}
-                    className="rounded-2xl overflow-hidden"
-                    style={{
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #ece7d4',
-                      boxShadow: '0 2px 8px rgba(16,61,43,0.07)',
-                    }}
-                  >
-                    {/* Item image */}
-                    <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100">
-                      {item.image_path ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={item.image_path}
-                          alt={item.name_en}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-xs" style={{ color: '#9ca3af' }}>
-                          No photo
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Item details */}
-                    <div className="p-3">
-                      <h3 className="font-bold text-sm leading-tight" style={{ color: '#12291f' }}>
-                        {item.name_en}
-                      </h3>
-                      {item.description_en && (
-                        <p
-                          className="text-xs mt-0.5 line-clamp-2"
-                          style={{ color: '#5c7063' }}
-                        >
-                          {item.description_en}
-                        </p>
-                      )}
-
-                      {/* Price + Add button */}
-                      <div className="flex items-center justify-between mt-2 gap-1">
-                        <span className="text-sm font-bold" style={{ color: '#12291f' }}>
-                          {formatPrice(item.base_price_santim)}
-                        </span>
-
-                        {qty === 0 ? (
-                          <button
-                            onClick={() =>
-                              addItem({
-                                id: item.id,
-                                name_en: item.name_en,
-                                base_price_santim: item.base_price_santim,
-                              })
-                            }
-                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold"
-                            style={{ backgroundColor: '#103d2b', color: '#ffffff' }}
-                          >
-                            <Plus className="w-3 h-3" />
-                            Add
-                          </button>
+          {/* ── MENU GRID ────────────────────────────── */}
+          <div style={{ padding: '4px 10px 100px' }}>
+            {loading ? (
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
+                <Loader2 style={{ width: '24px', height: '24px', color: FOREST, animation: 'spin 1s linear infinite' }} />
+              </div>
+            ) : filteredItems.length === 0 ? (
+              <p style={{ textAlign: 'center', color: MUTED, fontSize: '14px', padding: '48px 0' }}>
+                No items found
+              </p>
+            ) : (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '10px',
+                }}
+              >
+                {filteredItems.map((item) => {
+                  const qty = getQty(item.id);
+                  return (
+                    <div
+                      key={item.id}
+                      style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                        border: `1px solid ${BORDER}`,
+                        boxShadow: '0 2px 8px rgba(16,61,43,0.06)',
+                      }}
+                    >
+                      {/* Item image */}
+                      <div
+                        style={{
+                          width: '100%',
+                          aspectRatio: '4/3',
+                          backgroundColor: '#f0ede4',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {item.image_path ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={item.image_path}
+                            alt={item.name_en}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
                         ) : (
-                          <div
-                            className="flex items-center rounded-lg overflow-hidden"
-                            style={{ backgroundColor: '#103d2b' }}
-                          >
-                            <button
-                              onClick={() => removeItem(item.id)}
-                              className="px-2 py-1.5 flex items-center justify-center"
-                              style={{ color: '#ffffff' }}
-                            >
-                              <Minus className="w-3 h-3" />
-                            </button>
-                            <span className="px-2 text-xs font-bold" style={{ color: '#ffffff' }}>
-                              {qty}
-                            </span>
-                            <button
-                              onClick={() =>
-                                addItem({
-                                  id: item.id,
-                                  name_en: item.name_en,
-                                  base_price_santim: item.base_price_santim,
-                                })
-                              }
-                              className="px-2 py-1.5 flex items-center justify-center"
-                              style={{ color: '#ffffff' }}
-                            >
-                              <Plus className="w-3 h-3" />
-                            </button>
+                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', color: '#9ca3af' }}>
+                            No photo
                           </div>
                         )}
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>{/* end px-4 pb-24 menu section */}
-        </div>{/* end scrollable content */}
 
-        {/* ── BOTTOM NAV — inside right panel only ─────────────────── */}
+                      {/* Item details */}
+                      <div style={{ padding: '10px' }}>
+                        <p style={{ fontSize: '14px', fontWeight: 700, color: INK, margin: '0 0 3px', lineHeight: 1.3 }}>
+                          {item.name_en}
+                        </p>
+                        {item.description_en && (
+                          <p
+                            style={{
+                              fontSize: '11px',
+                              color: MUTED,
+                              margin: '0 0 8px',
+                              lineHeight: 1.4,
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            {item.description_en}
+                          </p>
+                        )}
+
+                        {/* Price row */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px' }}>
+                          <span style={{ fontSize: '13px', fontWeight: 700, color: INK }}>
+                            {formatPrice(item.base_price_santim)}
+                          </span>
+
+                          {qty === 0 ? (
+                            <button
+                              onClick={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                backgroundColor: FOREST,
+                                color: '#ffffff',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '6px 10px',
+                                fontSize: '12px',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <Plus style={{ width: '12px', height: '12px' }} />
+                              Add
+                            </button>
+                          ) : (
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                backgroundColor: FOREST,
+                                borderRadius: '8px',
+                                overflow: 'hidden',
+                              }}
+                            >
+                              <button
+                                onClick={() => removeItem(item.id)}
+                                style={{ background: 'none', border: 'none', color: '#fff', padding: '6px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                              >
+                                <Minus style={{ width: '12px', height: '12px' }} />
+                              </button>
+                              <span style={{ fontSize: '12px', fontWeight: 700, color: '#fff', minWidth: '16px', textAlign: 'center' }}>
+                                {qty}
+                              </span>
+                              <button
+                                onClick={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
+                                style={{ background: 'none', border: 'none', color: '#fff', padding: '6px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                              >
+                                <Plus style={{ width: '12px', height: '12px' }} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+        </div>{/* end scrollable */}
+
+        {/* Bottom nav — inside right panel */}
         <BottomNav />
       </div>{/* end main panel */}
     </div>
