@@ -61,7 +61,7 @@ describe('OrdersPage Delete Button and Confirmation Modal', () => {
       expect(screen.getAllByTitle('Delete order')).toHaveLength(2);
     });
 
-    const firstDeleteBtn = screen.getAllByTitle('Delete order')[0];
+    const firstDeleteBtn = screen.getAllByTitle('Delete order')[0]!;
     fireEvent.click(firstDeleteBtn);
 
     // Modal should be displayed asking for Yes or No
@@ -78,7 +78,7 @@ describe('OrdersPage Delete Button and Confirmation Modal', () => {
       expect(screen.getAllByTitle('Delete order')).toHaveLength(2);
     });
 
-    const firstDeleteBtn = screen.getAllByTitle('Delete order')[0];
+    const firstDeleteBtn = screen.getAllByTitle('Delete order')[0]!;
     fireEvent.click(firstDeleteBtn);
 
     const noButton = screen.getByText('No, Keep');
@@ -98,7 +98,7 @@ describe('OrdersPage Delete Button and Confirmation Modal', () => {
       expect(screen.getAllByTitle('Delete order')).toHaveLength(2);
     });
 
-    const firstDeleteBtn = screen.getAllByTitle('Delete order')[0];
+    const firstDeleteBtn = screen.getAllByTitle('Delete order')[0]!;
     fireEvent.click(firstDeleteBtn);
 
     const yesButton = screen.getByText('Yes, Delete');
@@ -132,7 +132,7 @@ describe('OrdersPage Delete Button and Confirmation Modal', () => {
       if (urlStr.startsWith('/api/orders/') && init?.method === 'DELETE') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ ok: true, deleted_id: mockOrders[0].id }),
+          json: async () => ({ ok: true, deleted_id: mockOrders[0]!.id }),
         } as Response);
       }
       return Promise.reject(new Error(`Unhandled fetch: ${urlStr}`));
