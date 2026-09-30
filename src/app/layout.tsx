@@ -42,9 +42,32 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-white" style={{ backgroundColor: '#ffffff' }} suppressHydrationWarning>
       <head>
-        <meta name="color-scheme" content="light dark" />
-        <meta name="supported-color-schemes" content="light dark" />
+        <meta name="color-scheme" content="light" />
+        <meta name="supported-color-schemes" content="light" />
+        {/* Force white background on Telegram native shell BEFORE first paint */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            try {
+              // Paint the html element white immediately — before CSS loads
+              document.documentElement.style.backgroundColor = '#ffffff';
+              document.documentElement.style.background = '#ffffff';
+            } catch(e) {}
+          })();
+        ` }} />
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
+        {/* Tell Telegram native shell to use white background — runs after SDK loads */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            try {
+              var tg = window.Telegram && window.Telegram.WebApp;
+              if (tg) {
+                tg.setBackgroundColor('#ffffff');
+                tg.setHeaderColor('#ffffff');
+                tg.ready();
+              }
+            } catch(e) {}
+          })();
+        ` }} />
       </head>
       <body className="bg-white text-black min-h-screen" style={{ backgroundColor: '#ffffff' }} suppressHydrationWarning>
         <ThemeProvider>
