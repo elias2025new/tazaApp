@@ -168,7 +168,7 @@ export default function HomePage() {
           style={{
             paddingLeft: '12px',
             paddingRight: '6px',
-            paddingTop: `calc(84px + ${SAFE_TOP})`,
+            paddingTop: `calc(48px + ${SAFE_TOP})`,
             paddingBottom: '12px',
             display: 'flex',
             flexDirection: 'column',
@@ -359,7 +359,7 @@ export default function HomePage() {
         <div
           style={{
             position: 'relative',
-            height: `calc(190px + ${SAFE_TOP})`,
+            height: `calc(155px + ${SAFE_TOP})`,
             width: '100%',
             overflow: 'hidden',
           }}
@@ -406,7 +406,7 @@ export default function HomePage() {
             style={{
               position: 'absolute',
               left: '12px',
-              top: `calc(84px + ${SAFE_TOP})`,
+              top: `calc(48px + ${SAFE_TOP})`,
               zIndex: 2,
             }}
           >
@@ -457,7 +457,7 @@ export default function HomePage() {
         <div
           style={{
             position: 'sticky',
-            top: `calc(84px + ${SAFE_TOP})`,
+            top: `calc(48px + ${SAFE_TOP})`,
             zIndex: 35,
             padding: '4px 12px',
             marginTop: '-8px',
