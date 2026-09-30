@@ -13,13 +13,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   if (isHome) {
-    // Home page manages its own full-height layout (sidebar + main panel)
-    // BottomNav is rendered inside the page itself
-    return <main style={{ height: '100dvh', overflow: 'hidden' }}>{children}</main>;
+    return (
+      <main
+        style={{
+          height: '100dvh',
+          overflow: 'hidden',
+          position: 'relative',
+          backgroundColor: '#03301C',
+        }}
+      >
+        {children}
+        <BottomNav />
+      </main>
+    );
   }
 
   return (
-    <main className="min-h-screen pb-16">
+    <main className="min-h-screen pb-20">
       {children}
       <BottomNav />
     </main>

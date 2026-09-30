@@ -30,52 +30,42 @@ declare global {
         close: () => void;
         setHeaderColor?: (color: string) => void;
         setBackgroundColor?: (color: string) => void;
+        setBottomBarColor?: (color: string) => void;
+        HapticFeedback?: {
+          impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft') => void;
+          notificationOccurred: (type: 'error' | 'success' | 'warning') => void;
+          selectionChanged: () => void;
+        };
       };
     };
   }
 }
 
 export function TelegramProvider({ children }: { children: React.ReactNode }) {
-  const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const tg = window.Telegram?.WebApp;
 
-    // Check if we are inside Telegram
     if (!tg) {
-      if (process.env.NEXT_PUBLIC_DEV_MOCK_TELEGRAM === 'true') {
-        console.warn('Telegram WebApp not detected — using dev mock mode.');
-        return;
-      }
-      setError('This app must be opened inside Telegram.');
+      console.warn('Telegram WebApp not detected — running in browser preview mode.');
       return;
     }
 
-    // 1. Signal to Telegram that the app is ready
-    tg.ready();
-
-    // 2. Expand to full height
-    tg.expand();
-
-    // Prevent pull-to-close gesture
     try {
-      if (typeof tg.disableVerticalSwipes === 'function') {
-        tg.disableVerticalSwipes();
-      }
-    } catch (e) {
-      console.warn('disableVerticalSwipes not supported', e);
-    }
-    
-    // Attempt to request full screen
-    try {
+      if (typeof tg.ready === 'function') tg.ready();
+      if (typeof tg.expand === 'function') tg.expand();
+      if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#FBF8F3');
+      if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#FBF8F3');
+      if (typeof tg.setBottomBarColor === 'function') tg.setBottomBarColor('#FBFAF6');
+      if (typeof tg.disableVerticalSwipes === 'function') tg.disableVerticalSwipes();
       if (typeof tg.requestFullscreen === 'function' && ['android', 'ios'].includes(tg.platform)) {
         tg.requestFullscreen();
       }
     } catch (e) {
-      console.warn('requestFullscreen not supported on this platform', e);
+      console.warn('Telegram WebApp setup error:', e);
     }
 
-    // 3. Authenticate with backend in background if initData is available
+    // Authenticate with backend in background if initData is available
     if (tg.initData) {
       fetch('/api/auth/telegram', {
         method: 'POST',
@@ -88,17 +78,6 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
         });
     }
   }, []);
-
-  if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center p-6 text-center">
-        <div>
-          <p className="text-xl font-semibold text-red-500 mb-2">⚠️ Open in Telegram</p>
-          <p className="text-gray-500 text-sm">{error}</p>
-        </div>
-      </div>
-    );
-  }
 
   return <>{children}</>;
 }

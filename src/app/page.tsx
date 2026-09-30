@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Search, ShoppingCart, Plus, Minus, X, Loader2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, ShoppingCart, Plus, Minus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/cart-store';
-import { formatPrice, calcOrderTotals } from '@/lib/money';
-import { BottomNav } from '@/components/ui/bottom-nav';
+import { formatPrice } from '@/lib/money';
+import { DESIGN_CONFIG, getCategorySubtitle } from '@/lib/design-config';
 
 type Category = { id: string; name_en: string; emoji: string; sort_order: number };
 type MenuItem = {
@@ -18,514 +18,1180 @@ type MenuItem = {
   is_available: boolean;
 };
 
-/* ── Brand tokens ──────────────────────────────────── */
-const FOREST = '#103d2b';   // dark green — sidebar, buttons
-const INK    = '#12291f';   // near-black text
-const MUTED  = '#5c7063';   // secondary text
-const CITRUS = '#c8e72f';   // yellow-green — cart pill
-const PAPER  = '#fbf8ed';   // warm cream — content panel bg + active pill
-const BORDER = '#d8d0bb';   // warm gray border
+// Design tokens strictly from spec
+const FOREST = '#03301C';
+const CREAM = '#FBF8F3';
+const CARD_BG = '#FDFCF9';
+const AMBER = '#EBAA38';
+const INK = '#111111';
+const SECONDARY = '#3B3D41';
+const PLACEHOLDER = '#6B6B6C';
+
+// Telegram + CSS safe-area insets with 0 fallbacks
+const SAFE_TOP =
+  'var(--tg-content-safe-area-inset-top, var(--tg-safe-area-inset-top, env(safe-area-inset-top, 0px)))';
+const SAFE_BOTTOM =
+  'var(--tg-content-safe-area-inset-bottom, var(--tg-safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)))';
+
+function triggerHaptic(style: 'light' | 'medium' = 'light') {
+  try {
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp?.HapticFeedback) {
+      window.Telegram.WebApp.HapticFeedback.impactOccurred(style);
+    }
+  } catch {}
+}
+
+function formatCategoryLabel(name: string) {
+  const lower = name.toLowerCase().trim();
+  if (lower === 'sandwiches & rolls' || lower === 'sandwiches and rolls') {
+    return (
+      <>
+        Sandwiches
+        <br />
+        &amp; Rolls
+      </>
+    );
+  }
+  if (lower === 'breakfast specials') {
+    return (
+      <>
+        Breakfast
+        <br />
+        Specials
+      </>
+    );
+  }
+  if (lower === 'hot drinks') {
+    return (
+      <>
+        Hot
+        <br />
+        Drinks
+      </>
+    );
+  }
+  return name;
+}
 
 export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [items, setItems]           = useState<MenuItem[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [search, setSearch]         = useState('');
+  const [items, setItems] = useState<MenuItem[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string>('');
+  const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [loading, setLoading]       = useState(true);
-  const router    = useRouter();
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const rightScrollRef = useRef<HTMLDivElement>(null);
+  const searchBarContainerRef = useRef<HTMLDivElement>(null);
 
   const { items: cartItems, addItem, removeItem, count, total } = useCartStore();
-  const cartCount    = count();
+  const cartCount = count();
   const cartSubtotal = total();
-  const { total: cartTotal } = calcOrderTotals(cartSubtotal);
 
   useEffect(() => {
     fetch('/api/menu', { cache: 'no-store' })
       .then((r) => r.json())
       .then((d) => {
-        setCategories(d.categories || []);
-        setItems(d.items || []);
+        const fetchedCats: Category[] = d.categories || [];
+        const fetchedItems: MenuItem[] = d.items || [];
+        setCategories(fetchedCats);
+        setItems(fetchedItems);
         setLoading(false);
+
+        // Spec: Default on first load = Breakfast Specials as in the mockup, or the first real category
+        if (fetchedCats.length > 0) {
+          const breakfast = fetchedCats.find((c) =>
+            c.name_en.toLowerCase().includes('breakfast')
+          );
+          setActiveCategory(breakfast ? breakfast.id : (fetchedCats[0]?.id || 'all'));
+        } else {
+          setActiveCategory('all');
+        }
       })
       .catch(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search), 300);
+    const t = setTimeout(() => setDebouncedSearch(search), 250);
     return () => clearTimeout(t);
   }, [search]);
-
-  const filteredItems = items.filter((item) => {
-    const matchCat    = activeCategory === 'all' || item.category_id === activeCategory;
-    const matchSearch = item.name_en.toLowerCase().includes(debouncedSearch.toLowerCase());
-    return matchCat && matchSearch;
-  });
 
   function getQty(id: string) {
     return cartItems.find((c) => c.id === id)?.quantity ?? 0;
   }
 
-  const activeLabel =
-    activeCategory === 'all'
-      ? 'All'
-      : (categories.find((c) => c.id === activeCategory)?.name_en ?? 'All');
-
-  const navItems = [
-    { id: 'all', label: 'All' },
-    ...categories.map((c) => ({ id: c.id, label: c.name_en })),
-  ];
-
-  function selectCategory(id: string) {
-    setActiveCategory(id);
-    scrollRef.current?.scrollTo({ top: 0 });
+  function handleSelectCategory(catId: string) {
+    triggerHaptic('light');
+    setActiveCategory(catId);
+    rightScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /* ─────────────────────────────────────────────────────────────────── */
+  function handleFocusSearch() {
+    triggerHaptic('light');
+    searchBarContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 150);
+  }
+
+  // Filter items
+  const isSearching = debouncedSearch.trim().length > 0;
+  const searchResults = isSearching
+    ? items.filter((item) =>
+        item.name_en.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        (item.description_en && item.description_en.toLowerCase().includes(debouncedSearch.toLowerCase()))
+      )
+    : [];
+
+  const navCategories = [
+    { id: 'all', name_en: 'All' },
+    ...categories,
+  ];
+
   return (
     <div
       style={{
         display: 'flex',
         height: '100dvh',
+        width: '100%',
         overflow: 'hidden',
-        backgroundColor: FOREST,   // fills the gap behind the sidebar
+        backgroundColor: FOREST,
       }}
     >
-
-      {/* ══════════════════════════════════════════════════════
-          SIDEBAR — forest green, 105px wide
-      ══════════════════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════════════════════════════
+          1) SIDEBAR (Left Column ~94px, 24% width, full height, scrolls itself)
+      ══════════════════════════════════════════════════════════════════ */}
       <aside
         style={{
-          width: '105px',
+          width: '94px',
+          minWidth: '94px',
+          maxWidth: '94px',
           flexShrink: 0,
           backgroundColor: FOREST,
           display: 'flex',
           flexDirection: 'column',
+          height: '100%',
           overflowY: 'auto',
           overflowX: 'hidden',
+          paddingBottom: `calc(72px + ${SAFE_BOTTOM})`, // Nav height + 16px
+          borderRight: 'none',
         }}
       >
-        {/* Logo block */}
+        {/* Brand block: left-aligned, 12px left padding, 16px top padding (+ safe-area) */}
         <div
           style={{
+            paddingLeft: '12px',
+            paddingRight: '6px',
+            paddingTop: `calc(16px + ${SAFE_TOP})`,
+            paddingBottom: '12px',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            padding: '85px 8px 14px', // Increased 5px more to clear Telegram native header
-            gap: '6px',
+            alignItems: 'flex-start',
           }}
         >
           <div
             style={{
-              width: '52px',
-              height: '52px',
+              width: '66px',
+              height: '66px',
               borderRadius: '50%',
-              backgroundColor: 'rgba(255,255,255,0.15)',
+              overflow: 'hidden',
+              backgroundColor: 'rgba(251, 248, 243, 0.12)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              overflow: 'hidden',
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/brand/logo.jpg"
-              alt="Taza Greens logo"
-              style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '50%' }}
+              src={DESIGN_CONFIG.brand.logo}
+              alt={DESIGN_CONFIG.brand.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>
-          <p style={{
-            color: '#ffffff',
-            fontSize: '11px',
-            fontWeight: 700,
-            textAlign: 'center',
-            lineHeight: 1.3,
-            margin: 0,
-          }}>
-            Taza Greens
-          </p>
-          <p style={{
-            color: 'rgba(255,255,255,0.5)',
-            fontSize: '9px',
-            textAlign: 'center',
-            lineHeight: 1.4,
-            margin: 0,
-          }}>
-            Bole Rwanda,<br />Addis Ababa
+
+          <h1
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '15px',
+              fontWeight: 700,
+              color: CREAM,
+              margin: '8px 0 0 0',
+              lineHeight: 1.15,
+            }}
+          >
+            {DESIGN_CONFIG.brand.name}
+          </h1>
+
+          <p
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: '10.5px',
+              color: 'rgba(251, 248, 243, 0.85)',
+              margin: '2px 0 0 0',
+              lineHeight: 1.25,
+            }}
+          >
+            {DESIGN_CONFIG.brand.locationLine1}
+            <br />
+            {DESIGN_CONFIG.brand.locationLine2}
           </p>
         </div>
 
-        {/* Divider */}
-        <div style={{
-          height: '1px',
-          backgroundColor: 'rgba(255,255,255,0.12)',
-          margin: '0 10px 4px',
-        }} />
+        {/* Divider below brand block: white at 16% opacity, inset 12px left and 13px right */}
+        <div
+          style={{
+            height: '1px',
+            backgroundColor: 'rgba(255, 255, 255, 0.16)',
+            marginLeft: '12px',
+            marginRight: '13px',
+            marginBottom: '4px',
+          }}
+        />
 
         {/* Category list */}
-        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '12px 0 24px', gap: '4px' }}>
-          {navItems.map((cat) => {
+        <nav style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+          {navCategories.map((cat, idx) => {
             const isActive = activeCategory === cat.id;
+            const nextIsActive = activeCategory === navCategories[idx + 1]?.id;
+            const hideDivider = isActive || nextIsActive;
+
             return (
-              <button
-                key={cat.id}
-                onClick={() => selectCategory(cat.id)}
-                style={{
-                  position: 'relative',
-                  display: 'block',
-                  width: 'calc(100% - 12px)', // Inset from left, flush to right panel
-                  marginLeft: '12px',
-                  padding: '12px 14px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  // Rounded left corners, flat right corners to seamlessly join the main panel
-                  borderRadius: isActive ? '16px 0 0 16px' : '0',
-                  textAlign: 'left',
-                  fontSize: '13px',
-                  fontWeight: isActive ? 700 : 400,
-                  lineHeight: 1.35,
-                  backgroundColor: isActive ? PAPER : 'transparent',
-                  color: isActive ? INK : 'rgba(255,255,255,0.7)',
-                  transition: 'background-color 0.15s, color 0.15s',
-                }}
-              >
-                {/* Terracotta accent line for active item */}
-                {isActive && (
-                  <div style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    width: '3px',
-                    height: '16px',
-                    backgroundColor: '#c66f45',
-                    borderRadius: '0 2px 2px 0'
-                  }} />
+              <React.Fragment key={cat.id}>
+                <button
+                  type="button"
+                  onClick={() => handleSelectCategory(cat.id)}
+                  style={{
+                    position: 'relative',
+                    width: isActive ? 'calc(100% - 5px)' : '100%',
+                    minHeight: '46px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    paddingLeft: '16px',
+                    paddingRight: '6px',
+                    paddingTop: '6px',
+                    paddingBottom: '6px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '13px',
+                    fontWeight: isActive ? 700 : 400,
+                    lineHeight: 1.2,
+                    backgroundColor: isActive ? CREAM : 'transparent',
+                    color: isActive ? INK : CREAM,
+                    borderRadius: isActive ? '0 12px 12px 0' : '0',
+                    transition: 'transform 0.1s ease, background-color 0.15s ease',
+                  }}
+                  onPointerDown={(e) => {
+                    e.currentTarget.style.transform = 'scale(0.97)';
+                  }}
+                  onPointerUp={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
+                  onPointerLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
+                >
+                  {/* Active 3px-wide fully rounded amber bar, 6px from left edge, 70% height */}
+                  {isActive && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: '6px',
+                        top: '15%',
+                        height: '70%',
+                        width: '3px',
+                        backgroundColor: AMBER,
+                        borderRadius: '9999px',
+                      }}
+                    />
+                  )}
+
+                  <span
+                    style={{
+                      display: 'block',
+                      whiteSpace: 'normal',
+                      wordBreak: 'normal',
+                      overflowWrap: 'normal',
+                      letterSpacing: '-0.02em',
+                    }}
+                  >
+                    {formatCategoryLabel(cat.name_en)}
+                  </span>
+                </button>
+
+                {/* 1px divider between rows, inset 12px left and 13px right */}
+                {idx < navCategories.length - 1 && !hideDivider && (
+                  <div
+                    style={{
+                      height: '1px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.16)',
+                      marginLeft: '12px',
+                      marginRight: '13px',
+                    }}
+                  />
                 )}
-                {cat.label}
-              </button>
+              </React.Fragment>
             );
           })}
         </nav>
       </aside>
 
-      {/* ══════════════════════════════════════════════════════
-          MAIN PANEL — paper cream, rounded left edge
-      ══════════════════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════════════════════════════
+          2) RIGHT PANEL (Cream #FBF8F3, full scroll, bottom padding for nav)
+      ══════════════════════════════════════════════════════════════════ */}
       <div
+        ref={rightScrollRef}
         style={{
           flex: 1,
-          backgroundColor: PAPER,
-          borderTopLeftRadius: '24px',
-          borderBottomLeftRadius: '24px',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          minWidth: 0,
+          height: '100%',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          backgroundColor: CREAM,
+          position: 'relative',
+          paddingBottom: `calc(72px + ${SAFE_BOTTOM})`, // Nav height + 16px
         }}
       >
-        {/* Scrollable body */}
-        <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
-
-          {/* ── HERO ─────────────────────────────────────────── */}
+        {/* Sticky top-right action row (Search Button + Cart Pill + Badge) */}
+        <div
+          style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 35,
+            display: 'flex',
+            justifyContent: 'flex-end',
+            paddingRight: '12px',
+            paddingTop: `calc(12px + ${SAFE_TOP})`,
+            marginBottom: `calc(-44px - 12px - ${SAFE_TOP})`,
+            pointerEvents: 'none',
+          }}
+        >
           <div
             style={{
-              position: 'relative',
-              height: '260px', // Restored height to accommodate top padding
-              backgroundColor: PAPER,
-              overflow: 'hidden',
-              /* The top-left corner of the panel already has borderRadius from parent,
-                 but the hero needs to clip inside it */
-              borderRadius: '24px 0 0 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              pointerEvents: 'auto',
             }}
           >
-            {/* Food image — positioned right so text reads on the lighter left */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/brand/hero.webp"
-              alt=""
-              aria-hidden
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                objectPosition: 'right center',
-              }}
-            />
-            {/* Gradient Overlay to fade left side into the cream background */}
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: `linear-gradient(to right, ${PAPER} 25%, rgba(251,248,237,0.8) 45%, transparent 100%)`
-            }} />
-
-            {/* Cart pill — top right */}
+            {/* Search circle button: 34px cream circle, dark outline magnifier */}
             <button
-              onClick={() => router.push('/cart')}
+              type="button"
+              onClick={handleFocusSearch}
+              aria-label="Search"
               style={{
-                position: 'absolute',
-                top: '72px', // Pushed down to clear native Telegram buttons
-                right: '16px',
-                zIndex: 10,
+                width: '34px',
+                height: '34px',
+                borderRadius: '50%',
+                backgroundColor: CREAM,
+                border: '1px solid rgba(17, 17, 17, 0.22)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                backgroundColor: CITRUS,
-                borderRadius: '9999px',
-                padding: '10px 18px',
-                border: 'none',
+                justifyContent: 'center',
                 cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                transition: 'transform 0.1s ease',
+              }}
+              onPointerDown={(e) => {
+                e.currentTarget.style.transform = 'scale(0.97)';
+              }}
+              onPointerUp={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
               }}
             >
-              <ShoppingCart style={{ width: '18px', height: '18px', color: FOREST }} />
-              <span style={{ fontSize: '14px', fontWeight: 700, color: FOREST }}>
-                {cartCount > 0 ? `${cartCount} · ` : ''}{formatPrice(cartTotal)}
-              </span>
+              <Search style={{ width: '16px', height: '16px', color: INK }} strokeWidth={2} />
             </button>
 
-            {/* Hero text */}
-            <div style={{ position: 'relative', zIndex: 1, padding: '72px 16px 28px' }}>
-              <h1
+            {/* Cart pill: 31px tall, fully round, forest green fill, 1.5px cream border */}
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic('light');
+                  router.push('/cart');
+                }}
                 style={{
-                  fontSize: '22px', // Reduced from 28px as requested
-                  fontWeight: 800,
-                  lineHeight: 1.2,
-                  color: INK,
-                  margin: 0,
+                  height: '31px',
+                  borderRadius: '9999px',
+                  backgroundColor: FOREST,
+                  border: `1.5px solid ${CREAM}`,
+                  padding: '0 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
+                  transition: 'transform 0.1s ease',
+                }}
+                onPointerDown={(e) => {
+                  e.currentTarget.style.transform = 'scale(0.97)';
+                }}
+                onPointerUp={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
                 }}
               >
-                Good Food<br />Brighter Days
-              </h1>
+                <ShoppingCart style={{ width: '14px', height: '14px', color: '#ffffff' }} strokeWidth={1.75} />
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    color: '#ffffff',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {formatPrice(cartSubtotal)}
+                </span>
+              </button>
+
+              {/* Amber circular badge (19px, white bold 11px item count), overlaps top-right */}
+              {cartCount > 0 && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '-7px',
+                    right: '-5px',
+                    width: '19px',
+                    height: '19px',
+                    borderRadius: '50%',
+                    backgroundColor: AMBER,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1.5px solid #ffffff',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: '#ffffff',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {cartCount}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ── HERO SECTION (~210px tall + top safe inset) ────────────────── */}
+        <div
+          style={{
+            position: 'relative',
+            height: `calc(210px + ${SAFE_TOP})`,
+            width: '100%',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Cover photo anchored right */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={DESIGN_CONFIG.hero.image}
+            alt=""
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'right center',
+            }}
+          />
+
+          {/* Left cream gradient for text legibility */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: `linear-gradient(to right, ${CREAM} 24%, rgba(251, 248, 243, 0.85) 50%, rgba(251, 248, 243, 0.15) 80%, transparent 100%)`,
+            }}
+          />
+
+          {/* Bottom ~50px fade into panel cream */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '50px',
+              background: `linear-gradient(to bottom, transparent 0%, ${CREAM} 100%)`,
+            }}
+          />
+
+          {/* Title at top-left: 12px from edge, ~48px from top (+ safe inset) */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: `calc(48px + ${SAFE_TOP})`,
+              zIndex: 2,
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontWeight: 700,
+                fontSize: '24px',
+                lineHeight: 1.05,
+                color: INK,
+                margin: 0,
+              }}
+            >
+              {DESIGN_CONFIG.hero.titleLine1}
+              <br />
+              {DESIGN_CONFIG.hero.titleLine2}
+            </h2>
+
+            {/* 52x3px rounded amber underline */}
+            <div
+              style={{
+                width: '52px',
+                height: '3px',
+                backgroundColor: AMBER,
+                borderRadius: '9999px',
+                marginTop: '6px',
+              }}
+            />
+
+            {/* Tagline directly over photo */}
+            <p
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '9px',
+                fontWeight: 600,
+                letterSpacing: '0.12em',
+                color: INK,
+                textTransform: 'uppercase',
+                margin: '6px 0 0 0',
+              }}
+            >
+              {DESIGN_CONFIG.hero.tagline}
+            </p>
+          </div>
+        </div>
+
+        {/* ── 3) SEARCH BAR (overlaps bottom of hero by ~24px) ─────────────── */}
+        <div
+          ref={searchBarContainerRef}
+          style={{
+            padding: '0 12px',
+            marginTop: '-24px',
+            position: 'relative',
+            zIndex: 10,
+          }}
+        >
+          <div
+            style={{
+              height: '36px',
+              borderRadius: '12px',
+              backgroundColor: CARD_BG,
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              padding: '0 12px',
+              gap: '10px',
+              border: '1px solid rgba(0, 0, 0, 0.04)',
+            }}
+          >
+            <Search style={{ width: '16px', height: '16px', color: SECONDARY, flexShrink: 0 }} />
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search menu..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                backgroundColor: 'transparent',
+                fontFamily: 'var(--font-sans)',
+                fontSize: '13px',
+                color: INK,
+              }}
+            />
+            {search.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                aria-label="Clear search"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '2px',
+                  cursor: 'pointer',
+                  color: PLACEHOLDER,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <X style={{ width: '14px', height: '14px' }} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* ── CONTENT SECTIONS ────────────────────────────────────────────── */}
+        {loading ? (
+          <div style={{ padding: '16px 12px' }}>
+            <div style={{ height: '24px', width: '120px', backgroundColor: '#EDE7DC', borderRadius: '4px', marginBottom: '8px' }} />
+            <div style={{ height: '3px', width: '52px', backgroundColor: AMBER, borderRadius: '9999px', marginBottom: '16px' }} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    backgroundColor: CARD_BG,
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.06)',
+                  }}
+                >
+                  <div style={{ width: '100%', aspectRatio: '6 / 5', backgroundColor: '#EDE7DC' }} />
+                  <div style={{ padding: '10px' }}>
+                    <div style={{ height: '14px', width: '80%', backgroundColor: '#EDE7DC', borderRadius: '4px', marginBottom: '6px' }} />
+                    <div style={{ height: '10px', width: '100%', backgroundColor: '#EDE7DC', borderRadius: '4px', marginBottom: '12px' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ height: '16px', width: '40px', backgroundColor: '#EDE7DC', borderRadius: '4px' }} />
+                      <div style={{ height: '28px', width: '54px', backgroundColor: '#EDE7DC', borderRadius: '10px' }} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : isSearching ? (
+          /* Search results section */
+          <div style={{ padding: '16px 0 24px' }}>
+            <div style={{ padding: '0 12px 12px' }}>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '24px',
+                  fontWeight: 700,
+                  color: INK,
+                  margin: 0,
+                  lineHeight: 1.1,
+                }}
+              >
+                Search Results
+              </h2>
+              <div
+                style={{
+                  width: '52px',
+                  height: '3px',
+                  backgroundColor: AMBER,
+                  borderRadius: '9999px',
+                  marginTop: '6px',
+                }}
+              />
               <p
                 style={{
-                  fontSize: '10px',
-                  fontWeight: 800,
-                  letterSpacing: '0.1em',
-                  color: INK,
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '13px',
+                  color: SECONDARY,
                   marginTop: '8px',
                   marginBottom: 0,
                 }}
               >
-                HEALTHY BITES, HAPPY HEARTS
+                {searchResults.length} {searchResults.length === 1 ? 'dish' : 'dishes'} found
               </p>
             </div>
-          </div>
 
-          {/* ── SEARCH BAR — floats below hero ───────────────── */}
-          <div style={{ padding: '0 16px', marginTop: '-26px', position: 'relative', zIndex: 10 }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                backgroundColor: '#ffffff',
-                borderRadius: '9999px',
-                padding: '14px 20px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
-              }}
-            >
-              <Search style={{ width: '18px', height: '18px', color: '#9ca3af', flexShrink: 0 }} />
-              <input
-                type="text"
-                placeholder="Search menu..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+            {searchResults.length === 0 ? (
+              <p
                 style={{
-                  flex: 1,
-                  border: 'none',
-                  outline: 'none',
-                  fontSize: '15px',
-                  color: INK,
-                  backgroundColor: 'transparent',
+                  textAlign: 'center',
+                  padding: '36px 12px',
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '13px',
+                  color: SECONDARY,
                 }}
-              />
-              {search.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setSearch('')}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-                >
-                  <X style={{ width: '16px', height: '16px', color: '#9ca3af' }} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* ── SECTION HEADING ──────────────────────────────── */}
-          <div style={{ padding: '20px 14px 10px' }}>
-            <h2
-              style={{
-                fontSize: '18px',
-                fontWeight: 700,
-                color: INK,
-                margin: '0 0 2px',
-                display: 'inline-block',
-                borderBottom: `2.5px solid ${INK}`,
-                paddingBottom: '2px',
-              }}
-            >
-              {activeLabel}
-            </h2>
-            <p style={{ fontSize: '13px', color: MUTED, margin: '4px 0 0' }}>
-              Start your day with something delicious
-            </p>
-          </div>
-
-          {/* ── MENU GRID ─────────────────────────────────────── */}
-          <div style={{ padding: '4px 10px 24px' }}>
-            {loading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
-                <Loader2 style={{ width: '24px', height: '24px', color: FOREST }} className="animate-spin" />
-              </div>
-            ) : filteredItems.length === 0 ? (
-              <p style={{ textAlign: 'center', color: MUTED, fontSize: '14px', padding: '48px 0' }}>
-                No items found
+              >
+                No dishes found
               </p>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                {filteredItems.map((item) => {
-                  const qty = getQty(item.id);
-                  return (
-                    <div
-                      key={item.id}
-                      style={{
-                        backgroundColor: '#ffffff',
-                        borderRadius: '16px',
-                        overflow: 'hidden',
-                        border: `1px solid ${BORDER}`,
-                        boxShadow: '0 2px 8px rgba(16,61,43,0.06)',
-                      }}
-                    >
-                      {/* Square food image */}
-                      <div
-                        style={{
-                          width: '100%',
-                          aspectRatio: '1 / 1',
-                          backgroundColor: '#f0ede4',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        {item.image_path ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={item.image_path}
-                            alt={item.name_en}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                          />
-                        ) : (
-                          <div style={{
-                            width: '100%', height: '100%',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '11px', color: '#9ca3af',
-                          }}>
-                            No photo
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Card body */}
-                      <div style={{ padding: '10px' }}>
-                        <p style={{
-                          fontSize: '14px', fontWeight: 700, color: INK,
-                          margin: '0 0 3px', lineHeight: 1.3,
-                        }}>
-                          {item.name_en}
-                        </p>
-                        {item.description_en && (
-                          <p style={{
-                            fontSize: '11px', color: MUTED, margin: '0 0 8px', lineHeight: 1.4,
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                          }}>
-                            {item.description_en}
-                          </p>
-                        )}
-
-                        {/* Price + Add */}
-                        <div style={{
-                          display: 'flex', alignItems: 'center',
-                          justifyContent: 'space-between', gap: '4px',
-                        }}>
-                          <span style={{ fontSize: '13px', fontWeight: 700, color: INK }}>
-                            {formatPrice(item.base_price_santim)}
-                          </span>
-
-                          {qty === 0 ? (
-                            <button
-                              onClick={() => addItem({
-                                id: item.id,
-                                name_en: item.name_en,
-                                base_price_santim: item.base_price_santim,
-                              })}
-                              style={{
-                                display: 'flex', alignItems: 'center', gap: '4px',
-                                backgroundColor: FOREST, color: '#ffffff',
-                                border: 'none', borderRadius: '8px',
-                                padding: '6px 10px',
-                                fontSize: '12px', fontWeight: 700,
-                                cursor: 'pointer',
-                              }}
-                            >
-                              <Plus style={{ width: '12px', height: '12px' }} />
-                              Add
-                            </button>
-                          ) : (
-                            <div style={{
-                              display: 'flex', alignItems: 'center',
-                              backgroundColor: FOREST, borderRadius: '8px', overflow: 'hidden',
-                            }}>
-                              <button
-                                onClick={() => removeItem(item.id)}
-                                style={{
-                                  background: 'none', border: 'none', color: '#fff',
-                                  padding: '6px 8px', cursor: 'pointer',
-                                  display: 'flex', alignItems: 'center',
-                                }}
-                              >
-                                <Minus style={{ width: '12px', height: '12px' }} />
-                              </button>
-                              <span style={{
-                                fontSize: '12px', fontWeight: 700, color: '#fff',
-                                minWidth: '16px', textAlign: 'center',
-                              }}>
-                                {qty}
-                              </span>
-                              <button
-                                onClick={() => addItem({
-                                  id: item.id,
-                                  name_en: item.name_en,
-                                  base_price_santim: item.base_price_santim,
-                                })}
-                                style={{
-                                  background: 'none', border: 'none', color: '#fff',
-                                  padding: '6px 8px', cursor: 'pointer',
-                                  display: 'flex', alignItems: 'center',
-                                }}
-                              >
-                                <Plus style={{ width: '12px', height: '12px' }} />
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '8px',
+                  padding: '0 12px',
+                }}
+              >
+                {searchResults.map((item) => (
+                  <DishCard
+                    key={item.id}
+                    item={item}
+                    qty={getQty(item.id)}
+                    onAdd={() => {
+                      triggerHaptic('light');
+                      addItem({
+                        id: item.id,
+                        name_en: item.name_en,
+                        base_price_santim: item.base_price_santim,
+                      });
+                    }}
+                    onRemove={() => {
+                      triggerHaptic('light');
+                      removeItem(item.id);
+                    }}
+                  />
+                ))}
               </div>
             )}
           </div>
+        ) : activeCategory === 'all' ? (
+          /* "All" active: Stack every category as its own section with header */
+          <div style={{ padding: '16px 0 24px' }}>
+            {categories.map((cat) => {
+              const catItems = items.filter((it) => it.category_id === cat.id);
+              if (catItems.length === 0) return null;
 
-        </div>{/* end scrollable */}
+              return (
+                <div key={cat.id} style={{ marginBottom: '24px' }}>
+                  {/* Category Section Header */}
+                  <div style={{ padding: '0 12px 12px' }}>
+                    <h2
+                      style={{
+                        fontFamily: 'var(--font-serif)',
+                        fontSize: '24px',
+                        fontWeight: 700,
+                        color: INK,
+                        margin: 0,
+                        lineHeight: 1.1,
+                      }}
+                    >
+                      {cat.name_en}
+                    </h2>
+                    <div
+                      style={{
+                        width: '52px',
+                        height: '3px',
+                        backgroundColor: AMBER,
+                        borderRadius: '9999px',
+                        marginTop: '6px',
+                      }}
+                    />
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '13px',
+                        color: SECONDARY,
+                        marginTop: '8px',
+                        marginBottom: 0,
+                      }}
+                    >
+                      {getCategorySubtitle(cat.name_en)}
+                    </p>
+                  </div>
 
-        {/* Bottom nav inside the right panel */}
-        <BottomNav />
+                  {/* 2-column dish grid */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '8px',
+                      padding: '0 12px',
+                    }}
+                  >
+                    {catItems.map((item) => (
+                      <DishCard
+                        key={item.id}
+                        item={item}
+                        qty={getQty(item.id)}
+                        onAdd={() => {
+                          triggerHaptic('light');
+                          addItem({
+                            id: item.id,
+                            name_en: item.name_en,
+                            base_price_santim: item.base_price_santim,
+                          });
+                        }}
+                        onRemove={() => {
+                          triggerHaptic('light');
+                          removeItem(item.id);
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          /* Single category active */
+          <div style={{ padding: '16px 0 24px' }}>
+            {(() => {
+              const currentCat = categories.find((c) => c.id === activeCategory);
+              const catName = currentCat ? currentCat.name_en : 'Menu';
+              const catItems = items.filter((it) => it.category_id === activeCategory);
+
+              return (
+                <>
+                  <div style={{ padding: '0 12px 12px' }}>
+                    <h2
+                      style={{
+                        fontFamily: 'var(--font-serif)',
+                        fontSize: '24px',
+                        fontWeight: 700,
+                        color: INK,
+                        margin: 0,
+                        lineHeight: 1.1,
+                      }}
+                    >
+                      {catName}
+                    </h2>
+                    <div
+                      style={{
+                        width: '52px',
+                        height: '3px',
+                        backgroundColor: AMBER,
+                        borderRadius: '9999px',
+                        marginTop: '6px',
+                      }}
+                    />
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '13px',
+                        color: SECONDARY,
+                        marginTop: '8px',
+                        marginBottom: 0,
+                      }}
+                    >
+                      {getCategorySubtitle(catName)}
+                    </p>
+                  </div>
+
+                  {catItems.length === 0 ? (
+                    <p
+                      style={{
+                        textAlign: 'center',
+                        padding: '36px 12px',
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '13px',
+                        color: SECONDARY,
+                      }}
+                    >
+                      No items available in this category
+                    </p>
+                  ) : (
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '8px',
+                        padding: '0 12px',
+                      }}
+                    >
+                      {catItems.map((item) => (
+                        <DishCard
+                          key={item.id}
+                          item={item}
+                          qty={getQty(item.id)}
+                          onAdd={() => {
+                            triggerHaptic('light');
+                            addItem({
+                              id: item.id,
+                              name_en: item.name_en,
+                              base_price_santim: item.base_price_santim,
+                            });
+                          }}
+                          onRemove={() => {
+                            triggerHaptic('light');
+                            removeItem(item.id);
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   5) DISH CARD COMPONENT (2 columns, 8px gap, 6:5 photos,
+   one-line dish name, 2-line description clamp, 60x28 Add button
+   with >=40px hit area)
+══════════════════════════════════════════════════════════════════ */
+function DishCard({
+  item,
+  qty,
+  onAdd,
+  onRemove,
+}: {
+  item: MenuItem;
+  qty: number;
+  onAdd: () => void;
+  onRemove: () => void;
+}) {
+  const priceFormatted = `${Math.round(item.base_price_santim / 100)} birr`;
+  const isLongTitle = item.name_en.length > 17;
+
+  return (
+    <div
+      style={{
+        backgroundColor: CARD_BG,
+        borderRadius: '12px',
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.06)',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* 6:5 aspect ratio photo with top corners rounded */}
+      <div
+        style={{
+          width: '100%',
+          aspectRatio: '6 / 5',
+          position: 'relative',
+          backgroundColor: '#EDE7DC',
+          overflow: 'hidden',
+        }}
+      >
+        {item.image_path ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={item.image_path}
+            alt={item.name_en}
+            loading="lazy"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#EDE7DC',
+              gap: '4px',
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={DESIGN_CONFIG.brand.logo}
+              alt=""
+              style={{ width: '28px', height: '28px', borderRadius: '50%', opacity: 0.45, objectFit: 'cover' }}
+            />
+            <span
+              style={{
+                color: '#7A7468',
+                fontFamily: 'var(--font-serif)',
+                fontSize: '10.5px',
+                fontWeight: 600,
+              }}
+            >
+              Taza Greens
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Text area with 9-10px padding */}
+      <div
+        style={{
+          padding: '9px 10px 10px',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          justifyContent: 'space-between',
+        }}
+      >
+        <div>
+          {/* Dish name: serif bold ~14px, ink, one line with tight tracking for long names */}
+          <h3
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: isLongTitle ? '11.5px' : '13.5px',
+              fontWeight: 700,
+              letterSpacing: isLongTitle ? '-0.04em' : '-0.02em',
+              color: INK,
+              margin: 0,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              lineHeight: 1.2,
+            }}
+            title={item.name_en}
+          >
+            {item.name_en}
+          </h3>
+
+          {/* Description: sans ~11px, secondary text #3B3D41, line-height 1.25, clamped to 2 lines */}
+          <p
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: '11px',
+              color: SECONDARY,
+              lineHeight: 1.25,
+              margin: '3px 0 0 0',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              minHeight: '27px',
+            }}
+          >
+            {item.description_en || 'Delicious freshly prepared dish.'}
+          </p>
+        </div>
+
+        {/* Bottom row: Price on left, Add button on right */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '4px',
+            marginTop: '8px',
+          }}
+        >
+          {/* Price: serif bold ~16px, ink */}
+          <span
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '15px',
+              fontWeight: 700,
+              color: INK,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {priceFormatted}
+          </span>
+
+          {/* Add button or Stepper: forest green, radius 10px, 54x28px */}
+          {qty === 0 ? (
+            <button
+              type="button"
+              onClick={onAdd}
+              style={{
+                position: 'relative',
+                width: '54px',
+                height: '28px',
+                borderRadius: '10px',
+                backgroundColor: FOREST,
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '3px',
+                padding: 0,
+                color: '#ffffff',
+                fontFamily: 'var(--font-sans)',
+                fontSize: '12.5px',
+                fontWeight: 500,
+                transition: 'transform 0.1s ease',
+                flexShrink: 0,
+              }}
+              onPointerDown={(e) => {
+                e.currentTarget.style.transform = 'scale(0.97)';
+              }}
+              onPointerUp={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
+              {/* Invisible tap area of at least 40px */}
+              <span
+                style={{
+                  position: 'absolute',
+                  inset: '-6px',
+                  pointerEvents: 'none',
+                }}
+              />
+              <Plus style={{ width: '12px', height: '12px', color: '#ffffff' }} strokeWidth={2.5} />
+              <span>Add</span>
+            </button>
+          ) : (
+            <div
+              style={{
+                width: '54px',
+                height: '28px',
+                borderRadius: '10px',
+                backgroundColor: FOREST,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 3px',
+                flexShrink: 0,
+              }}
+            >
+              <button
+                type="button"
+                onClick={onRemove}
+                aria-label="Decrease quantity"
+                style={{
+                  position: 'relative',
+                  background: 'none',
+                  border: 'none',
+                  color: '#ffffff',
+                  cursor: 'pointer',
+                  padding: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <span style={{ position: 'absolute', inset: '-6px' }} />
+                <Minus style={{ width: '11px', height: '11px' }} strokeWidth={2.5} />
+              </button>
+
+              <span
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '11.5px',
+                  fontWeight: 700,
+                  color: '#ffffff',
+                }}
+              >
+                {qty}
+              </span>
+
+              <button
+                type="button"
+                onClick={onAdd}
+                aria-label="Increase quantity"
+                style={{
+                  position: 'relative',
+                  background: 'none',
+                  border: 'none',
+                  color: '#ffffff',
+                  cursor: 'pointer',
+                  padding: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <span style={{ position: 'absolute', inset: '-6px' }} />
+                <Plus style={{ width: '11px', height: '11px' }} strokeWidth={2.5} />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
