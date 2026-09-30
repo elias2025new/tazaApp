@@ -23,6 +23,7 @@ const FOREST = '#03301C';
 const CREAM = '#FBF8F3';
 const CARD_BG = '#FDFCF9';
 const AMBER = '#EBAA38';
+const LIME = '#c4e32e';
 const INK = '#111111';
 const SECONDARY = '#3B3D41';
 const PLACEHOLDER = '#6B6B6C';
@@ -76,7 +77,7 @@ function formatCategoryLabel(name: string) {
 export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string>('');
+  const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -84,7 +85,6 @@ export default function HomePage() {
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const rightScrollRef = useRef<HTMLDivElement>(null);
-  const searchBarContainerRef = useRef<HTMLDivElement>(null);
 
   const { items: cartItems, addItem, removeItem, count, total } = useCartStore();
   const cartCount = count();
@@ -99,16 +99,7 @@ export default function HomePage() {
         setCategories(fetchedCats);
         setItems(fetchedItems);
         setLoading(false);
-
-        // Spec: Default on first load = Breakfast Specials as in the mockup, or the first real category
-        if (fetchedCats.length > 0) {
-          const breakfast = fetchedCats.find((c) =>
-            c.name_en.toLowerCase().includes('breakfast')
-          );
-          setActiveCategory(breakfast ? breakfast.id : (fetchedCats[0]?.id || 'all'));
-        } else {
-          setActiveCategory('all');
-        }
+        setActiveCategory('all');
       })
       .catch(() => setLoading(false));
   }, []);
@@ -124,16 +115,9 @@ export default function HomePage() {
 
   function handleSelectCategory(catId: string) {
     triggerHaptic('light');
+    if (search) setSearch('');
     setActiveCategory(catId);
     rightScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function handleFocusSearch() {
-    triggerHaptic('light');
-    searchBarContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => {
-      searchInputRef.current?.focus();
-    }, 150);
   }
 
   // Filter items
@@ -354,133 +338,6 @@ export default function HomePage() {
           paddingBottom: `calc(72px + ${SAFE_BOTTOM})`, // Nav height + 16px
         }}
       >
-        {/* Sticky top-right action row (Search Button + Cart Pill + Badge) */}
-        <div
-          style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 35,
-            display: 'flex',
-            justifyContent: 'flex-end',
-            paddingRight: '12px',
-            paddingTop: `calc(90px + ${SAFE_TOP})`,
-            marginBottom: `calc(-44px - 90px - ${SAFE_TOP})`,
-            pointerEvents: 'none',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              pointerEvents: 'auto',
-            }}
-          >
-            {/* Search circle button: 34px cream circle, dark outline magnifier */}
-            <button
-              type="button"
-              onClick={handleFocusSearch}
-              aria-label="Search"
-              style={{
-                width: '34px',
-                height: '34px',
-                borderRadius: '50%',
-                backgroundColor: CREAM,
-                border: '1px solid rgba(17, 17, 17, 0.22)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                transition: 'transform 0.1s ease',
-              }}
-              onPointerDown={(e) => {
-                e.currentTarget.style.transform = 'scale(0.97)';
-              }}
-              onPointerUp={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-              }}
-            >
-              <Search style={{ width: '16px', height: '16px', color: INK }} strokeWidth={2} />
-            </button>
-
-            {/* Cart pill: 31px tall, fully round, forest green fill, 1.5px cream border */}
-            <div style={{ position: 'relative' }}>
-              <button
-                type="button"
-                onClick={() => {
-                  triggerHaptic('light');
-                  router.push('/cart');
-                }}
-                style={{
-                  height: '31px',
-                  borderRadius: '9999px',
-                  backgroundColor: FOREST,
-                  border: `1.5px solid ${CREAM}`,
-                  padding: '0 12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
-                  transition: 'transform 0.1s ease',
-                }}
-                onPointerDown={(e) => {
-                  e.currentTarget.style.transform = 'scale(0.97)';
-                }}
-                onPointerUp={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                }}
-              >
-                <ShoppingCart style={{ width: '14px', height: '14px', color: '#ffffff' }} strokeWidth={1.75} />
-                <span
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    color: '#ffffff',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {formatPrice(cartSubtotal)}
-                </span>
-              </button>
-
-              {/* Amber circular badge (19px, white bold 11px item count), overlaps top-right */}
-              {cartCount > 0 && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '-7px',
-                    right: '-5px',
-                    width: '19px',
-                    height: '19px',
-                    borderRadius: '50%',
-                    backgroundColor: AMBER,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1.5px solid #ffffff',
-                    pointerEvents: 'none',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      color: '#ffffff',
-                      lineHeight: 1,
-                    }}
-                  >
-                    {cartCount}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
         {/* ── HERO SECTION (~285px tall + top safe inset) ────────────────── */}
         <div
           style={{
@@ -579,12 +436,100 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ── 3) SEARCH BAR (overlaps bottom of hero by ~24px) ─────────────── */}
+        {/* Cart Pill (alone, placed directly above the search field) */}
         <div
-          ref={searchBarContainerRef}
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: '0 12px',
+            marginTop: '-44px',
+            marginBottom: '8px',
+            position: 'relative',
+            zIndex: 15,
+          }}
+        >
+          <div style={{ position: 'relative' }}>
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic('light');
+                router.push('/cart');
+              }}
+              aria-label="Cart"
+              style={{
+                height: '32px',
+                borderRadius: '9999px',
+                backgroundColor: LIME,
+                border: 'none',
+                padding: '0 14px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '7px',
+                cursor: 'pointer',
+                boxShadow: '0 3px 10px rgba(0, 0, 0, 0.14)',
+                transition: 'transform 0.1s ease',
+              }}
+              onPointerDown={(e) => {
+                e.currentTarget.style.transform = 'scale(0.97)';
+              }}
+              onPointerUp={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
+              <ShoppingCart style={{ width: '15px', height: '15px', color: FOREST }} strokeWidth={2.2} />
+              <span
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: FOREST,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {formatPrice(cartSubtotal)}
+              </span>
+            </button>
+
+            {/* Item count badge (overlaps top-right corner) */}
+            {cartCount > 0 && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '-7px',
+                  right: '-6px',
+                  minWidth: '19px',
+                  height: '19px',
+                  padding: '0 4px',
+                  borderRadius: '9999px',
+                  backgroundColor: FOREST,
+                  border: '1.5px solid #ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  pointerEvents: 'none',
+                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    color: '#ffffff',
+                    lineHeight: 1,
+                  }}
+                >
+                  {cartCount}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── 3) SEARCH BAR ──────────────────────────────────────────────── */}
+        <div
           style={{
             padding: '0 12px',
-            marginTop: '-24px',
             position: 'relative',
             zIndex: 10,
           }}
