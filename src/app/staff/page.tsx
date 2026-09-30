@@ -36,8 +36,10 @@ type MenuItem = {
   image_path: string | null;
 };
 
+const DEFAULT_BADGE = { label: 'Pending Approval', bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200' };
+
 const STATUS_BADGE: Record<string, { label: string; bg: string; text: string; border: string }> = {
-  pending:          { label: 'Pending Approval', bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200' },
+  pending:          DEFAULT_BADGE,
   accepted:         { label: 'Accepted',         bg: 'bg-blue-50',  text: 'text-blue-800',  border: 'border-blue-200' },
   preparing:        { label: 'In Kitchen',       bg: 'bg-purple-50',text: 'text-purple-800',border: 'border-purple-200' },
   ready:            { label: 'Ready',            bg: 'bg-emerald-50',text: 'text-emerald-800',border: 'border-emerald-200' },
@@ -765,7 +767,7 @@ export default function StaffDashboard() {
               ) : (
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-5">
                   {displayedOrders.map((order) => {
-                    const statusMeta = STATUS_BADGE[order.status] ?? STATUS_BADGE.pending;
+                    const statusMeta = STATUS_BADGE[order.status] ?? DEFAULT_BADGE;
                     const isPending = order.status === 'pending';
 
                     return (
