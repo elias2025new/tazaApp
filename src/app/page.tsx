@@ -233,8 +233,8 @@ export default function HomePage() {
           <div
             style={{
               position: 'relative',
-              height: '265px', // Increased 5px to match shifted content
-              backgroundColor: '#dff0e8',
+              height: '220px',
+              backgroundColor: PAPER,
               overflow: 'hidden',
               /* The top-left corner of the panel already has borderRadius from parent,
                  but the hero needs to clip inside it */
@@ -254,37 +254,42 @@ export default function HomePage() {
                 height: '100%',
                 objectFit: 'cover',
                 objectPosition: 'right center',
-                opacity: 0.9,
               }}
             />
+            {/* Gradient Overlay to fade left side into the cream background */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: `linear-gradient(to right, ${PAPER} 25%, rgba(251,248,237,0.8) 45%, transparent 100%)`
+            }} />
 
             {/* Cart pill — top right */}
             <button
               onClick={() => router.push('/cart')}
               style={{
                 position: 'absolute',
-                top: '77px', // Pushed down 5px more
-                right: '14px',
+                top: '24px',
+                right: '16px',
                 zIndex: 10,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '8px',
                 backgroundColor: CITRUS,
                 borderRadius: '9999px',
-                padding: '8px 14px',
+                padding: '10px 18px',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.18)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
               }}
             >
-              <ShoppingCart style={{ width: '16px', height: '16px', color: FOREST }} />
-              <span style={{ fontSize: '13px', fontWeight: 700, color: FOREST }}>
+              <ShoppingCart style={{ width: '18px', height: '18px', color: FOREST }} />
+              <span style={{ fontSize: '14px', fontWeight: 700, color: FOREST }}>
                 {cartCount > 0 ? `${cartCount} · ` : ''}{formatPrice(cartTotal)}
               </span>
             </button>
 
             {/* Hero text */}
-            <div style={{ position: 'relative', zIndex: 1, padding: '85px 16px 28px' }}>
+            <div style={{ position: 'relative', zIndex: 1, padding: '24px 16px 28px' }}>
               <h1
                 style={{
                   fontSize: '28px',
@@ -299,10 +304,10 @@ export default function HomePage() {
               <p
                 style={{
                   fontSize: '10px',
-                  fontWeight: 700,
+                  fontWeight: 800,
                   letterSpacing: '0.1em',
                   color: INK,
-                  marginTop: '6px',
+                  marginTop: '8px',
                   marginBottom: 0,
                 }}
               >
@@ -312,19 +317,19 @@ export default function HomePage() {
           </div>
 
           {/* ── SEARCH BAR — floats below hero ───────────────── */}
-          <div style={{ padding: '0 12px', marginTop: '-20px', position: 'relative', zIndex: 10 }}>
+          <div style={{ padding: '0 16px', marginTop: '-26px', position: 'relative', zIndex: 10 }}>
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px',
+                gap: '12px',
                 backgroundColor: '#ffffff',
-                borderRadius: '14px',
-                padding: '12px 16px',
-                boxShadow: '0 4px 18px rgba(0,0,0,0.12)',
+                borderRadius: '9999px',
+                padding: '14px 20px',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
               }}
             >
-              <Search style={{ width: '16px', height: '16px', color: '#9ca3af', flexShrink: 0 }} />
+              <Search style={{ width: '18px', height: '18px', color: '#9ca3af', flexShrink: 0 }} />
               <input
                 type="text"
                 placeholder="Search menu..."
