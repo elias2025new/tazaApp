@@ -163,12 +163,12 @@ export default function HomePage() {
           borderRight: 'none',
         }}
       >
-        {/* Brand block: left-aligned, 12px left padding, 90px top padding (clears Telegram overlay buttons) */}
+        {/* Brand block: left-aligned, 12px left padding, compact top padding (clears Telegram overlay buttons) */}
         <div
           style={{
             paddingLeft: '12px',
             paddingRight: '6px',
-            paddingTop: `calc(90px + ${SAFE_TOP})`,
+            paddingTop: `calc(48px + ${SAFE_TOP})`,
             paddingBottom: '12px',
             display: 'flex',
             flexDirection: 'column',
@@ -177,8 +177,8 @@ export default function HomePage() {
         >
           <div
             style={{
-              width: '66px',
-              height: '66px',
+              width: '58px',
+              height: '58px',
               borderRadius: '50%',
               overflow: 'hidden',
               backgroundColor: 'rgba(251, 248, 243, 0.12)',
@@ -328,145 +328,49 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════════════════ */}
       <div
         ref={rightScrollRef}
+        id="right-panel-scroll"
         style={{
           flex: 1,
           height: '100%',
           overflowY: 'auto',
-          overflowX: 'hidden',
+          overflowX: 'clip',
           backgroundColor: CREAM,
           position: 'relative',
           paddingBottom: `calc(72px + ${SAFE_BOTTOM})`, // Nav height + 16px
         }}
       >
-        {/* ── HERO SECTION (~285px tall + top safe inset) ────────────────── */}
+        {/* Sticky floating cart pill at top-right (clears Telegram top buttons, stays visible when scrolling) */}
         <div
           style={{
-            position: 'relative',
-            height: `calc(285px + ${SAFE_TOP})`,
-            width: '100%',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Cover photo anchored right */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={DESIGN_CONFIG.hero.image}
-            alt=""
-            aria-hidden
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'right center',
-            }}
-          />
-
-          {/* Left cream gradient for text legibility */}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: `linear-gradient(to right, ${CREAM} 24%, rgba(251, 248, 243, 0.85) 50%, rgba(251, 248, 243, 0.15) 80%, transparent 100%)`,
-            }}
-          />
-
-          {/* Bottom ~50px fade into panel cream */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: '50px',
-              background: `linear-gradient(to bottom, transparent 0%, ${CREAM} 100%)`,
-            }}
-          />
-
-          {/* Title at top-left: 12px from edge, 90px from top (+ safe inset) */}
-          <div
-            style={{
-              position: 'absolute',
-              left: '12px',
-              top: `calc(90px + ${SAFE_TOP})`,
-              zIndex: 2,
-            }}
-          >
-            <h2
-              style={{
-                fontFamily: 'var(--font-serif)',
-                fontWeight: 700,
-                fontSize: '24px',
-                lineHeight: 1.05,
-                color: INK,
-                margin: 0,
-              }}
-            >
-              {DESIGN_CONFIG.hero.titleLine1}
-              <br />
-              {DESIGN_CONFIG.hero.titleLine2}
-            </h2>
-
-            {/* 52x3px rounded amber underline */}
-            <div
-              style={{
-                width: '52px',
-                height: '3px',
-                backgroundColor: AMBER,
-                borderRadius: '9999px',
-                marginTop: '6px',
-              }}
-            />
-
-            {/* Tagline directly over photo */}
-            <p
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '9px',
-                fontWeight: 600,
-                letterSpacing: '0.12em',
-                color: INK,
-                textTransform: 'uppercase',
-                margin: '6px 0 0 0',
-              }}
-            >
-              {DESIGN_CONFIG.hero.tagline}
-            </p>
-          </div>
-        </div>
-
-        {/* Cart Pill (alone, placed directly above the search field) */}
-        <div
-          style={{
+            position: 'sticky',
+            top: `calc(48px + ${SAFE_TOP})`,
+            zIndex: 40,
             display: 'flex',
             justifyContent: 'flex-end',
-            padding: '0 12px',
-            marginTop: '-44px',
-            marginBottom: '8px',
-            position: 'relative',
-            zIndex: 15,
+            paddingRight: '12px',
+            marginBottom: '-32px',
+            pointerEvents: 'none',
           }}
         >
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', pointerEvents: 'auto' }}>
             <button
               type="button"
               onClick={() => {
                 triggerHaptic('light');
                 router.push('/cart');
               }}
-              aria-label="Cart"
+              aria-label="View cart"
               style={{
                 height: '32px',
                 borderRadius: '9999px',
                 backgroundColor: LIME,
-                border: 'none',
-                padding: '0 14px',
+                border: '1px solid rgba(3, 48, 28, 0.12)',
+                padding: '0 13px',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '7px',
+                gap: '6px',
                 cursor: 'pointer',
-                boxShadow: '0 3px 10px rgba(0, 0, 0, 0.14)',
+                boxShadow: '0 3px 12px rgba(0, 0, 0, 0.16)',
                 transition: 'transform 0.1s ease',
               }}
               onPointerDown={(e) => {
@@ -526,10 +430,109 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* ── HERO SECTION (compact ~145px tall + top safe inset) ─────────── */}
+        <div
+          style={{
+            position: 'relative',
+            height: `calc(145px + ${SAFE_TOP})`,
+            width: '100%',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Cover photo anchored right */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={DESIGN_CONFIG.hero.image}
+            alt=""
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'right center',
+            }}
+          />
+
+          {/* Left cream gradient for text legibility */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: `linear-gradient(to right, ${CREAM} 24%, rgba(251, 248, 243, 0.85) 50%, rgba(251, 248, 243, 0.15) 80%, transparent 100%)`,
+            }}
+          />
+
+          {/* Bottom ~32px fade into panel cream */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '32px',
+              background: `linear-gradient(to bottom, transparent 0%, ${CREAM} 100%)`,
+            }}
+          />
+
+          {/* Title at top-left: 12px from edge, 48px from top (+ safe inset) */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: `calc(48px + ${SAFE_TOP})`,
+              zIndex: 2,
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontWeight: 700,
+                fontSize: '22px',
+                lineHeight: 1.05,
+                color: INK,
+                margin: 0,
+              }}
+            >
+              {DESIGN_CONFIG.hero.titleLine1}
+              <br />
+              {DESIGN_CONFIG.hero.titleLine2}
+            </h2>
+
+            {/* 44x3px rounded amber underline */}
+            <div
+              style={{
+                width: '44px',
+                height: '3px',
+                backgroundColor: AMBER,
+                borderRadius: '9999px',
+                marginTop: '5px',
+              }}
+            />
+
+            {/* Tagline directly over photo */}
+            <p
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '8.5px',
+                fontWeight: 600,
+                letterSpacing: '0.12em',
+                color: INK,
+                textTransform: 'uppercase',
+                margin: '5px 0 0 0',
+              }}
+            >
+              {DESIGN_CONFIG.hero.tagline}
+            </p>
+          </div>
+        </div>
+
         {/* ── 3) SEARCH BAR ──────────────────────────────────────────────── */}
         <div
           style={{
             padding: '0 12px',
+            marginTop: '-12px',
             position: 'relative',
             zIndex: 10,
           }}
@@ -696,37 +699,22 @@ export default function HomePage() {
             )}
           </div>
         ) : activeCategory === 'all' ? (
-          /* "All" active: Master Header + Quick-Jump Chips + Stack every category as its own section */
+          /* "All" active: Interleaved dishes from all categories in a unified 2-column grid */
           <div style={{ padding: '16px 0 24px' }}>
-            {/* Master "All Categories" Header */}
+            {/* Header */}
             <div style={{ padding: '0 12px 14px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <h2
-                  style={{
-                    fontFamily: 'var(--font-serif)',
-                    fontSize: '24px',
-                    fontWeight: 700,
-                    color: INK,
-                    margin: 0,
-                    lineHeight: 1.1,
-                  }}
-                >
-                  All Categories
-                </h2>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    color: SECONDARY,
-                    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                    padding: '3px 10px',
-                    borderRadius: '9999px',
-                  }}
-                >
-                  {items.length} {items.length === 1 ? 'dish' : 'dishes'}
-                </span>
-              </div>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '24px',
+                  fontWeight: 700,
+                  color: INK,
+                  margin: 0,
+                  lineHeight: 1.1,
+                }}
+              >
+                All
+              </h2>
               <div
                 style={{
                   width: '52px',
@@ -749,162 +737,78 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Quick-jump category chips */}
-            <div
-              style={{
-                display: 'flex',
-                gap: '6px',
-                overflowX: 'auto',
-                padding: '0 12px 16px',
-                scrollbarWidth: 'none',
-                WebkitOverflowScrolling: 'touch',
-              }}
-            >
-              {categories.map((cat) => {
-                const count = items.filter((it) => it.category_id === cat.id).length;
-                if (count === 0) return null;
+            {/* Interleaved 2-column dish grid */}
+            {(() => {
+              const interleavedItems: MenuItem[] = [];
+              const categoryBuckets = categories.map((cat) =>
+                items.filter((it) => it.category_id === cat.id)
+              );
+              const maxCount = Math.max(0, ...categoryBuckets.map((b) => b.length));
+
+              for (let i = 0; i < maxCount; i++) {
+                for (const bucket of categoryBuckets) {
+                  const item = bucket[i];
+                  if (item) {
+                    interleavedItems.push(item);
+                  }
+                }
+              }
+
+              // Include any remaining items not matching active categories
+              const addedIds = new Set(interleavedItems.map((it) => it.id));
+              for (const it of items) {
+                if (!addedIds.has(it.id)) {
+                  interleavedItems.push(it);
+                }
+              }
+
+              if (interleavedItems.length === 0) {
                 return (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => {
-                      triggerHaptic('light');
-                      const el = document.getElementById(`cat-section-${cat.id}`);
-                      if (el) {
-                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }
-                    }}
+                  <p
                     style={{
-                      flexShrink: 0,
-                      padding: '5px 11px',
-                      borderRadius: '9999px',
-                      backgroundColor: CARD_BG,
-                      border: '1px solid rgba(0, 0, 0, 0.08)',
-                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+                      textAlign: 'center',
+                      padding: '36px 12px',
                       fontFamily: 'var(--font-sans)',
-                      fontSize: '11.5px',
-                      fontWeight: 600,
-                      color: INK,
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      whiteSpace: 'nowrap',
+                      fontSize: '13px',
+                      color: SECONDARY,
                     }}
                   >
-                    {cat.emoji && <span>{cat.emoji}</span>}
-                    <span>{cat.name_en}</span>
-                    <span style={{ fontSize: '10.5px', color: PLACEHOLDER }}>({count})</span>
-                  </button>
+                    No dishes available
+                  </p>
                 );
-              })}
-            </div>
-
-            {/* Stacked Category Sections */}
-            {categories.map((cat, catIdx) => {
-              const catItems = items.filter((it) => it.category_id === cat.id);
-              if (catItems.length === 0) return null;
+              }
 
               return (
-                <div key={cat.id} id={`cat-section-${cat.id}`} style={{ marginBottom: '28px' }}>
-                  {/* Category Section Header */}
-                  <div style={{ padding: '0 12px 10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <h3
-                        style={{
-                          fontFamily: 'var(--font-serif)',
-                          fontSize: '20px',
-                          fontWeight: 700,
-                          color: INK,
-                          margin: 0,
-                          lineHeight: 1.15,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                        }}
-                      >
-                        {cat.emoji && <span>{cat.emoji}</span>}
-                        <span>{cat.name_en}</span>
-                      </h3>
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-sans)',
-                          fontSize: '11px',
-                          fontWeight: 600,
-                          color: SECONDARY,
-                          backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                          padding: '2px 8px',
-                          borderRadius: '9999px',
-                        }}
-                      >
-                        {catItems.length} {catItems.length === 1 ? 'item' : 'items'}
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        width: '36px',
-                        height: '2.5px',
-                        backgroundColor: AMBER,
-                        borderRadius: '9999px',
-                        marginTop: '5px',
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '8px',
+                    padding: '0 12px',
+                  }}
+                >
+                  {interleavedItems.map((item) => (
+                    <DishCard
+                      key={item.id}
+                      item={item}
+                      qty={getQty(item.id)}
+                      onAdd={() => {
+                        triggerHaptic('light');
+                        addItem({
+                          id: item.id,
+                          name_en: item.name_en,
+                          base_price_santim: item.base_price_santim,
+                        });
+                      }}
+                      onRemove={() => {
+                        triggerHaptic('light');
+                        removeItem(item.id);
                       }}
                     />
-                    <p
-                      style={{
-                        fontFamily: 'var(--font-sans)',
-                        fontSize: '12px',
-                        color: SECONDARY,
-                        marginTop: '6px',
-                        marginBottom: 0,
-                      }}
-                    >
-                      {getCategorySubtitle(cat.name_en)}
-                    </p>
-                  </div>
-
-                  {/* 2-column dish grid */}
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '8px',
-                      padding: '0 12px',
-                    }}
-                  >
-                    {catItems.map((item) => (
-                      <DishCard
-                        key={item.id}
-                        item={item}
-                        qty={getQty(item.id)}
-                        onAdd={() => {
-                          triggerHaptic('light');
-                          addItem({
-                            id: item.id,
-                            name_en: item.name_en,
-                            base_price_santim: item.base_price_santim,
-                          });
-                        }}
-                        onRemove={() => {
-                          triggerHaptic('light');
-                          removeItem(item.id);
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Divider between categories */}
-                  {catIdx < categories.length - 1 && (
-                    <div
-                      style={{
-                        height: '1px',
-                        backgroundColor: 'rgba(0, 0, 0, 0.07)',
-                        margin: '24px 12px 0',
-                      }}
-                    />
-                  )}
+                  ))}
                 </div>
               );
-            })}
+            })()}
           </div>
         ) : (
           /* Single category active */
