@@ -165,7 +165,7 @@ export default function HomePage() {
         }} />
 
         {/* Category list */}
-        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '4px 0 16px' }}>
+        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '12px 0 24px', gap: '4px' }}>
           {navItems.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
@@ -173,24 +173,37 @@ export default function HomePage() {
                 key={cat.id}
                 onClick={() => selectCategory(cat.id)}
                 style={{
-                  /* Full rounded pill, inset 8px from both edges */
+                  position: 'relative',
                   display: 'block',
-                  width: 'calc(100% - 16px)',
-                  margin: '2px 8px',
-                  padding: '9px 6px',
+                  width: 'calc(100% - 12px)', // Inset from left, flush to right panel
+                  marginLeft: '12px',
+                  padding: '12px 14px',
                   border: 'none',
                   cursor: 'pointer',
-                  borderRadius: '9999px',
-                  textAlign: 'center',
-                  fontSize: '12.5px',
+                  // Rounded left corners, flat right corners to seamlessly join the main panel
+                  borderRadius: isActive ? '16px 0 0 16px' : '0',
+                  textAlign: 'left',
+                  fontSize: '13px',
                   fontWeight: isActive ? 700 : 400,
                   lineHeight: 1.35,
-                  /* Active: paper cream (same as content panel) → looks connected */
                   backgroundColor: isActive ? PAPER : 'transparent',
-                  color: isActive ? FOREST : 'rgba(255,255,255,0.78)',
+                  color: isActive ? INK : 'rgba(255,255,255,0.7)',
                   transition: 'background-color 0.15s, color 0.15s',
                 }}
               >
+                {/* Terracotta accent line for active item */}
+                {isActive && (
+                  <div style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    width: '3px',
+                    height: '16px',
+                    backgroundColor: '#c66f45',
+                    borderRadius: '0 2px 2px 0'
+                  }} />
+                )}
                 {cat.label}
               </button>
             );
