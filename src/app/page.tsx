@@ -233,7 +233,7 @@ export default function HomePage() {
           <div
             style={{
               position: 'relative',
-              height: '220px',
+              height: '260px', // Restored height to accommodate top padding
               backgroundColor: PAPER,
               overflow: 'hidden',
               /* The top-left corner of the panel already has borderRadius from parent,
@@ -268,7 +268,7 @@ export default function HomePage() {
               onClick={() => router.push('/cart')}
               style={{
                 position: 'absolute',
-                top: '24px',
+                top: '72px', // Pushed down to clear native Telegram buttons
                 right: '16px',
                 zIndex: 10,
                 display: 'flex',
@@ -289,12 +289,12 @@ export default function HomePage() {
             </button>
 
             {/* Hero text */}
-            <div style={{ position: 'relative', zIndex: 1, padding: '24px 16px 28px' }}>
+            <div style={{ position: 'relative', zIndex: 1, padding: '72px 16px 28px' }}>
               <h1
                 style={{
-                  fontSize: '28px',
+                  fontSize: '22px', // Reduced from 28px as requested
                   fontWeight: 800,
-                  lineHeight: 1.15,
+                  lineHeight: 1.2,
                   color: INK,
                   margin: 0,
                 }}
