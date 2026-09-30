@@ -16,7 +16,7 @@ export function BottomNav() {
   return (
     <nav
       className="shrink-0 border-t"
-      style={{ backgroundColor: '#ffffff', borderColor: '#ece7d4' }}
+      style={{ backgroundColor: '#fbf8ed', borderColor: '#d8d0bb' }}
     >
       <div className="flex h-16 items-center justify-around px-4">
         {navItems.map((item) => {

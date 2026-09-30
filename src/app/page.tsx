@@ -18,24 +18,26 @@ type MenuItem = {
   is_available: boolean;
 };
 
-const FOREST = '#103d2b';
-const INK = '#12291f';
-const MUTED = '#5c7063';
-const CITRUS = '#c8e72f';
-const BORDER = '#ece7d4';
+/* ── Brand tokens ──────────────────────────────────── */
+const FOREST = '#103d2b';   // dark green — sidebar, buttons
+const INK    = '#12291f';   // near-black text
+const MUTED  = '#5c7063';   // secondary text
+const CITRUS = '#c8e72f';   // yellow-green — cart pill
+const PAPER  = '#fbf8ed';   // warm cream — content panel bg + active pill
+const BORDER = '#d8d0bb';   // warm gray border
 
 export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [items, setItems] = useState<MenuItem[]>([]);
+  const [items, setItems]           = useState<MenuItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [search, setSearch] = useState('');
+  const [search, setSearch]         = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [loading, setLoading]       = useState(true);
+  const router    = useRouter();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { items: cartItems, addItem, removeItem, count, total } = useCartStore();
-  const cartCount = count();
+  const cartCount    = count();
   const cartSubtotal = total();
   const { total: cartTotal } = calcOrderTotals(cartSubtotal);
 
@@ -56,7 +58,7 @@ export default function HomePage() {
   }, [search]);
 
   const filteredItems = items.filter((item) => {
-    const matchCat = activeCategory === 'all' || item.category_id === activeCategory;
+    const matchCat    = activeCategory === 'all' || item.category_id === activeCategory;
     const matchSearch = item.name_en.toLowerCase().includes(debouncedSearch.toLowerCase());
     return matchCat && matchSearch;
   });
@@ -80,21 +82,23 @@ export default function HomePage() {
     scrollRef.current?.scrollTo({ top: 0 });
   }
 
+  /* ─────────────────────────────────────────────────────────────────── */
   return (
     <div
       style={{
         display: 'flex',
         height: '100dvh',
         overflow: 'hidden',
-        backgroundColor: FOREST,
+        backgroundColor: FOREST,   // fills the gap behind the sidebar
       }}
     >
-      {/* ══════════════════════════════════════════════
-          SIDEBAR
-      ══════════════════════════════════════════════ */}
+
+      {/* ══════════════════════════════════════════════════════
+          SIDEBAR — forest green, 105px wide
+      ══════════════════════════════════════════════════════ */}
       <aside
         style={{
-          width: '100px',
+          width: '105px',
           flexShrink: 0,
           backgroundColor: FOREST,
           display: 'flex',
@@ -109,7 +113,7 @@ export default function HomePage() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: '20px 8px 14px',
+            padding: '22px 8px 14px',
             gap: '6px',
           }}
         >
@@ -132,19 +136,36 @@ export default function HomePage() {
               style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '50%' }}
             />
           </div>
-          <p style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textAlign: 'center', lineHeight: 1.3, margin: 0 }}>
+          <p style={{
+            color: '#ffffff',
+            fontSize: '11px',
+            fontWeight: 700,
+            textAlign: 'center',
+            lineHeight: 1.3,
+            margin: 0,
+          }}>
             Taza Greens
           </p>
-          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '9px', textAlign: 'center', lineHeight: 1.4, margin: 0 }}>
+          <p style={{
+            color: 'rgba(255,255,255,0.5)',
+            fontSize: '9px',
+            textAlign: 'center',
+            lineHeight: 1.4,
+            margin: 0,
+          }}>
             Bole Rwanda,<br />Addis Ababa
           </p>
         </div>
 
         {/* Divider */}
-        <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.12)', margin: '0 12px 6px' }} />
+        <div style={{
+          height: '1px',
+          backgroundColor: 'rgba(255,255,255,0.12)',
+          margin: '0 10px 4px',
+        }} />
 
         {/* Category list */}
-        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: '16px' }}>
+        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '4px 0 16px' }}>
           {navItems.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
@@ -152,21 +173,21 @@ export default function HomePage() {
                 key={cat.id}
                 onClick={() => selectCategory(cat.id)}
                 style={{
+                  /* Full rounded pill, inset 8px from both edges */
                   display: 'block',
-                  width: '100%',
-                  textAlign: 'left',
-                  padding: '10px 0 10px 14px',
-                  fontSize: '13px',
-                  fontWeight: isActive ? 600 : 400,
-                  lineHeight: 1.35,
-                  color: isActive ? FOREST : 'rgba(255,255,255,0.75)',
-                  backgroundColor: isActive ? '#ffffff' : 'transparent',
+                  width: 'calc(100% - 16px)',
+                  margin: '2px 8px',
+                  padding: '9px 6px',
                   border: 'none',
                   cursor: 'pointer',
-                  /* Rounded left side only — connects flush to white panel on the right */
-                  borderRadius: isActive ? '20px 0 0 20px' : '0',
-                  marginLeft: isActive ? '8px' : '0',
-                  paddingLeft: isActive ? '14px' : '14px',
+                  borderRadius: '9999px',
+                  textAlign: 'center',
+                  fontSize: '12.5px',
+                  fontWeight: isActive ? 700 : 400,
+                  lineHeight: 1.35,
+                  /* Active: paper cream (same as content panel) → looks connected */
+                  backgroundColor: isActive ? PAPER : 'transparent',
+                  color: isActive ? FOREST : 'rgba(255,255,255,0.78)',
                   transition: 'background-color 0.15s, color 0.15s',
                 }}
               >
@@ -177,13 +198,13 @@ export default function HomePage() {
         </nav>
       </aside>
 
-      {/* ══════════════════════════════════════════════
-          MAIN PANEL
-      ══════════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════════════════
+          MAIN PANEL — paper cream, rounded left edge
+      ══════════════════════════════════════════════════════ */}
       <div
         style={{
           flex: 1,
-          backgroundColor: '#ffffff',
+          backgroundColor: PAPER,
           borderTopLeftRadius: '24px',
           borderBottomLeftRadius: '24px',
           display: 'flex',
@@ -195,16 +216,19 @@ export default function HomePage() {
         {/* Scrollable body */}
         <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
 
-          {/* ── HERO ─────────────────────────────────── */}
+          {/* ── HERO ─────────────────────────────────────────── */}
           <div
             style={{
               position: 'relative',
-              minHeight: '190px',
-              backgroundColor: '#c9e6d4',
+              height: '200px',
+              backgroundColor: '#dff0e8',
               overflow: 'hidden',
+              /* The top-left corner of the panel already has borderRadius from parent,
+                 but the hero needs to clip inside it */
+              borderRadius: '24px 0 0 0',
             }}
           >
-            {/* Background food image */}
+            {/* Food image — positioned right so text reads on the lighter left */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/brand/hero.webp"
@@ -216,12 +240,12 @@ export default function HomePage() {
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                objectPosition: 'center',
-                opacity: 0.75,
+                objectPosition: 'right center',
+                opacity: 0.9,
               }}
             />
 
-            {/* Cart pill — absolute top-right */}
+            {/* Cart pill — top right */}
             <button
               onClick={() => router.push('/cart')}
               style={{
@@ -237,7 +261,7 @@ export default function HomePage() {
                 padding: '8px 14px',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.18)',
               }}
             >
               <ShoppingCart style={{ width: '16px', height: '16px', color: FOREST }} />
@@ -246,11 +270,11 @@ export default function HomePage() {
               </span>
             </button>
 
-            {/* Hero text — sits on top of image */}
-            <div style={{ position: 'relative', zIndex: 1, padding: '20px 16px 24px' }}>
+            {/* Hero text */}
+            <div style={{ position: 'relative', zIndex: 1, padding: '22px 16px 28px' }}>
               <h1
                 style={{
-                  fontSize: '26px',
+                  fontSize: '28px',
                   fontWeight: 800,
                   lineHeight: 1.15,
                   color: INK,
@@ -274,7 +298,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ── SEARCH BAR — floats below hero ───────── */}
+          {/* ── SEARCH BAR — floats below hero ───────────────── */}
           <div style={{ padding: '0 12px', marginTop: '-20px', position: 'relative', zIndex: 10 }}>
             <div
               style={{
@@ -284,7 +308,7 @@ export default function HomePage() {
                 backgroundColor: '#ffffff',
                 borderRadius: '14px',
                 padding: '12px 16px',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+                boxShadow: '0 4px 18px rgba(0,0,0,0.12)',
               }}
             >
               <Search style={{ width: '16px', height: '16px', color: '#9ca3af', flexShrink: 0 }} />
@@ -297,7 +321,7 @@ export default function HomePage() {
                   flex: 1,
                   border: 'none',
                   outline: 'none',
-                  fontSize: '14px',
+                  fontSize: '15px',
                   color: INK,
                   backgroundColor: 'transparent',
                 }}
@@ -314,7 +338,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ── SECTION HEADING ──────────────────────── */}
+          {/* ── SECTION HEADING ──────────────────────────────── */}
           <div style={{ padding: '20px 14px 10px' }}>
             <h2
               style={{
@@ -334,24 +358,18 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* ── MENU GRID ────────────────────────────── */}
-          <div style={{ padding: '4px 10px 100px' }}>
+          {/* ── MENU GRID ─────────────────────────────────────── */}
+          <div style={{ padding: '4px 10px 24px' }}>
             {loading ? (
               <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
-                <Loader2 style={{ width: '24px', height: '24px', color: FOREST, animation: 'spin 1s linear infinite' }} />
+                <Loader2 style={{ width: '24px', height: '24px', color: FOREST }} className="animate-spin" />
               </div>
             ) : filteredItems.length === 0 ? (
               <p style={{ textAlign: 'center', color: MUTED, fontSize: '14px', padding: '48px 0' }}>
                 No items found
               </p>
             ) : (
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '10px',
-                }}
-              >
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 {filteredItems.map((item) => {
                   const qty = getQty(item.id);
                   return (
@@ -365,11 +383,11 @@ export default function HomePage() {
                         boxShadow: '0 2px 8px rgba(16,61,43,0.06)',
                       }}
                     >
-                      {/* Item image */}
+                      {/* Square food image */}
                       <div
                         style={{
                           width: '100%',
-                          aspectRatio: '4/3',
+                          aspectRatio: '1 / 1',
                           backgroundColor: '#f0ede4',
                           overflow: 'hidden',
                         }}
@@ -382,54 +400,58 @@ export default function HomePage() {
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           />
                         ) : (
-                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', color: '#9ca3af' }}>
+                          <div style={{
+                            width: '100%', height: '100%',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '11px', color: '#9ca3af',
+                          }}>
                             No photo
                           </div>
                         )}
                       </div>
 
-                      {/* Item details */}
+                      {/* Card body */}
                       <div style={{ padding: '10px' }}>
-                        <p style={{ fontSize: '14px', fontWeight: 700, color: INK, margin: '0 0 3px', lineHeight: 1.3 }}>
+                        <p style={{
+                          fontSize: '14px', fontWeight: 700, color: INK,
+                          margin: '0 0 3px', lineHeight: 1.3,
+                        }}>
                           {item.name_en}
                         </p>
                         {item.description_en && (
-                          <p
-                            style={{
-                              fontSize: '11px',
-                              color: MUTED,
-                              margin: '0 0 8px',
-                              lineHeight: 1.4,
-                              display: '-webkit-box',
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden',
-                            }}
-                          >
+                          <p style={{
+                            fontSize: '11px', color: MUTED, margin: '0 0 8px', lineHeight: 1.4,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}>
                             {item.description_en}
                           </p>
                         )}
 
-                        {/* Price row */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px' }}>
+                        {/* Price + Add */}
+                        <div style={{
+                          display: 'flex', alignItems: 'center',
+                          justifyContent: 'space-between', gap: '4px',
+                        }}>
                           <span style={{ fontSize: '13px', fontWeight: 700, color: INK }}>
                             {formatPrice(item.base_price_santim)}
                           </span>
 
                           {qty === 0 ? (
                             <button
-                              onClick={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
+                              onClick={() => addItem({
+                                id: item.id,
+                                name_en: item.name_en,
+                                base_price_santim: item.base_price_santim,
+                              })}
                               style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '4px',
-                                backgroundColor: FOREST,
-                                color: '#ffffff',
-                                border: 'none',
-                                borderRadius: '8px',
+                                display: 'flex', alignItems: 'center', gap: '4px',
+                                backgroundColor: FOREST, color: '#ffffff',
+                                border: 'none', borderRadius: '8px',
                                 padding: '6px 10px',
-                                fontSize: '12px',
-                                fontWeight: 700,
+                                fontSize: '12px', fontWeight: 700,
                                 cursor: 'pointer',
                               }}
                             >
@@ -437,27 +459,37 @@ export default function HomePage() {
                               Add
                             </button>
                           ) : (
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                backgroundColor: FOREST,
-                                borderRadius: '8px',
-                                overflow: 'hidden',
-                              }}
-                            >
+                            <div style={{
+                              display: 'flex', alignItems: 'center',
+                              backgroundColor: FOREST, borderRadius: '8px', overflow: 'hidden',
+                            }}>
                               <button
                                 onClick={() => removeItem(item.id)}
-                                style={{ background: 'none', border: 'none', color: '#fff', padding: '6px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                style={{
+                                  background: 'none', border: 'none', color: '#fff',
+                                  padding: '6px 8px', cursor: 'pointer',
+                                  display: 'flex', alignItems: 'center',
+                                }}
                               >
                                 <Minus style={{ width: '12px', height: '12px' }} />
                               </button>
-                              <span style={{ fontSize: '12px', fontWeight: 700, color: '#fff', minWidth: '16px', textAlign: 'center' }}>
+                              <span style={{
+                                fontSize: '12px', fontWeight: 700, color: '#fff',
+                                minWidth: '16px', textAlign: 'center',
+                              }}>
                                 {qty}
                               </span>
                               <button
-                                onClick={() => addItem({ id: item.id, name_en: item.name_en, base_price_santim: item.base_price_santim })}
-                                style={{ background: 'none', border: 'none', color: '#fff', padding: '6px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                onClick={() => addItem({
+                                  id: item.id,
+                                  name_en: item.name_en,
+                                  base_price_santim: item.base_price_santim,
+                                })}
+                                style={{
+                                  background: 'none', border: 'none', color: '#fff',
+                                  padding: '6px 8px', cursor: 'pointer',
+                                  display: 'flex', alignItems: 'center',
+                                }}
                               >
                                 <Plus style={{ width: '12px', height: '12px' }} />
                               </button>
@@ -474,9 +506,9 @@ export default function HomePage() {
 
         </div>{/* end scrollable */}
 
-        {/* Bottom nav — inside right panel */}
+        {/* Bottom nav inside the right panel */}
         <BottomNav />
-      </div>{/* end main panel */}
+      </div>
     </div>
   );
 }

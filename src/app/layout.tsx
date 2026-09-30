@@ -31,7 +31,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#ffffff',
+  themeColor: '#103d2b',
 };
 
 export default function RootLayout({
@@ -44,13 +44,12 @@ export default function RootLayout({
       <head>
         <meta name="color-scheme" content="light" />
         <meta name="supported-color-schemes" content="light" />
-        {/* Force white background on Telegram native shell BEFORE first paint */}
+        {/* Force forest-green background on Telegram native shell BEFORE first paint */}
         <script dangerouslySetInnerHTML={{ __html: `
           (function() {
             try {
-              // Paint the html element white immediately — before CSS loads
-              document.documentElement.style.backgroundColor = '#ffffff';
-              document.documentElement.style.background = '#ffffff';
+              document.documentElement.style.backgroundColor = '#103d2b';
+              document.documentElement.style.background = '#103d2b';
             } catch(e) {}
           })();
         ` }} />
@@ -61,8 +60,8 @@ export default function RootLayout({
             try {
               var tg = window.Telegram && window.Telegram.WebApp;
               if (tg) {
-                tg.setBackgroundColor('#ffffff');
-                tg.setHeaderColor('#ffffff');
+                tg.setBackgroundColor('#103d2b');
+                tg.setHeaderColor('#103d2b');
                 tg.ready();
               }
             } catch(e) {}
