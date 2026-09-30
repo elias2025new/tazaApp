@@ -195,25 +195,41 @@ export default function HomePage() {
             />
           </div>
 
-          <h1
-            style={{
-              fontFamily: 'var(--font-serif)',
-              fontSize: '15px',
-              fontWeight: 700,
-              color: CREAM,
-              margin: '8px 0 0 0',
-              lineHeight: 1.15,
-            }}
-          >
-            {DESIGN_CONFIG.brand.name}
-          </h1>
+          {/* Brand name matching official typography: lowercase small 'taza', lowercase bold larger 'greens' */}
+          <div style={{ marginTop: '8px' }}>
+            <div
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '11px',
+                fontWeight: 400,
+                letterSpacing: '0.04em',
+                color: 'rgba(251, 248, 243, 0.9)',
+                lineHeight: 1,
+              }}
+            >
+              taza
+            </div>
+            <div
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontSize: '17px',
+                fontWeight: 700,
+                color: CREAM,
+                lineHeight: 1.05,
+                letterSpacing: '-0.02em',
+                marginTop: '1px',
+              }}
+            >
+              greens
+            </div>
+          </div>
 
           <p
             style={{
               fontFamily: 'var(--font-sans)',
-              fontSize: '10.5px',
-              color: 'rgba(251, 248, 243, 0.85)',
-              margin: '2px 0 0 0',
+              fontSize: '8.5px',
+              color: 'rgba(251, 248, 243, 0.8)',
+              margin: '4px 0 0 0',
               lineHeight: 1.25,
             }}
           >
@@ -343,7 +359,7 @@ export default function HomePage() {
         <div
           style={{
             position: 'relative',
-            height: `calc(165px + ${SAFE_TOP})`,
+            height: `calc(190px + ${SAFE_TOP})`,
             width: '100%',
             overflow: 'hidden',
           }}
@@ -444,7 +460,7 @@ export default function HomePage() {
             top: `calc(84px + ${SAFE_TOP})`,
             zIndex: 35,
             padding: '4px 12px',
-            marginTop: '-18px',
+            marginTop: '-8px',
             backgroundColor: CREAM,
           }}
         >
@@ -1053,11 +1069,11 @@ function DishCard({
             marginTop: '8px',
           }}
         >
-          {/* Price: serif bold ~16px, ink */}
+          {/* Price: serif bold 13px, ink */}
           <span
             style={{
               fontFamily: 'var(--font-serif)',
-              fontSize: '15px',
+              fontSize: '13px',
               fontWeight: 700,
               color: INK,
               whiteSpace: 'nowrap',
@@ -1066,28 +1082,29 @@ function DishCard({
             {priceFormatted}
           </span>
 
-          {/* Add button or Stepper: forest green, radius 10px, 54x28px */}
+          {/* Add button or Stepper: forest green, radius 9px, taller (31px), narrower (46px) */}
           {qty === 0 ? (
             <button
               type="button"
               onClick={onAdd}
+              aria-label={`Add ${item.name_en}`}
               style={{
                 position: 'relative',
-                width: '54px',
-                height: '28px',
-                borderRadius: '10px',
+                width: '46px',
+                height: '31px',
+                borderRadius: '9px',
                 backgroundColor: FOREST,
                 border: 'none',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '3px',
+                gap: '2px',
                 padding: 0,
                 color: '#ffffff',
                 fontFamily: 'var(--font-sans)',
-                fontSize: '12.5px',
-                fontWeight: 500,
+                fontSize: '11.5px',
+                fontWeight: 600,
                 transition: 'transform 0.1s ease',
                 flexShrink: 0,
               }}
@@ -1106,20 +1123,20 @@ function DishCard({
                   pointerEvents: 'none',
                 }}
               />
-              <Plus style={{ width: '12px', height: '12px', color: '#ffffff' }} strokeWidth={2.5} />
+              <Plus style={{ width: '11px', height: '11px', color: '#ffffff' }} strokeWidth={2.5} />
               <span>Add</span>
             </button>
           ) : (
             <div
               style={{
-                width: '54px',
-                height: '28px',
-                borderRadius: '10px',
+                width: '48px',
+                height: '31px',
+                borderRadius: '9px',
                 backgroundColor: FOREST,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '0 3px',
+                padding: '0 2px',
                 flexShrink: 0,
               }}
             >
@@ -1140,13 +1157,13 @@ function DishCard({
                 }}
               >
                 <span style={{ position: 'absolute', inset: '-6px' }} />
-                <Minus style={{ width: '11px', height: '11px' }} strokeWidth={2.5} />
+                <Minus style={{ width: '10px', height: '10px' }} strokeWidth={2.5} />
               </button>
 
               <span
                 style={{
                   fontFamily: 'var(--font-sans)',
-                  fontSize: '11.5px',
+                  fontSize: '11px',
                   fontWeight: 700,
                   color: '#ffffff',
                 }}
@@ -1171,7 +1188,7 @@ function DishCard({
                 }}
               >
                 <span style={{ position: 'absolute', inset: '-6px' }} />
-                <Plus style={{ width: '11px', height: '11px' }} strokeWidth={2.5} />
+                <Plus style={{ width: '10px', height: '10px' }} strokeWidth={2.5} />
               </button>
             </div>
           )}

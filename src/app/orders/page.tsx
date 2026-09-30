@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Package, ChevronRight, Clock } from 'lucide-react';
+import { Package, ChevronRight, Clock, Trash2, Loader2 } from 'lucide-react';
 import { formatPrice } from '@/lib/money';
 
 type Order = {
@@ -27,6 +27,9 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/orders')
@@ -37,6 +40,39 @@ export default function OrdersPage() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  const handleDeleteOrder = async () => {
+    if (!orderToDelete) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      const res = await fetch(`/api/orders/${orderToDelete.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to delete order.');
+      }
+
+      // Haptic feedback in Telegram if available
+      if (typeof window !== 'undefined' && window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+      }
+
+      setOrders((prev) => prev.filter((o) => o.id !== orderToDelete.id));
+      setOrderToDelete(null);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to delete order.';
+      setDeleteError(message);
+      if (typeof window !== 'undefined' && window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+      }
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -75,36 +111,129 @@ export default function OrdersPage() {
             });
 
             return (
-              <Link
+              <div
                 key={order.id}
-                href={`/orders/${order.id}?${params.toString()}`}
-                className="block bg-surface rounded-2xl shadow-sm p-4 active:scale-[0.98] active:bg-surface-raised transition-all duration-100"
+                className="bg-surface rounded-2xl shadow-sm p-4 active:bg-surface-raised transition-all duration-100 flex items-center justify-between gap-3 border border-border/50"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${statusInfo.color}`}>
-                        {statusInfo.label}
-                      </span>
-                      {isActive && (
-                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                      )}
-                    </div>
-                    <p className="text-sm font-bold text-text-muted">
-                      {order.fulfillment_type === 'pickup' ? '🏃 Pickup' : '🛵 Delivery'} · {formatPrice(order.total_santim)}
-                    </p>
-                    <div className="flex items-center gap-1 mt-1 text-xs text-text-muted">
-                      <Clock className="w-3 h-3" />
-                      <span>{new Date(order.placed_at).toLocaleDateString('en-ET', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-                    </div>
+                <Link
+                  href={`/orders/${order.id}?${params.toString()}`}
+                  className="flex-1 min-w-0"
+                >
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${statusInfo.color}`}>
+                      {statusInfo.label}
+                    </span>
+                    {isActive && (
+                      <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                    )}
                   </div>
-                  <ChevronRight className="w-4 h-4 text-text-muted" />
+                  <p className="text-sm font-bold text-text-muted truncate">
+                    {order.fulfillment_type === 'pickup' ? '🏃 Pickup' : '🛵 Delivery'} · {formatPrice(order.total_santim)}
+                  </p>
+                  <div className="flex items-center gap-1 mt-1 text-xs text-text-muted">
+                    <Clock className="w-3 h-3" />
+                    <span>{new Date(order.placed_at).toLocaleDateString('en-ET', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                </Link>
+
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDeleteError(null);
+                      setOrderToDelete(order);
+                    }}
+                    className="w-9 h-9 flex items-center justify-center rounded-xl text-red-500/80 hover:text-red-600 hover:bg-red-50 active:bg-red-100 active:scale-90 transition-all"
+                    aria-label={`Delete order ${order.id.slice(0, 8)}`}
+                    title="Delete order"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  <Link
+                    href={`/orders/${order.id}?${params.toString()}`}
+                    className="w-8 h-8 flex items-center justify-center text-text-muted hover:text-text transition-colors"
+                    aria-label="View order details"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
                 </div>
-              </Link>
+              </div>
             );
           })
         )}
       </div>
+
+      {/* Confirmation Modal: Ask for Yes or No before deleting */}
+      {orderToDelete && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-dialog-title"
+        >
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-border p-5 space-y-4">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-3">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <h2 id="delete-dialog-title" className="text-base font-bold text-text-muted">
+                Delete Order History?
+              </h2>
+              <p className="text-sm text-text-muted mt-1 leading-relaxed">
+                Are you sure you want to delete order <span className="font-semibold text-text">#{orderToDelete.id.slice(0, 8).toUpperCase()}</span> from your history?
+              </p>
+              <p className="text-xs text-text-muted/70 mt-1">
+                {orderToDelete.fulfillment_type === 'pickup' ? '🏃 Pickup' : '🛵 Delivery'} · {formatPrice(orderToDelete.total_santim)}
+              </p>
+              <p className="text-xs text-red-500 font-medium mt-2">
+                This action cannot be undone.
+              </p>
+            </div>
+
+            {deleteError && (
+              <div className="p-2.5 rounded-xl bg-red-50 text-red-600 text-xs font-medium text-center border border-red-100">
+                {deleteError}
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-1">
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => {
+                  if (!isDeleting) {
+                    setOrderToDelete(null);
+                    setDeleteError(null);
+                  }
+                }}
+                className="flex-1 py-2.5 rounded-xl border border-border text-sm font-semibold text-text-muted hover:bg-gray-100 active:scale-[0.98] transition-all disabled:opacity-50"
+              >
+                No, Keep
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={handleDeleteOrder}
+                className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-75 shadow-sm"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Deleting…</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    <span>Yes, Delete</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
