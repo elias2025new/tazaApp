@@ -66,3 +66,30 @@ bot.command('admin', (ctx) => {
     },
   });
 });
+
+// Handle shared contact (saves phone number to profiles table)
+bot.on(':contact', async (ctx) => {
+  const contact = ctx.message?.contact;
+  if (!contact || !contact.user_id) return;
+
+  try {
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabaseAdmin = createClient(
+      publicEnv.NEXT_PUBLIC_SUPABASE_URL,
+      serverEnv.SUPABASE_SERVICE_ROLE_KEY
+    );
+    await supabaseAdmin
+      .from('profiles')
+      .update({
+        phone: contact.phone_number,
+        phone_number: contact.phone_number,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('telegram_id', contact.user_id);
+
+    await ctx.reply('Thank you! Your phone number has been saved for deliveries. 🌿');
+  } catch (err) {
+    console.error('Error saving contact from bot:', err);
+  }
+});
+

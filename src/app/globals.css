@@ -2,16 +2,26 @@
 @import "../styles/tokens.css";
 
 /* ─── Tailwind v4 theme bridge ──────────────────────────────────────── */
-@theme inline {
-  --color-forest: var(--color-forest);
-  --color-cream: var(--color-cream);
-  --color-card: var(--color-card);
-  --color-nav-bg: var(--color-nav-bg);
-  --color-amber: var(--color-amber);
-  --color-ink: var(--color-ink);
-  --color-secondary: var(--color-secondary);
-  --color-placeholder: var(--color-placeholder);
-  --color-inactive: var(--color-inactive);
+@theme {
+  --color-forest: #03301C;
+  --color-cream: #FBF8F3;
+  --color-card: #FFFFFF;
+  --color-nav-bg: #FBFAF6;
+  --color-amber: #EBAA38;
+  --color-ink: #111111;
+  --color-secondary: #5A5D63;
+  --color-placeholder: #8C8F96;
+  --color-inactive: #48494D;
+
+  --color-primary: #03301C;
+  --color-primary-dark: #022013;
+  --color-accent: #EBAA38;
+  --color-emphasis: #EBAA38;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #FFFFFF;
+  --color-text-muted: #5A5D63;
+  --color-border: #E8E2D5;
+  --color-border-subtle: #F0ECE1;
 
   --font-serif: var(--font-serif);
   --font-sans: var(--font-sans);

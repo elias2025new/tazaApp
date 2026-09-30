@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Trash2, MapPin, MessageSquare, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Trash2, MapPin, MessageSquare, CheckCircle, ShoppingBag, Sparkles } from 'lucide-react';
 import { useCartStore } from '@/lib/cart-store';
 import { formatPrice, calcOrderTotals } from '@/lib/money';
+
+const SAFE_TOP = 'var(--tg-content-safe-area-inset-top, var(--tg-safe-area-inset-top, env(safe-area-inset-top, 0px)))';
 
 type FulfillmentType = 'delivery' | 'pickup';
 
@@ -90,18 +92,25 @@ export default function CartPage() {
 
   if (success) {
     return (
-      <div className="h-full bg-surface flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-4">
-          <CheckCircle className="w-10 h-10 text-green-500" />
+      <div
+        className="min-h-screen flex flex-col items-center justify-center p-6 text-center"
+        style={{
+          backgroundColor: '#FBF8F3',
+          paddingTop: `calc(72px + ${SAFE_TOP})`,
+          paddingBottom: '96px',
+        }}
+      >
+        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-5 border border-green-200 shadow-xs">
+          <CheckCircle className="w-10 h-10 text-[#03301C]" />
         </div>
-        <h1 className="text-2xl font-bold text-text-muted mb-2">Order Placed! 🎉</h1>
-        <p className="text-text-muted text-sm mb-2">
+        <h1 className="font-serif text-2xl font-bold text-[#03301C] mb-2">Order Placed! 🎉</h1>
+        <p className="text-[#3B3D41] text-sm max-w-xs mb-2">
           Your order has been received and our team will start preparing it shortly.
         </p>
-        <p className="text-xs text-text-muted mb-8">You&apos;ll receive an update on Telegram when it&apos;s ready.</p>
+        <p className="text-xs text-[#6B6B6C] mb-8">You&apos;ll receive an update on Telegram when it&apos;s ready.</p>
         <button
           onClick={() => router.push('/')}
-          className="bg-primary text-white font-semibold px-8 py-3 rounded-full shadow-md"
+          className="bg-[#03301C] text-[#FBF8F3] font-semibold text-sm px-8 py-3.5 rounded-full shadow-md shadow-[#03301C]/20 active:scale-95 transition-all"
         >
           Back to Menu
         </button>
@@ -111,16 +120,76 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="h-full bg-surface flex flex-col items-center justify-center p-6 text-center">
-        <p className="text-5xl mb-4">🛒</p>
-        <h2 className="text-lg font-semibold text-text-muted mb-2">Your cart is empty</h2>
-        <p className="text-sm text-text-muted mb-6">Add some items from the menu to get started!</p>
-        <button
-          onClick={() => router.push('/')}
-          className="bg-primary text-white font-semibold px-8 py-3 rounded-full"
-        >
-          Browse Menu
-        </button>
+      <div
+        className="min-h-[calc(100dvh-5rem)] flex flex-col justify-between"
+        style={{
+          backgroundColor: '#FBF8F3',
+          paddingTop: `calc(84px + ${SAFE_TOP})`,
+          paddingBottom: '24px',
+        }}
+      >
+        {/* Top Header */}
+        <div className="px-5 flex items-center justify-between">
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-[#E8E2D5] shadow-xs active:scale-95 transition-all text-[#111111]"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="font-serif text-lg font-bold text-[#03301C]">Your Cart</h1>
+          <div className="w-10" />
+        </div>
+
+        {/* Center Content */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 text-center my-auto">
+          {/* Elegant Icon Badge */}
+          <div className="relative mb-6">
+            <div className="w-24 h-24 rounded-full bg-[#03301C]/[0.05] border border-[#03301C]/[0.08] flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-white border border-[#E8E2D5] shadow-xs flex items-center justify-center text-[#03301C]">
+                <ShoppingBag className="w-8 h-8 text-[#03301C]" strokeWidth={1.75} />
+              </div>
+            </div>
+            <div
+              className="absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center shadow-xs"
+              style={{ backgroundColor: '#c4e32e', border: '2px solid #FBF8F3' }}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#03301C]" />
+            </div>
+          </div>
+
+          {/* Heading */}
+          <h2 className="font-serif text-2xl font-bold text-[#03301C] mb-2 tracking-tight">
+            Your cart is empty
+          </h2>
+
+          {/* Subtext */}
+          <p className="text-sm text-[#3B3D41] max-w-[260px] leading-relaxed mb-7 font-normal">
+            Add some delicious items from our menu to get started!
+          </p>
+
+          {/* Action CTA */}
+          <button
+            onClick={() => router.push('/')}
+            className="w-full max-w-[220px] bg-[#03301C] hover:bg-[#022013] active:scale-[0.98] text-[#FBF8F3] font-semibold text-sm py-3.5 px-6 rounded-full shadow-md shadow-[#03301C]/20 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+          >
+            <span>Browse Menu</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+          </button>
+        </div>
+
+        {/* Footer Brand Reassurance Note */}
+        <div className="px-6 flex items-center justify-center gap-5 text-[11.5px] text-[#6B6B6C]">
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#EBAA38]" />
+            Freshly prepared
+          </span>
+          <span className="text-[#E8E2D5]">•</span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#03301C]" />
+            Bole Rwanda, Addis
+          </span>
+        </div>
       </div>
     );
   }
@@ -128,7 +197,10 @@ export default function CartPage() {
   return (
     <div className="h-full overflow-y-auto bg-surface-raised">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-surface border-b border-border flex items-center gap-3 px-4 pt-24 pb-4">
+      <div
+        className="sticky top-0 z-40 bg-surface border-b border-border flex items-center gap-3 px-4 pb-4"
+        style={{ paddingTop: `calc(84px + ${SAFE_TOP})` }}
+      >
         <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100">
           <ArrowLeft className="w-4 h-4 text-text-muted" />
         </button>

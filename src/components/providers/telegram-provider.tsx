@@ -31,6 +31,8 @@ declare global {
         setHeaderColor?: (color: string) => void;
         setBackgroundColor?: (color: string) => void;
         setBottomBarColor?: (color: string) => void;
+        openTelegramLink?: (url: string) => void;
+        requestContact?: (callback: (shared: boolean, data?: any) => void) => void;
         HapticFeedback?: {
           impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft') => void;
           notificationOccurred: (type: 'error' | 'success' | 'warning') => void;
