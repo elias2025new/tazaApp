@@ -163,12 +163,12 @@ export default function HomePage() {
           borderRight: 'none',
         }}
       >
-        {/* Brand block: left-aligned, 12px left padding, compact top padding (clears Telegram overlay buttons) */}
+        {/* Brand block: left-aligned, 12px left padding, clears Telegram overlay Close button */}
         <div
           style={{
             paddingLeft: '12px',
             paddingRight: '6px',
-            paddingTop: `calc(48px + ${SAFE_TOP})`,
+            paddingTop: `calc(84px + ${SAFE_TOP})`,
             paddingBottom: '12px',
             display: 'flex',
             flexDirection: 'column',
@@ -339,102 +339,11 @@ export default function HomePage() {
           paddingBottom: `calc(72px + ${SAFE_BOTTOM})`, // Nav height + 16px
         }}
       >
-        {/* Sticky floating cart pill at top-right (clears Telegram top buttons, stays visible when scrolling) */}
-        <div
-          style={{
-            position: 'sticky',
-            top: `calc(48px + ${SAFE_TOP})`,
-            zIndex: 40,
-            display: 'flex',
-            justifyContent: 'flex-end',
-            paddingRight: '12px',
-            marginBottom: '-32px',
-            pointerEvents: 'none',
-          }}
-        >
-          <div style={{ position: 'relative', pointerEvents: 'auto' }}>
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic('light');
-                router.push('/cart');
-              }}
-              aria-label="View cart"
-              style={{
-                height: '32px',
-                borderRadius: '9999px',
-                backgroundColor: LIME,
-                border: '1px solid rgba(3, 48, 28, 0.12)',
-                padding: '0 13px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                cursor: 'pointer',
-                boxShadow: '0 3px 12px rgba(0, 0, 0, 0.16)',
-                transition: 'transform 0.1s ease',
-              }}
-              onPointerDown={(e) => {
-                e.currentTarget.style.transform = 'scale(0.97)';
-              }}
-              onPointerUp={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-              }}
-            >
-              <ShoppingCart style={{ width: '15px', height: '15px', color: FOREST }} strokeWidth={2.2} />
-              <span
-                style={{
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  color: FOREST,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {formatPrice(cartSubtotal)}
-              </span>
-            </button>
-
-            {/* Item count badge (overlaps top-right corner) */}
-            {cartCount > 0 && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '-7px',
-                  right: '-6px',
-                  minWidth: '19px',
-                  height: '19px',
-                  padding: '0 4px',
-                  borderRadius: '9999px',
-                  backgroundColor: FOREST,
-                  border: '1.5px solid #ffffff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  pointerEvents: 'none',
-                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    color: '#ffffff',
-                    lineHeight: 1,
-                  }}
-                >
-                  {cartCount}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* ── HERO SECTION (compact ~145px tall + top safe inset) ─────────── */}
+        {/* ── HERO SECTION (~165px tall + top safe inset, clears Telegram overlay buttons) ── */}
         <div
           style={{
             position: 'relative',
-            height: `calc(145px + ${SAFE_TOP})`,
+            height: `calc(165px + ${SAFE_TOP})`,
             width: '100%',
             overflow: 'hidden',
           }}
@@ -460,28 +369,28 @@ export default function HomePage() {
             style={{
               position: 'absolute',
               inset: 0,
-              background: `linear-gradient(to right, ${CREAM} 24%, rgba(251, 248, 243, 0.85) 50%, rgba(251, 248, 243, 0.15) 80%, transparent 100%)`,
+              background: `linear-gradient(to right, ${CREAM} 28%, rgba(251, 248, 243, 0.85) 55%, rgba(251, 248, 243, 0.15) 85%, transparent 100%)`,
             }}
           />
 
-          {/* Bottom ~32px fade into panel cream */}
+          {/* Bottom ~36px fade into panel cream */}
           <div
             style={{
               position: 'absolute',
               bottom: 0,
               left: 0,
               right: 0,
-              height: '32px',
+              height: '36px',
               background: `linear-gradient(to bottom, transparent 0%, ${CREAM} 100%)`,
             }}
           />
 
-          {/* Title at top-left: 12px from edge, 48px from top (+ safe inset) */}
+          {/* Title at top-left: 12px from edge, 84px from top (+ safe inset, clears Telegram overlay buttons) */}
           <div
             style={{
               position: 'absolute',
               left: '12px',
-              top: `calc(48px + ${SAFE_TOP})`,
+              top: `calc(84px + ${SAFE_TOP})`,
               zIndex: 2,
             }}
           >
@@ -528,63 +437,156 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ── 3) SEARCH BAR ──────────────────────────────────────────────── */}
+        {/* ── 3) SEARCH BAR & CART PILL ROW (Sticky while scrolling, clears Telegram top buttons) ── */}
         <div
           style={{
-            padding: '0 12px',
-            marginTop: '-12px',
-            position: 'relative',
-            zIndex: 10,
+            position: 'sticky',
+            top: `calc(84px + ${SAFE_TOP})`,
+            zIndex: 35,
+            padding: '4px 12px',
+            marginTop: '-18px',
+            backgroundColor: CREAM,
           }}
         >
           <div
             style={{
-              height: '36px',
-              borderRadius: '12px',
-              backgroundColor: CARD_BG,
-              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
               display: 'flex',
               alignItems: 'center',
-              padding: '0 12px',
-              gap: '10px',
-              border: '1px solid rgba(0, 0, 0, 0.04)',
+              gap: '8px',
+              width: '100%',
             }}
           >
-            <Search style={{ width: '16px', height: '16px', color: SECONDARY, flexShrink: 0 }} />
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Search menu..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+            {/* Search input (occupies ~70% of row) */}
+            <div
               style={{
                 flex: 1,
-                border: 'none',
-                outline: 'none',
-                backgroundColor: 'transparent',
-                fontFamily: 'var(--font-sans)',
-                fontSize: '13px',
-                color: INK,
+                minWidth: 0,
+                height: '36px',
+                borderRadius: '12px',
+                backgroundColor: CARD_BG,
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 10px',
+                gap: '8px',
+                border: '1px solid rgba(0, 0, 0, 0.04)',
               }}
-            />
-            {search.length > 0 && (
+            >
+              <Search style={{ width: '15px', height: '15px', color: SECONDARY, flexShrink: 0 }} />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search menu..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  border: 'none',
+                  outline: 'none',
+                  backgroundColor: 'transparent',
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '12.5px',
+                  color: INK,
+                }}
+              />
+              {search.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setSearch('')}
+                  aria-label="Clear search"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: '2px',
+                    cursor: 'pointer',
+                    color: PLACEHOLDER,
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <X style={{ width: '14px', height: '14px' }} />
+                </button>
+              )}
+            </div>
+
+            {/* Cart pill (occupies ~30% on right) */}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
               <button
                 type="button"
-                onClick={() => setSearch('')}
-                aria-label="Clear search"
+                onClick={() => {
+                  triggerHaptic('light');
+                  router.push('/cart');
+                }}
+                aria-label="View cart"
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  padding: '2px',
-                  cursor: 'pointer',
-                  color: PLACEHOLDER,
-                  display: 'flex',
+                  height: '36px',
+                  borderRadius: '9999px',
+                  backgroundColor: LIME,
+                  border: '1px solid rgba(3, 48, 28, 0.12)',
+                  padding: '0 12px',
+                  display: 'inline-flex',
                   alignItems: 'center',
+                  gap: '5px',
+                  cursor: 'pointer',
+                  boxShadow: '0 3px 12px rgba(0, 0, 0, 0.14)',
+                  transition: 'transform 0.1s ease',
+                }}
+                onPointerDown={(e) => {
+                  e.currentTarget.style.transform = 'scale(0.97)';
+                }}
+                onPointerUp={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
                 }}
               >
-                <X style={{ width: '14px', height: '14px' }} />
+                <ShoppingCart style={{ width: '15px', height: '15px', color: FOREST }} strokeWidth={2.2} />
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '12.5px',
+                    fontWeight: 700,
+                    color: FOREST,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {formatPrice(cartSubtotal)}
+                </span>
               </button>
-            )}
+
+              {/* Item count badge (overlaps top-right corner) */}
+              {cartCount > 0 && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '-6px',
+                    right: '-5px',
+                    minWidth: '19px',
+                    height: '19px',
+                    padding: '0 4px',
+                    borderRadius: '9999px',
+                    backgroundColor: FOREST,
+                    border: '1.5px solid #ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    pointerEvents: 'none',
+                    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: '#ffffff',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {cartCount}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
